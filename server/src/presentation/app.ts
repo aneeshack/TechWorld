@@ -10,8 +10,8 @@ const corseOptions ={
     methods: 'GET, HEAD, PUT, POST, PATCH, DELETE',
     Credential:true,
 }
-app.get('/api/data', (req, res) => {
-    res.json({ message: 'Hello from server!' });
+app.get('/api/data', (Request, Response) => {
+    Response.json({ message: 'Hello from server!' });
   });
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
