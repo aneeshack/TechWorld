@@ -1,9 +1,13 @@
 import dotenv from 'dotenv'
-import { mongo } from 'mongoose';
 dotenv.config();
 
 
 export const envConfig ={
+    http:{
+        HOST: process.env.HOST,
+        PORT: process.env.PORT,
+        ORIGIN: process.env.FRONTEND_URL
+    },
     mongo: {
         MONGODB_URI : process.env.MONGODB_URI
     }
