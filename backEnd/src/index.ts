@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import app from './presentation/app';
-import connectDb from './setup/databaseConnection';
-import { envConfig } from './setup/envConfig';
+import app from './util/app';
+import connectDb from './config/databaseConnection';
+import { envConfig } from './config/envConfig';
 
 const PORT = envConfig.http.PORT;
 const HOST = envConfig.http.HOST;

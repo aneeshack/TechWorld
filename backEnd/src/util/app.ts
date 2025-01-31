@@ -1,20 +1,23 @@
 import express,{ Request, Response } from 'express';
 import cors from 'cors';
-import { envConfig } from '../setup/envConfig';
+import { envConfig } from '../config/envConfig';
 import cookieParser from 'cookie-parser';
+import userRouter from '../routes/userRoutes';
 
 const app = express()
 
-const corseOptions ={
-    origin: String(envConfig.http.ORIGIN),
+const corsOptions ={
+    origin: envConfig.http.ORIGIN,
     methods: 'GET, HEAD, PUT, POST, PATCH, DELETE',
-    Credential:true,
+    credentials:true,
 }
-app.get('/api/data', (Request, Response) => {
-    Response.json({ message: 'Hello from server!' });
-  });
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
-app.use(cors(corseOptions))
+
+app.use('/',userRouter)
+// app.use('/',studentRouter)
+// app.use('/',studentRouter)
+
 export default app
