@@ -1,9 +1,9 @@
-import mongoose, { Schema, Model, model } from "mongoose";
-import { IUser, Role } from "../interfaces/user/IUser";
+import mongoose, { Schema, Model, model, Document } from "mongoose";
 
 
-interface IOtp extends IUser{
-    otp:string,
+interface IOtp extends Document{
+    email: string,
+    otp: string,
     createdAt: Date
 }
 const OtpSchema = new Schema<IOtp>(
@@ -13,26 +13,14 @@ const OtpSchema = new Schema<IOtp>(
       required: true,
       unique: true,
     },
-    password: {
-      type: String,
-      required: true,
-    },
-    userName: {
-      type: String,
-      required: true,
-    },
-    role: {
-      type: String,
-      required: true,
-      enum: Object.values(Role),
-    },
     otp:{
-        type:String
+        type:String,
+        required: true
     },
     createdAt:{
         type : Date,
         default: Date.now,
-        expires: '10m'
+        expires: '5m'  //otp expired after 5 minutes
     }
   },
 );

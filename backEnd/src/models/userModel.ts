@@ -50,7 +50,7 @@ const UserSchema = new Schema<IUser>(
     },
     isOtpVerified: {
       type: Boolean,
-      efault: false,
+      default: false,
     },
     isBlocked: {
       type: Boolean,

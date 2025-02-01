@@ -16,6 +16,7 @@ app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 
+
 app.use('/',userRouter)
 // app.use('/',studentRouter)
 // app.use('/',studentRouter)

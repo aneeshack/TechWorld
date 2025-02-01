@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { SignupFormData,Response } from "../../../../types/IForm";
 import { CLIENT_API } from "../../../../utilities/axios/Axios";
-// import { config } from "../../../../common/Config";
 import { AxiosError } from "axios";
 
 export const signupAction = createAsyncThunk <Response, SignupFormData>(

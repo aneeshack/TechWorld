@@ -27,7 +27,7 @@ class EmailService{
                 from: process.env.SMTP_MAIL,
                 to: email,
                 subject: subject,
-                html: content
+                html: `Your OTP code is ${content}`
             }
 
             const info = await this.transporter.sendMail(mailOptions)
