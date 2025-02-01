@@ -25,8 +25,8 @@ const Navbar = () => {
       </div>
 
       <div className="absolute inset-y-0 right-0 flex items-center justify-end pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-      <a href="#" className="rounded-md hidden sm:block bg-green-900 px-3 py-2 mr-3 text-sm font-medium text-white" aria-current="page">Dashboard</a>
-      <a href="#" className="rounded-md hidden sm:block bg-green-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Dashboard</a>
+      <a href="/signup?role=student" className="rounded-md hidden sm:block bg-green-900 px-3 py-2 mr-3 text-sm font-medium text-white" aria-current="page">Signup</a>
+      <a href="#" className="rounded-md hidden sm:block bg-green-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Login</a>
       </div>
 
     </div>

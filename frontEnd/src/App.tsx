@@ -1,10 +1,11 @@
-import Home from "./pages/commonPages/Home"
+import { Route, Routes } from "react-router-dom"
+import UserRoutes from "./routes/UserRoutes"
 
 const App = () => {
   return (
-    <div>
-      <Home/>
-    </div>
+    <Routes>
+      <Route path='/*' element={<UserRoutes/>}/>
+    </Routes>
   )
 }
 

@@ -1,4 +1,5 @@
 import course from '../../assets/banner.webp'
+
 const Content = () => {
     return (
       <section className="bg-white py-10">
