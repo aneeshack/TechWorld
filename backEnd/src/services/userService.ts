@@ -1,31 +1,9 @@
 import { IUser } from "../interfaces/user/IUser";
-import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { UserRepository } from "../repository/userRepository";
-import { OtpGenerator } from "../util/otp/generateOtp";
-import EmailService from "../util/otp/nodeMailer";
+import { OtpGenerator } from "../util/auth/generateOtp";
+import { generateToken } from "../util/auth/jwt";
+import EmailService from "../util/auth/nodeMailer";
 
-// export class UserService{
-//     private userRepository:IUserRepository;
-
-//     constructor(userRepository:IUserRepository){
-//         this.userRepository = userRepository
-//     }
-
-//     async createUser(userData:IUser):Promise<IUser>{
-//         try {
-//             const existingUser = await this.userRepository.findByEmail(userData.email)
-//             if(existingUser){
-//                 console.log('error in userService: Email already exists')
-//                 return Promise.reject({success:false, message: "Email already exists" })
-//             }
-//             return await this.userRepository.createUser(userData)
-//         } catch (error) {
-//             console.error('Error in User Service',error)
-//             return Promise.reject({success:false, message: "Internal Server Error"})
-//         }
-   
-//     }
-// }
 
 export class UserService {
     constructor(private userRepository: UserRepository){}
@@ -54,7 +32,34 @@ export class UserService {
             return {message: "Signup successful. Please verify your email."}
         } catch (error) {
             console.log('userService error:signup',error)
-            throw new Error(`Error in signup: ${(error as Error).message}`)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
+
+    async verifyOtp(email: string, otp: string):Promise<{message:string, token?:string, user?:Partial<IUser>}>{
+        try {
+            const foundOtp = await this.userRepository.findOtpByEmail(email)
+            if(!foundOtp){
+                 throw new Error('Otp expired')
+            }
+            
+            if(foundOtp.otp !==otp){
+                throw new Error('Invalid Otp')
+            }
+           
+            const user = await this.userRepository.updateUser(email,{ isOtpVerified:true})
+            if(!user){
+                throw new Error('Failed to update user')
+            }
+            const token = generateToken({id:user?._id,email, role:user?.role})
+
+            await this.userRepository.deleteOtp(email)
+            console.log('otp is matching')
+
+            return {message:'user signup successfull', token, user}
+        } catch (error) {
+            console.log('userService error:verify Otp',error)
+            throw new Error(`${(error as Error).message}`)
         }
     }
 }

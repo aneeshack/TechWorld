@@ -1,14 +1,53 @@
+import { useSelector } from 'react-redux';
 import logo from '../../assets/logo.png';
-import otp from '../../assets/otp.avif'
+import otpPicture from '../../assets/otp.avif'
+import { otpAction } from '../../redux/store/actions/auth/OtpAction';
+import { useEffect, useState } from 'react';
+import { RootState } from '../../redux/store';
+import { useAppDispatch } from '../../hooks/Hooks';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const Otp = () => {
+  const dispatch = useAppDispatch();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [otp, setOtp] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const {  error} = useSelector((state:RootState)=>state.auth)
+  const email = location.state?.email || '';
+
+  useEffect(()=>{
+    if(!email){
+      toast.error('Email is missing! Redirecting to signup')
+      navigate('/signup')
+    }
+  },[email,navigate])
+  
+  const handleVerifyOtp = (e: React.FormEvent) =>{
+   
+    e.preventDefault();
+    console.log('inside handle verify otp')
+    setIsLoading(true)
+    console.log('otp',otp)
+    console.log('email',email)
+    if(otp && email){
+      console.log('Dispatching otpAction');
+         dispatch(otpAction({ otp, email }));
+       navigate('/')
+         setIsLoading(false)
+    }
+    console.log('error',error)
+    console.log('not working')
+  }
+
   return (
     <div className="h-screen flex flex-col md:flex-row bg-white">
         <div className="lg:w-1/2 relative w-full h-screen flex flex-col items-center justify-center bg-white-100">
       <div className='absolute top-4 left-4'>
       <img src={logo} alt="logo" className='w-auto h-16' />
       </div>
-        <img src={otp} alt="signup" className="w-11/12 h-3/4 lg:w-[600px] object-cover" />
+        <img src={otpPicture} alt="signup" className="w-11/12 h-3/4 lg:w-[600px] object-cover" />
       </div>
 
       {/* Right Section */}
@@ -18,24 +57,27 @@ const Otp = () => {
           <p className="text-gray-600 text-sm text-center mb-6">
             Enter the OTP sent to your registered email/phone number.
           </p>
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={handleVerifyOtp}>
+          {error && <p className="text-red-500 text-center mb-4">{error?.message}</p>}
             <input
               type="text"
               placeholder="Enter OTP"
               className="mb-6 p-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-600 text-center"
+              value={otp}
+              onChange={(e)=>setOtp(e.target.value)}
             />
             <button
               type="submit"
               className="w-full font-bold bg-green-700 text-white py-3 rounded-md hover:bg-green-600 transition duration-300"
             >
-              Verify
+              { isLoading? 'verifying otp...':'Verify'}
             </button>
           </form>
           <div className="text-center mt-6">
             <span className="text-sm text-gray-600">
               Didn't receive an OTP?{' '}
               <button className="text-blue-600 hover:underline">
-                Resend OTP
+              Resend OTP
               </button>
             </span>
           </div>

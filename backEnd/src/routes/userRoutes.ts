@@ -20,5 +20,6 @@ const userRouter = Router();
 const userController = new UserController();
 
 userRouter.post('/signup', userController.signup.bind(userController));
+userRouter.post('/verifyOtp', userController.verifyOtp.bind(userController));
 
 export default userRouter;

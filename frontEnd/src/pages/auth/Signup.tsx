@@ -11,12 +11,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEnvelope, faEye, faEyeSlash, faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+
 
 
 
 const Signup = () => {
   
   const [ isLoading, setIsLoading ] = useState(false);
+  // const [ email, setEmail] = useState('')
   const [ showPassword, setShowPassword ] = useState(false)
   const [ showConfirmPassword, setShowConfirmPassword ] = useState(false)
   const [ heading, setHeading ] = useState('Student Signup');
@@ -26,6 +30,7 @@ const Signup = () => {
 
   const queryParams = new URLSearchParams(location.search)
   const role = queryParams.get('role') as Role || Role.Student;
+  const { loading } = useSelector((state: RootState) => state.auth);
 
   useEffect(()=>{
     if(role=== Role.Instructor){
@@ -63,7 +68,7 @@ const Signup = () => {
           console.log('result of signup',signupAction)
           console.log('submitted values',data)
           console.log('payload',payload)
-          navigate('/otp')
+          navigate('/otp',{state:{email: values.email}})
         }
 
      
@@ -81,6 +86,7 @@ const Signup = () => {
       <div className="lg:w-1/2 w-full flex items-center justify-center bg-white-100">
         <div className="w-3/4 h-sull sm:h-full lg:w-[500px] md:h-5/6 bg-gray-200 p-8 rounded-xl shadow-md">
           <h1 className="text-2xl font-bold text-green-700 text-center mb-[20px]">
+          <p>{loading ? "Loading..." : ""}</p>
             {heading}
           </h1>
           
