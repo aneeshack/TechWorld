@@ -1,6 +1,6 @@
 import Banner from "../../components/home/Banner"
-import Footer from "../../components/home/Footer"
-import Navbar from "../../components/home/Navbar"
+import Footer from "../../components/common/Footer"
+import Navbar from "../../components/common/Navbar"
 import Content from "../../components/home/Content"
 
 

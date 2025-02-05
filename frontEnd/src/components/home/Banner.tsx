@@ -2,7 +2,7 @@ import banner from '../../assets/banner.webp';
 
 const Banner = () => {
   return (
-    <div>
+    
       <div
         className="w-full h-screen bg-cover bg-center relative flex items-center justify-center"
         style={{ backgroundImage: `url(${banner})` }}
@@ -23,7 +23,7 @@ const Banner = () => {
           </button>
         </div>
       </div>
-    </div>
+  
   );
 };
 

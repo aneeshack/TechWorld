@@ -13,12 +13,10 @@ export const otpAction = createAsyncThunk <Response, OtpPayload> (
     'auth/verifyOtp',
     async (data:OtpPayload, {rejectWithValue} )=> {
         try {
-            console.log('inside otp action')
             const response = await CLIENT_API.post('/verifyOtp', data)
-            console.log('response',response);
 
             if(response.data.success){
-                return response.data
+                return response.data as Response
             }else{
                 return rejectWithValue(response.data)
             }
@@ -26,7 +24,7 @@ export const otpAction = createAsyncThunk <Response, OtpPayload> (
         } catch (error) {
             const e: AxiosError = error as AxiosError;
             console.error('Error from backend:', e.response?.data || e.message);
-            return rejectWithValue(e.response?.data ||e.message)
+            return rejectWithValue(e.response?.data ||e)
         }
     }
 )

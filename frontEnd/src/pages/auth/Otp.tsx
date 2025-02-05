@@ -7,6 +7,7 @@ import { RootState } from '../../redux/store';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { Response } from '../../types/IForm';
 
 const Otp = () => {
   const dispatch = useAppDispatch();
@@ -14,7 +15,7 @@ const Otp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const {  error} = useSelector((state:RootState)=>state.auth)
+  const { error} = useSelector((state:RootState)=>state.auth)
   const email = location.state?.email || '';
 
   useEffect(()=>{
@@ -23,22 +24,46 @@ const Otp = () => {
       navigate('/signup')
     }
   },[email,navigate])
+
+
   
-  const handleVerifyOtp = (e: React.FormEvent) =>{
-   
+  const handleVerifyOtp = async(e: React.FormEvent) =>{
     e.preventDefault();
-    console.log('inside handle verify otp')
     setIsLoading(true)
-    console.log('otp',otp)
-    console.log('email',email)
-    if(otp && email){
-      console.log('Dispatching otpAction');
-         dispatch(otpAction({ otp, email }));
-       navigate('/')
-         setIsLoading(false)
+
+    if(!otp){
+      toast.error('Invalid OTP! Please enter a 6 digit number.')
+      return 
     }
-    console.log('error',error)
-    console.log('not working')
+    if(!/^\d{6}$/.test(otp)){
+      toast.error('Invalid OTP! Please enter a 6-digit number.')
+      setIsLoading(false)
+      return
+    }
+
+    if(otp && email){
+         try {
+          const result = await dispatch(otpAction({ otp, email }));
+          const payload =  result.payload as Response;
+
+          if (!payload?.success) {
+            setIsLoading(false);
+
+            if (payload?.message) {
+              toast.error(payload.message);
+            }
+
+          } else {
+            setIsLoading(false);
+            navigate("/");
+          }
+
+         } catch (error) {
+          console.error("OTP verification failed", error);
+          toast.error("An error occurred during OTP verification.");
+          setIsLoading(false);
+         }
+      }
   }
 
   return (
@@ -58,7 +83,7 @@ const Otp = () => {
             Enter the OTP sent to your registered email/phone number.
           </p>
           <form className="flex flex-col" onSubmit={handleVerifyOtp}>
-          {error && <p className="text-red-500 text-center mb-4">{error?.message}</p>}
+          {error  && <p className="text-red-500 text-center mb-4">{error}</p>}
             <input
               type="text"
               placeholder="Enter OTP"

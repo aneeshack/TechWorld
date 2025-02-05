@@ -28,7 +28,6 @@ export class UserRepository implements IUserRepository{
     async updateUser(email: string, updateData: Partial<IUser>): Promise<IUser | null> {
         try {
              const user =await UserModel.findOneAndUpdate({email},{$set:updateData},{new:true})
-            console.log('updated user',user)
 
             if(!user){
                 throw new Error('User update failed. No user found.')
@@ -65,6 +64,23 @@ export class UserRepository implements IUserRepository{
         } catch (error) {
             console.log('userRepository error: delete otp',error)
             throw new Error(`Error in deleting otp: ${(error as Error).message}`)
+        }
+    }
+
+    async verifyUser(email: string, password: string):Promise<IUser>{
+        try {
+            const user = await UserModel.findOne({email, password})
+            if(!user){
+                throw new Error('user not found')
+            }
+            if(!user.isOtpVerified){
+                throw new Error('OTP not verified. Signup again')
+            }
+
+            return user
+        } catch (error) {
+            console.log('userRepository error: login user',error)
+            throw new Error(` ${(error as Error).message}`)
         }
     }
 }

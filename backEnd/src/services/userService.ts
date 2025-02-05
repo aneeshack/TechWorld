@@ -54,7 +54,6 @@ export class UserService {
             const token = generateToken({id:user?._id,email, role:user?.role})
 
             await this.userRepository.deleteOtp(email)
-            console.log('otp is matching')
 
             return {message:'user signup successfull', token, user}
         } catch (error) {
@@ -62,4 +61,22 @@ export class UserService {
             throw new Error(`${(error as Error).message}`)
         }
     }
+
+    async loginAction(userData: Partial<IUser>): Promise<{ message: string, user?:Partial<IUser>, token?: string }>{
+        try {
+            if (!userData.email || !userData.password) {
+                throw new Error('Email is required');
+            }
+            
+            const user = await this.userRepository.verifyUser(userData.email, userData?.password)
+            const token = generateToken({id:user?._id,email:user?.email, role:user?.role})
+
+
+            return {message: "Signup successful. Please verify your email.", user: user,token}
+        } catch (error) {
+            console.log('userService error:signup',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
+    
 }
