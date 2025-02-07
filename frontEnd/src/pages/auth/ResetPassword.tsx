@@ -1,5 +1,5 @@
-import logo from '../../assets/logo.png';
-import reset from '../../assets/login.avif';
+import logo from '../../assets/commonPages/logo.png';
+import reset from '../../assets/auth/login.avif';
 
 const ResetPassword = () => {
   return (

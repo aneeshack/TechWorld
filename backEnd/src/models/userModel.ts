@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, model } from "mongoose";
+import  { Schema, Model, model } from "mongoose";
 import { IUser, Role } from "../interfaces/user/IUser";
 
 const UserSchema = new Schema<IUser>(
@@ -26,6 +26,9 @@ const UserSchema = new Schema<IUser>(
       type: String,
     },
     qualification: {
+      type: String,
+    },
+    cv: {
       type: String,
     },
     role: {

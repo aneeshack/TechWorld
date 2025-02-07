@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
-import logo from '../../assets/logo.png'
+import logo from '../../assets/commonPages/logo.png'
 import { RootState } from '../../redux/store';
-import placeholder from '../../assets/placeHolder.png'
+import placeholder from '../../assets/commonPages/placeHolder.png'
 import { useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
@@ -20,6 +20,19 @@ const Navbar = () => {
     setIsOpen(true)
   }
 
+  const handleDashboard = async()=>{
+    try {
+      if(user?.role=== 'student'){
+        navigate('/student/dashboard')
+      }else if(user?.role === 'instructor'){
+        
+        navigate('/instructor/dashboard')
+      }
+    } catch (error) {
+      console.log('error',error)
+    }
+  }
+
   const handleLogout = async()=> {
     try {
       const result = await dispatch(logoutAction())
@@ -30,7 +43,7 @@ const Navbar = () => {
           toast.error(response.message)
         }
       }else{
-        navigate('/login',{state: {role:'student'}})
+        navigate('/')
       }
       
     } catch (error) {
@@ -56,7 +69,7 @@ const Navbar = () => {
 
         <div className="hidden sm:ml-6 sm:block">
           <div className="flex space-x-4">
-            <a href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Home</a>
+            <a href="/" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Home</a>
             <a href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Courses</a>
             <a href="/teachUs" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Teach Us</a>
             <a href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Instructors</a>
@@ -74,6 +87,12 @@ const Navbar = () => {
         </div>
         {isOpen && (
         <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-lg shadow-lg">
+          <button 
+            className="w-full px-4 py-2 text-left hover:bg-gray-200"
+            onClick={handleDashboard}
+          >
+            Dashboard
+          </button>
           <button 
             className="w-full px-4 py-2 text-left hover:bg-gray-200"
             onClick={handleLogout}
@@ -98,10 +117,10 @@ const Navbar = () => {
   <div className="sm:hidden" id="mobile-menu">
     <div className="space-y-1 px-2 pb-3 pt-2">
       {/* <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" --> */}
-      <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" aria-current="page">Dashboard</a>
-      <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Team</a>
-      <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Projects</a>
-      <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Calendar</a>
+      <a href="/" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white" aria-current="page">Home</a>
+      <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Courses</a>
+      <a href="/teachUs" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Teach Us</a>
+      <a href="#" className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-gray-700 hover:text-white">Instructors</a>
     </div>
   </div>
 </nav>

@@ -3,11 +3,12 @@ import { Document } from "mongoose";
 interface Profile{
     avatar?: string |File,
     dateOfBirth?: string,
-    gender?: string
+    gender?: string,
+    profileDescription?: string
 }
 
 interface Contact{
-    phone?: string,
+    phoneNumber?: string,
     social?: string,
     address?: string,
 }
@@ -34,6 +35,7 @@ export interface IUser  extends Document{
     contact?: Contact,
     profession?: Profession,
     qualification?: string,
+    cv?: string,
     role?: Role,
     profit?: string,
     isGoogleAuth?: boolean,
@@ -44,5 +46,6 @@ export interface IUser  extends Document{
     lastLoginDate?: Date,
     loginStreak?: number,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
+    experience?: Number
 }

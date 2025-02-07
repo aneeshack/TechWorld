@@ -1,5 +1,5 @@
-import signup from '../../assets/signup2.avif';
-import logo from '../../assets/logo.png'
+import signup from '../../assets/auth/signup2.avif';
+import logo from '../../assets/commonPages/logo.png'
 
 const LeftSection = () => {
   return (

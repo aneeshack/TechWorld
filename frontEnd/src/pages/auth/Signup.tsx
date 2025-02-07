@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import google from "../../assets/google.jpeg";
+import google from "../../assets/auth/google.jpeg";
 import LeftSection from "../../components/signup/LeftSection";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks/Hooks";

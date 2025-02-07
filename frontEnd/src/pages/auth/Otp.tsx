@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
-import logo from '../../assets/logo.png';
-import otpPicture from '../../assets/otp.avif'
+import logo from '../../assets/commonPages/logo.png';
+import otpPicture from '../../assets/auth/otp.avif'
 import { otpAction } from '../../redux/store/actions/auth/OtpAction';
 import { useEffect, useState } from 'react';
 import { RootState } from '../../redux/store';

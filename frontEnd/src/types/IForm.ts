@@ -1,11 +1,12 @@
 interface Profile{
-    avatar?: string |File,
+    avatar?: string | File | null,
     dateOfBirth?: string,
-    gender?: string
+    gender?: string,
+    profileDescription?: string
 }
 
 interface Contact{
-    phone?: string,
+    phoneNumber?: string,
     social?: string,
     address?: string,
 }
@@ -38,6 +39,7 @@ export interface SignupFormData {
     profession?: Profession,
     qualification?: string,
     role?: Role,
+    cv?: string |null,
     profit?: string,
     isGooleAuth?: boolean,
     isRejected?: boolean,

@@ -1,5 +1,5 @@
-import logo from '../../assets/logo.png'
-import forgot from '../../assets/login.avif'
+import logo from '../../assets/commonPages/logo.png'
+import forgot from '../../assets/auth/login.avif'
 
 const ForgotPassword = () => {
   return (

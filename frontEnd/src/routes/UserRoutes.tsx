@@ -22,6 +22,7 @@ const UserRoutes = () => {
 
             {/* common pages */}
             <Route path="/teachUs" element={<TeachUs/>}/>
+
         </Routes>
     </div>
   )

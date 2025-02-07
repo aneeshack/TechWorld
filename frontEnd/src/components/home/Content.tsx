@@ -1,4 +1,4 @@
-import course from '../../assets/banner.webp'
+import course from '../../assets/commonPages/banner.webp'
 
 const Content = () => {
     return (

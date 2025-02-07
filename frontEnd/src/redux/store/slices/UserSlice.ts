@@ -4,6 +4,7 @@ import { signupAction } from "../actions/auth/SignupAction";
 import { otpAction } from "../actions/auth/OtpAction";
 import { logoutAction } from "../actions/auth/LogoutAction";
 import { loginAction } from "../actions/auth/LoginAction";
+import { RegisterAction } from "../actions/instructor/RegisterAction";
 
 export interface userState{
     loading: boolean;
@@ -105,6 +106,25 @@ const userSlice = createSlice({
                 (state: userState, action)=>{
                 state.loading =false;
                 state.error = action.payload  as string|| 'Login failed';
+                state.data = null;
+            })
+
+             // Register_form for instructor
+             .addCase(RegisterAction.pending, 
+                (state: userState)=>{
+                state.loading =true;
+                state.error = null;
+            })
+            .addCase(RegisterAction.fulfilled, 
+                (state: userState, action: PayloadAction<Response>)=>{
+                state.loading =false;
+                state.data = action.payload.data || null;
+                state.error = null;
+            })
+            .addCase(RegisterAction.rejected, 
+                (state: userState, action)=>{
+                state.loading =false;
+                state.error = action.payload  as string|| 'instructor registration failed';
                 state.data = null;
             })
     }

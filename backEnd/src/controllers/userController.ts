@@ -105,4 +105,14 @@ export class UserController {
         res.status(400).json({ message: error.message })
     }
   }
+
+  async registerInstructor(req: Request, res: Response):Promise<void>{
+    try {
+      console.log('inside register instructor',req.body)
+      
+
+    } catch (error: any) {
+        res.status(400).json({ message: error.message })
+    }
+  }
 }

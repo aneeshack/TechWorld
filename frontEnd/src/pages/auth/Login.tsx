@@ -1,5 +1,5 @@
 import LeftSection from "../../components/signup/LeftSection";
-import google from "../../assets/google.jpeg";
+import google from "../../assets/auth/google.jpeg";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Response, Role } from "../../types/IForm";
@@ -17,10 +17,16 @@ const Login = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const userRole = location.state.role || "";
+  const [userRole, setUserRole] = useState<Role>(Role.Student);
+
+useEffect(() => {
+  if (location.state?.role) {
+    setUserRole(location.state.role);
+  }
+}, [location.state]);
 
   useEffect(() => {
-
+    console.log('role',userRole)
     if (userRole === Role.Instructor) {
       setHeading("Instructor Login");
     } else {
@@ -40,7 +46,7 @@ const Login = () => {
       try {
 
         const data = { ...values}
-        const loginResult = await dispatch(loginAction({...data, role: values.role as Role}))
+        const loginResult = await dispatch(loginAction({...data, role: values.role as Role }))
         const payload = loginResult.payload as Response;
 
         if(!payload?.success){
