@@ -1,17 +1,19 @@
 import { IUser } from "../interfaces/user/IUser";
+import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { UserRepository } from "../repository/userRepository";
 import { OtpGenerator } from "../util/auth/generateOtp";
 import { generateToken } from "../util/auth/jwt";
 import EmailService from "../util/auth/nodeMailer";
-
+import bcrypt from 'bcrypt'
 
 export class UserService {
+    // constructor(private userRepository: IUserRepository){}
     constructor(private userRepository: UserRepository){}
 
     async signup(userData: Partial<IUser>): Promise<{ message: string }>{
         try {
-            if (!userData.email) {
-                throw new Error('Email is required');
+            if (!userData.email || !userData.password) {
+                throw new Error('Email and password is required');
             }
             
             const existingUser = await this.userRepository.findByEmail(userData.email)
@@ -19,6 +21,7 @@ export class UserService {
                 throw new Error('User already exists')
             }
 
+            userData.password = await bcrypt.hash(userData.password, 10)
             await this.userRepository.createUser({...userData, isOtpVerified: false})
 
             // generate and save otp
@@ -69,14 +72,33 @@ export class UserService {
             }
             
             const user = await this.userRepository.verifyUser(userData.email, userData?.password)
+            if(!user){
+                throw new Error('Invalid credentials')
+            }
+
+            if(userData.role !==user.role){
+                throw new Error('Invalid credentials')
+            }
             const token = generateToken({id:user?._id,email:user?.email, role:user?.role})
 
 
-            return {message: "Signup successful. Please verify your email.", user: user,token}
+            return {message: "Login successful.", user: user,token}
+        } catch (error) {
+            console.log('userService error:login',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
+    
+    async register(userData: Partial<IUser>):Promise<{message: string, user?:Partial<IUser>}>{
+        try {
+            const user = await this.userRepository.updateRegister(userData)
+            if(!user){
+                throw new Error('can not find user')
+            }
+            return {message:'success', user}
         } catch (error) {
             console.log('userService error:signup',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
-    
 }

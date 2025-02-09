@@ -5,6 +5,8 @@ import { otpAction } from "../actions/auth/OtpAction";
 import { logoutAction } from "../actions/auth/LogoutAction";
 import { loginAction } from "../actions/auth/LoginAction";
 import { RegisterAction } from "../actions/instructor/RegisterAction";
+import { RequestApprovalAction } from "../actions/instructor/RequestApprovalAction";
+import { RequestRejectAction } from "../actions/instructor/RequestRejectAction";
 
 export interface userState{
     loading: boolean;
@@ -125,6 +127,44 @@ const userSlice = createSlice({
                 (state: userState, action)=>{
                 state.loading =false;
                 state.error = action.payload  as string|| 'instructor registration failed';
+                state.data = null;
+            })
+
+             //instructor request approval by the admin
+             .addCase(RequestApprovalAction.pending, 
+                (state: userState)=>{
+                state.loading =true;
+                state.error = null;
+            })
+            .addCase(RequestApprovalAction.fulfilled, 
+                (state: userState, action: PayloadAction<Response>)=>{
+                state.loading =false;
+                state.data = action.payload.data || null;
+                state.error = null;
+            })
+            .addCase(RequestApprovalAction.rejected, 
+                (state: userState, action)=>{
+                state.loading =false;
+                state.error = action.payload  as string|| 'instructor registration approval failed';
+                state.data = null;
+            })
+
+             //instructor request rejection by the admin
+             .addCase(RequestRejectAction.pending, 
+                (state: userState)=>{
+                state.loading =true;
+                state.error = null;
+            })
+            .addCase(RequestRejectAction.fulfilled, 
+                (state: userState, action: PayloadAction<Response>)=>{
+                state.loading =false;
+                state.data = action.payload.data || null;
+                state.error = null;
+            })
+            .addCase(RequestRejectAction.rejected, 
+                (state: userState, action)=>{
+                state.loading =false;
+                state.error = action.payload  as string|| 'instructor registration rejection failed';
                 state.data = null;
             })
     }

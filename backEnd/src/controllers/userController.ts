@@ -68,7 +68,7 @@ export class UserController {
     try {
       
       clearTokenCookie(res)
-      res.status(500).json({ success: true, message: 'Logged out successful' })
+      res.status(200).json({ success: true, message: 'Logged out successfully' })
     } catch (error:any) {
       console.log('controller error',error)
       res.status(400).json({message: error.message})
@@ -77,17 +77,21 @@ export class UserController {
 
   async login(req: Request, res: Response): Promise<void> {
     try {
-      let roleInput: Role = Role.Pending;
+      let roleInput;
       const {email, password, role } = req.body;
-      
+
       if (!email || !password) {
         res.status(400).json({ success: false, message: "Email and password are required." });
         return;
         }
 
-      if (role && Object.values(Role).includes(role as Role)) {
-        roleInput = role as Role;
+      if (!role && !Object.values(Role).includes(role as Role)) {
+        res.status(400).json({ success: false, message: "Invalid or missing role." });
+        return;       
       }
+
+      roleInput = role as Role;
+      console.log('role',roleInput)
       const userData: Partial<IUser> = {
         email,
         password,
@@ -100,6 +104,7 @@ export class UserController {
       }
 
       setTokenCookie(res, token)
+      console.log('successful login')
       res.status(201).json({ success: true, message: message, data:user });
     } catch (error:any) {
         res.status(400).json({ message: error.message })
@@ -109,7 +114,8 @@ export class UserController {
   async registerInstructor(req: Request, res: Response):Promise<void>{
     try {
       console.log('inside register instructor',req.body)
-      
+      const user = await this.userService.register(req.body)
+      res.status(200).json({success:true, data: user})
 
     } catch (error: any) {
         res.status(400).json({ message: error.message })

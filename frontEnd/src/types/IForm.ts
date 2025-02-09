@@ -5,6 +5,11 @@ interface Profile{
     profileDescription?: string
 }
 
+export enum RequestStatus{
+    Processing = 'processing',
+    Approved = 'approved',
+    Rejected = 'rejected'
+}
 interface Contact{
     phoneNumber?: string,
     social?: string,
@@ -42,7 +47,7 @@ export interface SignupFormData {
     cv?: string |null,
     profit?: string,
     isGooleAuth?: boolean,
-    isRejected?: boolean,
+    requestStatus?: RequestStatus,
     isRequested?: boolean,
     isOtpVerified?: boolean,
     isBlocked?: boolean,

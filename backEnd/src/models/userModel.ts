@@ -43,9 +43,8 @@ const UserSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
-    isRejected: {
-      type: Boolean,
-      default: false,
+    requestStatus: {
+      type: Object,
     },
     isRequested: {
       type: Boolean,

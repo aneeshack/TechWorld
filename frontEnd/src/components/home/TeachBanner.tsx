@@ -6,8 +6,11 @@ import { useNavigate } from 'react-router-dom';
 const TeachBanner = () => {
   const navigate = useNavigate();
 
-  const handleClick =()=>{
+  const handleLogin =()=>{
     navigate('/login',{state:{role:'instructor'}})
+  }
+  const handleSignup =()=>{
+    navigate('/signup',{state:{role:'instructor'}})
   }
   return (
     <div>
@@ -30,10 +33,10 @@ const TeachBanner = () => {
               <li>Earn passive income by sharing your knowledge.</li>
             </ul>
             <button className="bg-green-900 hover:bg-green-700 text-white font-bold py-2 px-4 md:py-3 md:px-6 rounded-lg w-full md:w-auto">
-              <a href="/signup?role=instructor"> Apply Now</a>
+              <a onClick={handleSignup}> Apply Now</a>
             </button>
             <p  className=" text-sm mt-4 ">Already an instructor? 
-            <a onClick={handleClick} className='hover:underline ml-3 text-lg cursor-pointer text-green-500'>Login</a> </p>
+            <a onClick={handleLogin} className='hover:underline ml-3 text-lg cursor-pointer text-green-500'>Login</a> </p>
           </div>
         </div>
 

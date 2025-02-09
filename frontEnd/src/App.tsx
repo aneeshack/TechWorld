@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css";
 import InstructorRoutes from "./routes/InstructorRoutes";
 import StudentRoutes from "./routes/StudentRoutes";
+import AdminRoutes from "./routes/AdminRoutes";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
       <Route path='/*' element={<UserRoutes/>}/>
       <Route path='/student/*' element={<StudentRoutes/>}/>
       <Route path='/instructor/*' element={<InstructorRoutes/>}/>
+      <Route path='/admin/*' element={<AdminRoutes/>}/>
     </Routes>
     </>
   )

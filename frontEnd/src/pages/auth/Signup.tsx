@@ -29,18 +29,22 @@ const Signup = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
 
-  const queryParams = new URLSearchParams(location.search);
-  const role = (queryParams.get("role") as Role) || Role.Student;
-  const { loading } = useSelector((state: RootState) => state.auth);
 
+  const role = location.state?.role
+  const { loading } = useSelector((state: RootState) => state.auth);
+  console.log('state',location.state)
   useEffect(() => {
     if (role === Role.Instructor) {
       setHeading("Instructor Signup");
-    } else {
+    } else if (role === Role.Student){
       setHeading("Student Signup");
     }
   }, [role]);
 
+
+  const handleChange = ()=>{
+    navigate('/login',{state:{role:role}})
+  }
   const formik = useFormik({
     initialValues: {
       userName: "",
@@ -195,7 +199,7 @@ const Signup = () => {
           <div className="text-center mt-6">
             <span className="text-sm text-gray-600">
               Already have an account?{" "}
-              <a href="/login" className="text-blue-600 hover:underline">
+              <a href="" onClick={handleChange} className="text-blue-600 hover:underline">
                 Login
               </a>
             </span>

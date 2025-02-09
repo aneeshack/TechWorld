@@ -7,6 +7,12 @@ interface Profile{
     profileDescription?: string
 }
 
+export enum RequestStatus{
+    Processing = 'processing',
+    Approved = 'approved',
+    Rejected = 'rejected'
+}
+
 interface Contact{
     phoneNumber?: string,
     social?: string,
@@ -39,7 +45,7 @@ export interface IUser  extends Document{
     role?: Role,
     profit?: string,
     isGoogleAuth?: boolean,
-    isRejected?: boolean,
+    requestStatus?: RequestStatus,
     isRequested?: boolean,
     isOtpVerified?: boolean,
     isBlocked?: boolean,

@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import logo from '../../assets/commonPages/logo.png'
 import { RootState } from '../../redux/store';
 import placeholder from '../../assets/commonPages/placeHolder.png'
-import { useState } from 'react';
+import {  useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
 import { useNavigate } from 'react-router-dom';
@@ -14,19 +14,41 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [ isOpen, setIsOpen ] = useState(false);
   const user = useSelector((state:RootState)=>state.auth.data);
-
+  console.log('role',user?.role)
 
   const toggleDropDown = ()=>{
-    setIsOpen(true)
+    setIsOpen((prev)=>!prev)
   }
+  
 
   const handleDashboard = async()=>{
     try {
       if(user?.role=== 'student'){
         navigate('/student/dashboard')
       }else if(user?.role === 'instructor'){
-        
-        navigate('/instructor/dashboard')
+          switch( user?.requestStatus){
+            case "processing":
+              toast.warning("Your application is being processed.", {
+                style: { backgroundColor: "#f1c40f", color: "#000" }, // yellow
+              });
+              break;
+            case 'rejected':
+              toast.error("Your application has been rejected.", {
+                style: { backgroundColor: "#e74c3c", color: "#fff" }, // Red
+              });
+              break;
+            case 'approved':
+              navigate('/instructor/dashboard')
+              toast.success("Approved! Redirecting...", {
+                style: { backgroundColor: "#2ecc71", color: "#fff" }, // Green
+              });
+              break;
+            default:
+              toast.info("Please register to continue.", {
+                style: { backgroundColor: "#f39c12", color: "#fff" }, // Orange
+              });
+              navigate('/instructor/register')
+          }
       }
     } catch (error) {
       console.log('error',error)
@@ -78,9 +100,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      { user? (
-        <div className='relative z-50'>
-        <div className='flex items-center gap-2 p-2 border border-gray-300 rounded-lg shadow-md' onClick={toggleDropDown}>
+      { (user?.role === 'instructor' || user?.role === 'student')? (
+        <div className='relative z-50 cursor-pointer'>
+        <div className='flex items-center gap-2 p-2 border border-gray-300 rounded-lg shadow-md cursor-pointer' onClick={toggleDropDown}>
           <img src={placeholder} alt="Profile" 
           className='w-12 h-12 '/>
           <p className='text-gray-900 font-semibold'>{ user.userName?.toUpperCase() }</p>

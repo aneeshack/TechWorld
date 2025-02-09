@@ -3,6 +3,7 @@ import cors from 'cors';
 import { envConfig } from '../config/envConfig';
 import cookieParser from 'cookie-parser';
 import userRouter from '../routes/userRoutes';
+import adminRouter from '../routes/adminRoutes';
 
 const app = express()
 
@@ -18,6 +19,6 @@ app.use(cookieParser())
 
 
 app.use('/',userRouter)
-// app.use('/',studentRouter)
+app.use('/admin',adminRouter)
 
 export default app

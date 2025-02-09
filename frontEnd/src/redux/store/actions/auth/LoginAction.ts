@@ -7,11 +7,14 @@ export const loginAction = createAsyncThunk<Response, SignupFormData>(
   "auth/login",
   async (data: SignupFormData, { rejectWithValue }) => {
     try {
+      console.log('login page')
         const response = await CLIENT_API.post('/login',data)
 
         if(response.data.success){
+          console.log('data',response)
             return response.data
         }else{
+          console.log('error',response)
             return rejectWithValue(response.data)
         }
     } catch (error) {

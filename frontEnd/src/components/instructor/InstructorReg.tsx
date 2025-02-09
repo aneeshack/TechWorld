@@ -8,12 +8,14 @@ import { toast } from 'react-toastify';
 import { uploadToCloudinary } from '../../utilities/axios/UploadCloudinary';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { useNavigate } from 'react-router-dom';
 
 
 
 const InstructorReg = () => {
 
   const dispatch = useAppDispatch();
+  const navigate = useNavigate()
   const user = useSelector((state:RootState)=>state.auth.data)
 
   const handleFileUpload = async(event: React.ChangeEvent<HTMLInputElement>,fieldName: string)=>{
@@ -35,8 +37,8 @@ const InstructorReg = () => {
       _id:user?._id|| '',
       userName:"",
       profile:{
-        avatar: null,
         dateOfBirth: '',
+        avatar: null,
         profileDescription:''
       },
       contact: {
@@ -58,7 +60,7 @@ const InstructorReg = () => {
             toast.error(response.message)
           }
         }else{
-          console.log(response)
+          navigate('/instructor/dashboard')
         }
 
       } catch (error) {

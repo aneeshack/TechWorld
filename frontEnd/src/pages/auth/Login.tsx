@@ -17,36 +17,38 @@ const Login = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [userRole, setUserRole] = useState<Role>(Role.Student);
+  const [userRole, setUserRole] = useState(location.state?.role);
 
 useEffect(() => {
-  if (location.state?.role) {
-    setUserRole(location.state.role);
+  if (userRole) {
+    setUserRole(userRole);
   }
-}, [location.state]);
+}, [userRole]);
 
   useEffect(() => {
     console.log('role',userRole)
     if (userRole === Role.Instructor) {
       setHeading("Instructor Login");
-    } else {
+    } else if(userRole === Role.Student) {
       setHeading("Student Login");
     }
   }, [userRole]);
 
-  
+  const handleChange =()=>{
+    navigate('/signup',{state:{role:userRole}})
+  }
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
-      role: userRole as Role,
+      role: userRole ,
     },
     validationSchema: loginValidationSchema,
     onSubmit: async (values) => {
       try {
 
         const data = { ...values}
-        const loginResult = await dispatch(loginAction({...data, role: values.role as Role }))
+        const loginResult = await dispatch(loginAction({...data, role: userRole }))
         const payload = loginResult.payload as Response;
 
         if(!payload?.success){
@@ -144,7 +146,7 @@ useEffect(() => {
           <div className="text-center mt-6">
             <span className="text-sm text-gray-600">
               Are you a new User?{" "}
-              <a href="/signup" className="text-blue-600 hover:underline">
+              <a href="/signup" onClick={handleChange} className="text-blue-600 hover:underline">
                 Signup
               </a>
             </span>
