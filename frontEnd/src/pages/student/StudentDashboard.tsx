@@ -12,7 +12,7 @@ const StudentDashboard = () => {
   const user = useSelector((state:RootState)=>state.auth.data)
 
   useEffect(()=>{
-    if( !user || user?.role !=='instructor'){
+    if( !user || user?.role !=='student'){
       navigate('/')
     }
   },[user,navigate])

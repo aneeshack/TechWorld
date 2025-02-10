@@ -16,6 +16,7 @@ export const otpAction = createAsyncThunk <Response, OtpPayload> (
             const response = await CLIENT_API.post('/verifyOtp', data)
 
             if(response.data.success){
+                console.log('response from otp',response.data)
                 return response.data as Response
             }else{
                 return rejectWithValue(response.data)

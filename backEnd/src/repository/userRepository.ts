@@ -1,10 +1,16 @@
-import { IUser } from "../interfaces/user/IUser";
+import { IUser, RequestStatus } from "../interfaces/user/IUser";
 import { IUserRepository } from "../interfaces/user/IUserRepository";
 import OtpModel from "../models/otpModel";
 import UserModel from "../models/userModel";
 import bcrypt from "bcrypt";
 
 export class UserRepository implements IUserRepository {
+
+  async findById(userId: string):Promise<IUser |null> {
+    return await UserModel.findById(userId)
+  }
+
+  
   async findByEmail(email: string): Promise<IUser | null> {
     try {
       return await UserModel.findOne({ email });
@@ -29,12 +35,14 @@ export class UserRepository implements IUserRepository {
     updateData: Partial<IUser>
   ): Promise<IUser | null> {
     try {
+
       const user = await UserModel.findOneAndUpdate(
         { email },
         { $set: updateData },
-        { new: true }
+        {new: true}
       );
 
+      console.log('user in repository',user)
       if (!user) {
         throw new Error("User update failed. No user found.");
       }
@@ -102,12 +110,17 @@ export class UserRepository implements IUserRepository {
 
   async updateRegister(userData: Partial<IUser>): Promise<IUser | null> {
     try {
-      const user = await UserModel.findByIdAndUpdate(
+      const updateInstructor = await UserModel.findByIdAndUpdate(
         userData._id,
-        { $set: userData, isRequested: true, requestStatus: 'pending' },
-        { new: true }
+        { $set: userData, isRequested: true, requestStatus: RequestStatus.Pending },{new: true},
       );
 
+      if(!updateInstructor){
+        throw new Error('Failed to update instructor')
+      }
+
+      const user = await UserModel.findById(userData._id)
+      console.log('register',user)
       return user;
     } catch (error) {
       console.log("userRepository error: register instructor", error);

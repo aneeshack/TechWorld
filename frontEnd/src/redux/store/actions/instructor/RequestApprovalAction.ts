@@ -12,7 +12,8 @@ export const RequestApprovalAction = createAsyncThunk<Response, string>(
             const response = await CLIENT_API.patch(`/admin/request/approve/${userId}`)
             console.log('response from approval action',response)
             if(response.data.success){
-                return response.data
+                console.log('approval action',response.data)
+                return response.data.data
             }else{
                 return rejectWithValue(response.data)
             }

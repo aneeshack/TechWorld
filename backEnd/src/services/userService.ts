@@ -10,6 +10,10 @@ export class UserService {
     // constructor(private userRepository: IUserRepository){}
     constructor(private userRepository: UserRepository){}
 
+    async getUserById(userId: string): Promise<IUser |null>{
+        return this.userRepository.findById(userId)
+    }
+
     async signup(userData: Partial<IUser>): Promise<{ message: string }>{
         try {
             if (!userData.email || !userData.password) {

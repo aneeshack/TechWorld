@@ -60,7 +60,7 @@ const InstructorReg = () => {
             toast.error(response.message)
           }
         }else{
-          navigate('/instructor/dashboard')
+          setTimeout(() => navigate('/'), 500); 
         }
 
       } catch (error) {

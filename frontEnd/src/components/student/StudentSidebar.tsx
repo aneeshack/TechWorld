@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   // HomeIcon,
   BookOpenIcon,
@@ -9,10 +9,35 @@ import {
   ChartBarIcon
 } from "@heroicons/react/24/outline";
 import logo from '../../assets/commonPages/logo.png';
+import { useAppDispatch } from "../../hooks/Hooks";
+import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
+import { Response } from "../../types/IForm";
+import { toast } from "react-toastify";
 
 
 const StudentSidebar: React.FC = () => {
 
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async()=>{
+       try {
+              const result = await dispatch(logoutAction())
+              const response = result.payload as Response;
+        
+              if(!response?.success){
+                if(response.message){
+                  toast.error(response.message)
+                }
+              }else{
+                navigate('/')
+              }
+              
+            } catch (error) {
+              console.log(error)
+            }
+    }
+  
 
   return (
     <div className="w-1/5 	bg-[#A7D7C5] text-black h-screen flex flex-col">
@@ -69,7 +94,7 @@ const StudentSidebar: React.FC = () => {
 
       {/* Footer Section */}
       <div className="p-4" >
-        <button className="w-full border border-green-600 flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-green-800 transition-colors group">
+        <button onClick={handleLogout} className="w-full border border-green-600 flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-green-800 transition-colors group">
           <ArrowLeftOnRectangleIcon className="h-6 w-6 text-green-300 group-hover:text-white" />
           <span className="font-medium">Logout</span>
         </button>

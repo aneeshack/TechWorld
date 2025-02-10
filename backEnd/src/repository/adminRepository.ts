@@ -1,5 +1,5 @@
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
-import { IUser } from "../interfaces/user/IUser";
+import { IUser, RequestStatus } from "../interfaces/user/IUser";
 import UserModel from "../models/userModel";
 
 export class AdminRespository implements IAdminRepository{
@@ -16,7 +16,14 @@ export class AdminRespository implements IAdminRepository{
 
     async approveRequest(userId: string): Promise<IUser> {
         try {
-            const approvedUser = await UserModel.findByIdAndUpdate(userId,{requestStatus:'approved'},{new :true})
+            const updateRequest = await UserModel.findByIdAndUpdate(userId,{requestStatus: RequestStatus.Approved},{new :true})
+           
+            if(!updateRequest){
+                throw new Error('Error in update request')
+            }
+
+            const approvedUser = await UserModel.findById(userId)
+            console.log('approved usre',approvedUser)
             if( !approvedUser){
                 throw new Error('user not found')
             }
@@ -29,7 +36,7 @@ export class AdminRespository implements IAdminRepository{
 
     async rejectRequest(userId: string): Promise<IUser> {
         try {
-            const rejectUser = await UserModel.findByIdAndUpdate(userId,{requestStatus:'rejected'},{new :true})
+            const rejectUser = await UserModel.findByIdAndUpdate(userId,{requestStatus: RequestStatus.Rejected},{new :true})
             if( !rejectUser){
                 throw new Error('user not found')
             }

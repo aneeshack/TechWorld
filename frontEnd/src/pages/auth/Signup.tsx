@@ -17,8 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,22 +27,29 @@ const Signup = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const [userRole, setUserRole] = useState(location.state?.role);
 
 
-  const role = location.state?.role
-  const { loading } = useSelector((state: RootState) => state.auth);
-  console.log('state',location.state)
+  // const role = location.state?.role
+  // console.log('state',location.state)
+  
   useEffect(() => {
-    if (role === Role.Instructor) {
+    if (userRole) {
+      setUserRole(userRole);
+    }
+  }, [userRole]);
+  useEffect(() => {
+    console.log('role',userRole)
+    if (userRole === Role.Instructor) {
       setHeading("Instructor Signup");
-    } else if (role === Role.Student){
+    } else if(userRole === Role.Student) {
       setHeading("Student Signup");
     }
-  }, [role]);
+  }, [userRole]);
 
 
   const handleChange = ()=>{
-    navigate('/login',{state:{role:role}})
+    navigate('/login',{state:{role:userRole}})
   }
   const formik = useFormik({
     initialValues: {
@@ -51,13 +57,13 @@ const Signup = () => {
       email: "",
       password: "",
       confirmPassword: "",
-      role: role as Role,
+      role: userRole,
     },
     validationSchema: signupValidationSchema,
     onSubmit: async (values) => {
       try {
         setIsLoading(true);
-        const data = { ...values, role: values.role as Role };
+        const data = { ...values, role: userRole };
         const signupResult = await dispatch(signupAction({ ...data }));
         const payload = signupResult.payload as Response;
 
@@ -86,7 +92,6 @@ const Signup = () => {
       <div className="lg:w-1/2 w-full flex items-center justify-center bg-white-100">
         <div className="w-3/4 h-sull sm:h-full lg:w-[500px] md:h-5/6 bg-gray-200 p-8 rounded-xl shadow-md">
           <h1 className="text-2xl font-bold text-green-700 text-center mb-[20px]">
-            <p>{loading ? "Loading..." : ""}</p>
             {heading}
           </h1>
 

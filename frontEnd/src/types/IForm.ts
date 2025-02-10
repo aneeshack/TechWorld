@@ -6,7 +6,7 @@ interface Profile{
 }
 
 export enum RequestStatus{
-    Processing = 'processing',
+    Pending = 'pending',
     Approved = 'approved',
     Rejected = 'rejected'
 }

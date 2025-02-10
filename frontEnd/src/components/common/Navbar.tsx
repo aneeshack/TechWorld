@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import logo from '../../assets/commonPages/logo.png'
 import { RootState } from '../../redux/store';
 import placeholder from '../../assets/commonPages/placeHolder.png'
-import {  useState } from 'react';
+import {  useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +14,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const [ isOpen, setIsOpen ] = useState(false);
   const user = useSelector((state:RootState)=>state.auth.data);
-  console.log('role',user?.role)
+  const [userData, setUserData] = useState(user);
+
+  useEffect(()=>{
+    setUserData(user)
+  },[user])
 
   const toggleDropDown = ()=>{
     setIsOpen((prev)=>!prev)
@@ -26,8 +30,9 @@ const Navbar = () => {
       if(user?.role=== 'student'){
         navigate('/student/dashboard')
       }else if(user?.role === 'instructor'){
+        console.log("Request Status:", user?.requestStatus);
           switch( user?.requestStatus){
-            case "processing":
+            case "pending":
               toast.warning("Your application is being processed.", {
                 style: { backgroundColor: "#f1c40f", color: "#000" }, // yellow
               });
@@ -38,10 +43,10 @@ const Navbar = () => {
               });
               break;
             case 'approved':
-              navigate('/instructor/dashboard')
               toast.success("Approved! Redirecting...", {
                 style: { backgroundColor: "#2ecc71", color: "#fff" }, // Green
               });
+              navigate('/instructor/dashboard')
               break;
             default:
               toast.info("Please register to continue.", {
@@ -76,6 +81,9 @@ const Navbar = () => {
   const handleLogin =()=>{
     navigate('/login',{state: {role:'student'}})
   }
+  const handleSignup =()=>{
+    navigate('/signup',{state: {role:'student'}})
+  }
 
   return (
     <div>
@@ -100,12 +108,12 @@ const Navbar = () => {
         </div>
       </div>
 
-      { (user?.role === 'instructor' || user?.role === 'student')? (
+      { (userData?.role === 'instructor' || userData?.role === 'student')? (
         <div className='relative z-50 cursor-pointer'>
         <div className='flex items-center gap-2 p-2 border border-gray-300 rounded-lg shadow-md cursor-pointer' onClick={toggleDropDown}>
           <img src={placeholder} alt="Profile" 
           className='w-12 h-12 '/>
-          <p className='text-gray-900 font-semibold'>{ user.userName?.toUpperCase() }</p>
+          <p className='text-gray-900 font-semibold'>{ userData.userName?.toUpperCase() }</p>
         </div>
         {isOpen && (
         <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-lg shadow-lg">
@@ -127,7 +135,8 @@ const Navbar = () => {
      
       ):(
       <div className="absolute inset-y-0 right-0 flex items-center justify-end pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-        <a href="/signup?role=student" className="rounded-md hidden sm:block bg-green-900 px-3 py-2 mr-3 text-sm font-medium text-white" aria-current="page">Signup</a>
+        {/* <a href="/signup?role=student" onClick={handleSignup} className="rounded-md hidden sm:block bg-green-900 px-3 py-2 mr-3 text-sm font-medium text-white" aria-current="page">Signup</a> */}
+        <a href="" onClick={handleSignup} className="rounded-md hidden sm:block bg-green-900 px-3 py-2 mr-3 text-sm font-medium text-white" aria-current="page">Signup</a>
         <a href="" onClick={handleLogin} className="rounded-md hidden sm:block bg-green-900 px-3 py-2 text-sm font-medium text-white" aria-current="page">Login</a>
       </div>
       )}

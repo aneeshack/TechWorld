@@ -1,6 +1,7 @@
 import { IUser } from "./IUser";
 
 export interface IUserRepository {
+    findById(userId: string): Promise<IUser |null>;
     findByEmail(email: string): Promise<IUser | null>;
     createUser(userData: Partial<IUser>): Promise<IUser>;
     updateUser(email: string, updateData: Partial<IUser>): Promise<IUser |null>;

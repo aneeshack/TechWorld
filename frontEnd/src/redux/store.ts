@@ -3,24 +3,31 @@ import { userReducer } from './store/slices/UserSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { persistReducer, persistStore } from 'redux-persist';
 
-
 const persistConfig = {
-    key : 'root',
-    storage
-}
+    key: 'root',
+    storage,
+    whitelist: ['auth'] // ✅ Only persist auth state (optional)
+};
 
-// create a persisted reducer
+// ✅ Create a persisted reducer
 const persistedReducer = persistReducer(persistConfig, userReducer);
 
-// configure store
+// ✅ Configure store with ignored serializable checks
 export const store = configureStore({
     reducer: {
         auth: persistedReducer
-    }
-})
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: {
+                ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"], // ✅ Ignore Persist Actions
+                ignoredPaths: ["auth"], // ✅ Ignore specific paths
+            },
+        }),
+});
 
-export const persistor = persistStore(store)
+export const persistor = persistStore(store);
 
-// exporting types
+// ✅ Exporting types
 export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>
+export type RootState = ReturnType<typeof store.getState>;

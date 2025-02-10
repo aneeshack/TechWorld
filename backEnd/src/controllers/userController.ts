@@ -3,6 +3,7 @@ import { IUser, Role } from "../interfaces/user/IUser";
 import { UserService } from "../services/userService";
 import { UserRepository } from "../repository/userRepository";
 import { clearTokenCookie, setTokenCookie } from "../util/auth/jwt";
+import { AuthRequest } from "../middlewares/authMiddleware";
 
 export class UserController {
   private userService: UserService;
@@ -11,9 +12,25 @@ export class UserController {
     this.userService = new UserService(new UserRepository());
   }
 
+  async fetchUser(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      if (!req.user?.id) {
+        res.status(401).json({ success: false, message: "Unauthorized: No user ID found" });
+        return;
+      }
+
+      const user = await this.userService.getUserById(req.user.id);
+      res.status(200).json({ success: true, user });
+      return;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  }
+
   async signup(req: Request, res: Response): Promise<void> {
     try {
-      let roleInput: Role = Role.Pending;
+      let roleInput;
       const { userName, email, password, confirmPassword, role } = req.body;
       
       if (!email || !password) {
@@ -21,9 +38,13 @@ export class UserController {
         return;
         }
 
-      if (role && Object.values(Role).includes(role as Role)) {
+        if (!role && !Object.values(Role).includes(role as Role)) {
+          res.status(400).json({ success: false, message: "Invalid or missing role." });
+          return;       
+        }
+
         roleInput = role as Role;
-      }
+        console.log('role',roleInput)
       const userData: Partial<IUser> = {
         userName,
         email,

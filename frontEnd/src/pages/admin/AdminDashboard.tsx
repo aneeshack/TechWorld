@@ -11,12 +11,15 @@ const AdminDashboard = () => {
 
   const navigate = useNavigate();
   const user = useSelector((state:RootState)=>state.auth.data)
+  console.log('role',user?.role)
 
   useEffect(()=>{
     if( !user || user?.role !=='admin'){
+      console.log('role',user?.role)
       navigate('/admin/login')
     }
   },[user,navigate])
+  
   return (
     <div className="w-full flex align-middle">
       <AdminSidebar/>
@@ -24,7 +27,6 @@ const AdminDashboard = () => {
       <NavbarDashboard/>
       <div className="flex-grow flex justify-center items-center">
       <Outlet/>
-          {/* <p className="text-xl text-gray-700">Admin Main Content Here</p> */}
         </div>
         
       <FooterDashboard/>

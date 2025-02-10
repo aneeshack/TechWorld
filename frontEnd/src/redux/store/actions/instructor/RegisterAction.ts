@@ -8,7 +8,7 @@ export const RegisterAction = createAsyncThunk<Response, SignupFormData>(
   async (data: SignupFormData, { rejectWithValue }) => {
     try {
         const response = await CLIENT_API.post('/register',data)
-        
+        console.log('repsonse',response.data)
         if(response.data.success){
             return response.data
         }else{

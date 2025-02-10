@@ -24,7 +24,18 @@ export class AdminController{
             console.log('inside admin requests approved')
             const { userId }= req.params;
             const updatedUser = await this.adminService.approveRequest(userId)
-            res.status(201).json({ success: true, message:"Instructor approved", data:updatedUser });
+            res.status(201).json({ success: true, message:"Instructor approved", updatedUser });
+        } catch (error:any) {
+            res.status(400).json({ message: error.message })
+        }  
+    }
+
+    async rejectInstructor(req: Request, res:Response):Promise<void>{
+        try {
+            console.log('inside admin requests rejected')
+            const { userId }= req.params;
+            const updatedUser = await this.adminService.rejecteRequest(userId)
+            res.status(201).json({ success: true, message:"Instructor rejected", updatedUser });
         } catch (error:any) {
             res.status(400).json({ message: error.message })
         }  

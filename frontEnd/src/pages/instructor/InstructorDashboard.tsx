@@ -11,12 +11,15 @@ const InstructorDashboard = () => {
   
   const navigate = useNavigate();
   const user = useSelector((state:RootState)=>state.auth.data)
+  console.log('role',user?.role)
 
   useEffect(()=>{
     if( !user || user?.role !=='instructor'){
+      console.log('role',user?.role)
       navigate('/')
     }
   },[user,navigate])
+  
   return (
     <div className="w-full flex align-middle">
       <InstructorSidebar/>
