@@ -8,6 +8,7 @@ import { useAppDispatch } from '../../hooks/Hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Response } from '../../types/IForm';
+import { CLIENT_API } from '../../utilities/axios/Axios';
 
 const Otp = () => {
   const dispatch = useAppDispatch();
@@ -15,16 +16,77 @@ const Otp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { error} = useSelector((state:RootState)=>state.auth)
-  const email = location.state?.email || '';
+  const { error, data} = useSelector((state:RootState)=>state.auth)
+  const [email]=useState(location.state?.email || localStorage.getItem('signupEmail') || "")
+  console.log('email',email)
+  const RESEND_TIME =30;
+  const [timeLeft, setTimeLeft] =useState(0);
+  const [canResend, setCanResend] =useState(false)
 
   useEffect(()=>{
     if(!email){
       toast.error('Email is missing! Redirecting to signup')
       navigate('/signup')
+    }else{
+      localStorage.setItem('signupEmail',email)
     }
   },[email,navigate])
 
+  useEffect(()=>{
+    const expiryTime = localStorage.getItem('otpExpiryTime');
+    const currentTime = Math.floor(Date.now()/1000);
+
+    if(expiryTime && Number(expiryTime)>currentTime){
+      setTimeLeft(Number(expiryTime)-currentTime);
+      setCanResend(false)
+    }else{
+      setCanResend(true)
+    }
+  },[])
+
+  useEffect(()=>{
+    if(timeLeft>0){
+      setCanResend(false);
+      const timer = setInterval(() => {
+        setTimeLeft((prev)=>{
+          if(prev<=1){
+            clearInterval(timer);
+            setCanResend(true)
+            return 0
+          }
+          return prev-1
+        })
+      }, 1000);
+      return ()=> clearInterval(timer)
+    }
+  },[timeLeft])
+
+  const resendOtp = async()=>{
+    // const storedEmail: string = email || (localStorage.getItem('signupEmail') ?? "");
+    // setEmail( email || (localStorage.getItem('signupEmail') ?? ""))
+    if(!email){
+      toast.error('Email is missing! Please signup again.')
+      navigate('/signup',{state:{role:data?.role}})
+      return
+    }
+
+    try {
+      const response = await CLIENT_API.post('/resendOtp',{email})
+      if (response.data.success) {
+        toast.success("OTP resent successfully!");
+
+        const newExpiryTime = Math.floor(Date.now()/1000)+ RESEND_TIME;
+        localStorage.setItem('otpExpiryTime', String(newExpiryTime));
+        setTimeLeft(RESEND_TIME);
+        setCanResend(false)
+        toast.error('resend otp after 30 sec')
+      } else {
+        toast.error(response.data.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      console.error('Resend OTP error:',error)
+    }
+  }
 
   
   const handleVerifyOtp = async(e: React.FormEvent) =>{
@@ -55,6 +117,8 @@ const Otp = () => {
 
           } else {
             setIsLoading(false);
+            // localStorage.removeItem("signupEmail");
+            // localStorage.removeItem("otpExpiryTime");
             navigate("/");
           }
 
@@ -66,6 +130,13 @@ const Otp = () => {
       }
   }
 
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem("signupEmail");
+      localStorage.removeItem("otpExpiryTime");
+    };
+  }, []);
+  
   return (
     <div className="h-screen flex flex-col md:flex-row bg-white">
         <div className="lg:w-1/2 relative w-full h-screen flex flex-col items-center justify-center bg-white-100">
@@ -99,9 +170,10 @@ const Otp = () => {
             </button>
           </form>
           <div className="text-center mt-6">
+            <p>{ timeLeft>0 ? `Resend OTP in ${timeLeft} seconds`:"You can now resend OTP"} </p>
             <span className="text-sm text-gray-600">
               Didn't receive an OTP?{' '}
-              <button className="text-blue-600 hover:underline">
+              <button onClick={resendOtp} disabled={!canResend} className="text-blue-600 hover:underline">
               Resend OTP
               </button>
             </span>

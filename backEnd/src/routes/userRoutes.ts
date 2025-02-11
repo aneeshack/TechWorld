@@ -7,6 +7,7 @@ const userController = new UserController();
 
 userRouter.get('/fetchUser',authenticateUser, userController.fetchUser.bind(userController));
 userRouter.post('/signup', userController.signup.bind(userController));
+userRouter.post('/resendOtp', userController.resendOtp.bind(userController));
 userRouter.post('/verifyOtp', userController.verifyOtp.bind(userController));
 userRouter.delete('/logout', userController.logout.bind(userController));
 userRouter.post('/login', userController.login.bind(userController));

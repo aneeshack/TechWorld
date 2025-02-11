@@ -7,8 +7,7 @@ import EmailService from "../util/auth/nodeMailer";
 import bcrypt from 'bcrypt'
 
 export class UserService {
-    // constructor(private userRepository: IUserRepository){}
-    constructor(private userRepository: UserRepository){}
+    constructor(private userRepository: IUserRepository){}
 
     async getUserById(userId: string): Promise<IUser |null>{
         return this.userRepository.findById(userId)
@@ -65,6 +64,29 @@ export class UserService {
             return {message:'user signup successfull', token, user}
         } catch (error) {
             console.log('userService error:verify Otp',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
+
+    async resendOtp(email: string):Promise<{message: string}>{
+        try {
+            const user = await this.userRepository.findByEmail(email)
+            if(!user){
+                 throw new Error('user not found')
+            }
+            await this.userRepository.deleteOtp(email)
+             
+             // generate and save otp
+            const otp = OtpGenerator.generateOtp()
+            console.log('otp',otp)
+            await this.userRepository.createOtp({email, otp})
+
+            const emailService = new EmailService()
+            await emailService.sendMail(email, "otp verification", otp)
+
+            return {message: "Signup successful. Please verify your email."}
+        } catch (error) {
+            console.log('userService error:resend Otp',error)
             throw new Error(`${(error as Error).message}`)
         }
     }

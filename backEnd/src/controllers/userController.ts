@@ -4,6 +4,7 @@ import { UserService } from "../services/userService";
 import { UserRepository } from "../repository/userRepository";
 import { clearTokenCookie, setTokenCookie } from "../util/auth/jwt";
 import { AuthRequest } from "../middlewares/authMiddleware";
+import { error } from "console";
 
 export class UserController {
   private userService: UserService;
@@ -58,6 +59,23 @@ export class UserController {
       res.status(201).json({ success: true, message: result.message });
     } catch (error:any) {
         res.status(400).json({ message: error.message })
+    }
+  }
+
+  async resendOtp (req:Request, res: Response):Promise<void>{
+    try {
+      console.log('resend otp')
+      const { email }= req.body;
+      if(!email){
+        res.status(400).json({success: false, message: "Email is required."})
+        return 
+      }
+
+      const result = await this.userService.resendOtp(email)
+      res.status(200).json({success: true, message: result})
+
+    } catch (error:any) {
+      res.status(400).json({ message: error.message })
     }
   }
 

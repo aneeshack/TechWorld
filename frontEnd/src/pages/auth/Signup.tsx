@@ -29,10 +29,6 @@ const Signup = () => {
   const location = useLocation();
   const [userRole, setUserRole] = useState(location.state?.role);
 
-
-  // const role = location.state?.role
-  // console.log('state',location.state)
-  
   useEffect(() => {
     if (userRole) {
       setUserRole(userRole);
@@ -76,6 +72,11 @@ const Signup = () => {
           
         } else {
           setIsLoading(false);
+          localStorage.setItem("signupEmail", values.email);
+          
+           // Set OTP expiry time for first OTP
+      const newExpiryTime = Math.floor(Date.now() / 1000) + 30;
+      localStorage.setItem('otpExpiryTime', String(newExpiryTime));
           navigate("/otp", { state: { email: values.email } });
         }
       } catch (error) {
