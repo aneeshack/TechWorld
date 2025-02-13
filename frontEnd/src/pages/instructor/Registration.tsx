@@ -4,6 +4,7 @@ import InstructorReg from "../../components/instructor/InstructorReg"
 
 
 const Registration = () => {
+  
   return (
     <div>
         <Navbar/>

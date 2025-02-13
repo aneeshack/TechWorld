@@ -6,6 +6,7 @@ import { logoutAction } from "../actions/auth/LogoutAction";
 import { loginAction } from "../actions/auth/LoginAction";
 import { RegisterAction } from "../actions/instructor/RegisterAction";
 import { fetchUserAction } from "../actions/auth/fetchUserAction";
+import { googleAuthAction } from "../actions/auth/GoogleAuthAction";
 
 export interface userState{
     loading: boolean;
@@ -75,6 +76,26 @@ const userSlice = createSlice({
                 (state: userState, action)=>{
                 state.loading =false;
                 state.error = action.payload  as string|| 'Fetching user data failed'
+                state.data = null;
+            })
+
+
+             // fetch user data
+             .addCase(googleAuthAction.pending, 
+                (state: userState)=>{
+                state.loading =true;
+                state.error = null;
+            })
+            .addCase(googleAuthAction.fulfilled, 
+                (state: userState, action: PayloadAction<Response>)=>{
+                state.loading =false;
+                state.data = action.payload.data || null;
+                state.error = null;
+            })
+            .addCase(googleAuthAction.rejected, 
+                (state: userState, action)=>{
+                state.loading =false;
+                state.error = action.payload  as string|| 'Google authentication failed'
                 state.data = null;
             })
 

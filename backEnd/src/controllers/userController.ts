@@ -150,6 +150,28 @@ export class UserController {
     }
   }
 
+  async googleAuthentication(req: Request, res: Response):Promise<void>{
+    try {
+      console.log('inside google authentication',req.body)
+
+      let roleInput;
+      const { credentials, userRole } = req.body;
+
+      if (!userRole && !Object.values(Role).includes(userRole as Role)) {
+        res.status(400).json({ success: false, message: "Invalid or missing role." });
+        return;       
+      }
+
+      roleInput = userRole as Role;
+      console.log('role',userRole)
+      const user = await this.userService.googleAuth(credentials,roleInput)
+      res.status(200).json({success:true, message:"google authentication success", data: user})
+
+    } catch (error: any) {
+        res.status(400).json({ message: error.message })
+    }
+  }
+
   async registerInstructor(req: Request, res: Response):Promise<void>{
     try {
       console.log('inside register instructor',req.body)

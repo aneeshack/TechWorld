@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import google from "../../assets/auth/google.jpeg";
 import LeftSection from "../../components/signup/LeftSection";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../hooks/Hooks";
@@ -17,6 +16,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { googleAuthAction } from "../../redux/store/actions/auth/GoogleAuthAction";
 
 
 const Signup = () => {
@@ -84,6 +85,32 @@ const Signup = () => {
       }
     },
   });
+
+  const handleGoogleSignupSuccess = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    try {
+      const googleSignup = await dispatch(googleAuthAction({ credentials: credentialResponse, userRole }));
+      const payload = googleSignup.payload as Response;
+
+        if(!payload?.success){
+          if(payload.message){
+            toast.error(payload.message || 'signup faild. Please try again.')
+          }
+        }else{
+          toast.success('signup successful')
+          navigate('/')
+        }
+    } catch (error) {
+      console.error("Google signup error:", error);
+      toast.error("Google signup failed");
+    }
+  };
+
+  const handleGoogleSignupFailure = () => {
+    toast.error("Google signup failed");
+    console.error("Google signup error");
+  };
 
   return (
     <div className="h-screen flex flex-col md:flex-row bg-white">
@@ -194,13 +221,10 @@ const Signup = () => {
             <hr className="w-1/4 border-gray-300" />
           </div>
 
-          <button
-            type="button"
-            className="flex items-center justify-center w-full mt-4 bg-white text-gray-700 border border-gray-300 py-3 rounded-md hover:bg-gray-100 transition duration-300"
-          >
-            <img src={google} alt="Google Icon" className="w-5 h-5 mr-3" />
-            Sign Up with Google
-          </button>
+          <GoogleLogin
+          onSuccess={handleGoogleSignupSuccess}
+          onError={handleGoogleSignupFailure}
+          />
 
           <div className="text-center mt-6">
             <span className="text-sm text-gray-600">

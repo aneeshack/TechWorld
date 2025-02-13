@@ -1,5 +1,4 @@
 import LeftSection from "../../components/signup/LeftSection";
-import google from "../../assets/auth/google.jpeg";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Response, Role } from "../../types/IForm";
@@ -10,6 +9,9 @@ import { loginValidationSchema } from "../../utilities/validation/LoginSchema";
 import { useAppDispatch } from "../../hooks/Hooks";
 import { loginAction } from "../../redux/store/actions/auth/LoginAction";
 import { toast } from "react-toastify";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { googleAuthAction } from "../../redux/store/actions/auth/GoogleAuthAction";
+
 
 const Login = () => {
   const [ heading, setHeading ] = useState("Student Login");
@@ -64,6 +66,32 @@ useEffect(() => {
       }
     },
   });
+
+  const handleGoogleLoginSuccess = async (
+    credentialResponse: CredentialResponse
+  ) => {
+    try {
+      const googleLogin = await dispatch(googleAuthAction({ credentials: credentialResponse, userRole }));
+      const payload = googleLogin.payload as Response;
+
+        if(!payload?.success){
+          if(payload.message){
+            toast.error(payload.message || 'login faild. Please try again.')
+          }
+        }else{
+          toast.success('Login successful')
+          navigate('/')
+        }
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Google login failed");
+    }
+  };
+
+  const handleGoogleLoginFailure = () => {
+    toast.error("Google login failed");
+    console.error("Google login error");
+  };
   return (
     <div className="h-screen flex flex-col md:flex-row bg-white">
       <LeftSection />
@@ -120,14 +148,14 @@ useEffect(() => {
               LOGIN
             </button>
           </form>
-          <div className="text-center mt-4">
+          {/* <div className="text-center mt-4">
             <a
               href="/forgotPass"
               className="text-sm text-blue-600 hover:underline"
             >
               Forgot Password?
             </a>
-          </div>
+          </div> */}
 
           <div className="flex items-center justify-center mt-5">
             <hr className="w-1/4 border-gray-300" />
@@ -135,13 +163,10 @@ useEffect(() => {
             <hr className="w-1/4 border-gray-300" />
           </div>
 
-          <button
-            type="button"
-            className="flex items-center justify-center w-full mt-5 bg-white text-gray-700 border border-gray-300 py-3 rounded-md hover:bg-gray-100 transition duration-300"
-          >
-            <img src={google} alt="Google Icon" className="w-5 h-5 mr-3" />
-            Login with Google
-          </button>
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginFailure}
+            />
 
           <div className="text-center mt-6">
             <span className="text-sm text-gray-600">

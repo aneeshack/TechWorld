@@ -1,13 +1,14 @@
-import { IUser } from "../interfaces/user/IUser";
+import { IUser, Role } from "../interfaces/user/IUser";
 import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { UserRepository } from "../repository/userRepository";
 import { OtpGenerator } from "../util/auth/generateOtp";
 import { generateToken } from "../util/auth/jwt";
 import EmailService from "../util/auth/nodeMailer";
 import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken';
 
 export class UserService {
-    constructor(private userRepository: IUserRepository){}
+    constructor(private userRepository: UserRepository){}
 
     async getUserById(userId: string): Promise<IUser |null>{
         return this.userRepository.findById(userId)
@@ -58,6 +59,7 @@ export class UserService {
                 throw new Error('Failed to update user')
             }
             const token = generateToken({id:user?._id,email, role:user?.role})
+          
 
             await this.userRepository.deleteOtp(email)
 
@@ -124,6 +126,80 @@ export class UserService {
             return {message:'success', user}
         } catch (error) {
             console.log('userService error:signup',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
+
+    async googleAuth(credentials: any, roleInput:Role):Promise<IUser |null>{
+        try {
+            console.log("Received credentials:", credentials); 
+
+            if (!credentials || !credentials.credential) {
+                throw new Error("No credentials received.");
+            }
+    
+            // Decode the JWT token
+            const decoded = jwt.decode(credentials.credential);
+    
+            if (!decoded || typeof decoded !== 'object') {
+                throw new Error("Invalid token. Decoding failed.");
+            }
+    
+            // Extract values from the decoded token
+            const { email, name, picture, sub: googleId } = decoded as any;
+    
+            console.log("Decoded Token -> Name:", name, "Email:", email, "Google ID:", googleId);
+    
+            if (!googleId) {
+                throw new Error("Google ID (sub) is missing in credentials.");
+            }
+
+
+            let user = await this.userRepository.findByEmail(email);
+
+            if(user && user?.role !==roleInput ){
+                throw new Error(`you signed in as ${user?.role}. Please use the ${user?.role} login page`)
+            }
+
+            if(!user){
+                user = await this.userRepository.createUser({
+                    email,
+                    userName:name,
+                    isGoogleAuth:true,
+                    role: roleInput,
+                    isOtpVerified: false,
+                    profile: {
+                        avatar: picture
+                    }
+                })
+            }else{
+                const updateData: Partial<IUser> = {}
+
+                if(!user.isGoogleAuth){
+                    updateData.isGoogleAuth = true
+                }
+                if(!user.profile?.avatar){
+                    updateData.profile = {... (user.profile || {}), avatar: picture}
+                }
+
+                if(!user.userName){
+                    updateData.userName = name
+                }
+
+                if(Object.keys(updateData).length>0){
+                    user = await this.userRepository.updateUser(email, updateData)
+                }
+            }
+
+            const token = generateToken({id:user?._id,email, role:user?.role})
+           
+            if(!token){
+                throw new Error('token not generated')
+            }
+
+            return user;
+        } catch (error) {
+            console.log('userService error:google signup',error)
             throw new Error(`${(error as Error).message}`)
         }
     }

@@ -11,6 +11,7 @@ userRouter.post('/resendOtp', userController.resendOtp.bind(userController));
 userRouter.post('/verifyOtp', userController.verifyOtp.bind(userController));
 userRouter.delete('/logout', userController.logout.bind(userController));
 userRouter.post('/login', userController.login.bind(userController));
+userRouter.post('/googleAuth', userController.googleAuthentication.bind(userController));
 userRouter.post('/register', userController.registerInstructor.bind(userController));
 
 export default userRouter;

@@ -1,24 +1,24 @@
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 import AdminSidebar from "../../components/admin/AdminSidebar"
 import FooterDashboard from "../../components/common/FooterDashboard"
 import NavbarDashboard from "../../components/common/NavbarDashboard"
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
-import { useEffect } from "react"
+// import { useEffect } from "react"
 
 
 const AdminDashboard = () => {
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const user = useSelector((state:RootState)=>state.auth.data)
   console.log('role',user?.role)
 
-  useEffect(()=>{
-    if( !user || user?.role !=='admin'){
-      console.log('role',user?.role)
-      navigate('/admin/login')
-    }
-  },[user,navigate])
+  // useEffect(()=>{
+  //   if( !user || user?.role !=='admin'){
+  //     console.log('role',user?.role)
+  //     navigate('/admin/login')
+  //   }
+  // },[user,navigate])
   
   return (
     <div className="w-full flex align-middle">
