@@ -203,4 +203,60 @@ export class UserService {
             throw new Error(`${(error as Error).message}`)
         }
     }
+
+    async forgotPassword(email: string, role:Role):Promise<{message: string}>{
+        try {
+            const user = await this.userRepository.findByEmail(email)
+            if(!user){
+                throw new Error('User not found. Please signup again')
+            }
+
+            if(user.role === Role.Admin || user.role !==role){
+                throw new Error('Unauthorized access')
+            }
+
+            
+            if(user.isGoogleAuth){
+                throw new Error('Please login through google or signup')
+            }
+
+            await this.userRepository.deleteOtp(email)
+            // generate and save otp
+            const otp = OtpGenerator.generateOtp()
+            console.log('otp',otp)
+
+            await this.userRepository.createOtp({email, otp})
+
+            const emailService = new EmailService()
+            await emailService.sendMail(email, "otp verification", otp)
+
+            return {message: "Signup successful. Please verify your email."}
+
+        } catch (error) {
+            console.log('userService error:forgot password',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
+
+    async resetPassword(email: string, password: string, role:Role):Promise<{message: string}>{
+        try {
+            console.log('inside reset password')
+            const user = await this.userRepository.findByEmail(email)
+            if (!user) {
+                throw new Error("User not found");
+              }
+
+            if(user.role !== role){
+                throw new Error('role is not matching')
+            }
+            
+            const hashedPassword = await bcrypt.hash(password, 10); // Hashing password
+            await this.userRepository.updatePassword(user?._id as string, hashedPassword);
+
+            return {message: 'password reset successfully'}
+        } catch (error) {
+            console.log('userService error:reset password',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+    }
 }

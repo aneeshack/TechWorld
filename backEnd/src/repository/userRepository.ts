@@ -78,7 +78,7 @@ export class UserRepository implements IUserRepository {
 
   async deleteOtp(email: string): Promise<void> {
     try {
-      await OtpModel.deleteOne({ email });
+      const otp =await OtpModel.deleteOne({ email });
     } catch (error) {
       console.log("userRepository error: delete otp", error);
       throw new Error(`Error in deleting otp: ${(error as Error).message}`);
@@ -124,6 +124,15 @@ export class UserRepository implements IUserRepository {
       return user;
     } catch (error) {
       console.log("userRepository error: register instructor", error);
+      throw new Error(` ${(error as Error).message}`);
+    }
+  }
+
+  async updatePassword(userId: string, password:string):Promise<void>{
+    try {
+      await UserModel.updateOne({ _id: userId }, { $set: { password } });
+    } catch (error) {
+      console.log("userRepository error: reset password", error);
       throw new Error(` ${(error as Error).message}`);
     }
   }

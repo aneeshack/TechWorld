@@ -48,6 +48,7 @@ const Signup = () => {
   const handleChange = ()=>{
     navigate('/login',{state:{role:userRole}})
   }
+  
   const formik = useFormik({
     initialValues: {
       userName: "",
@@ -76,8 +77,8 @@ const Signup = () => {
           localStorage.setItem("signupEmail", values.email);
           
            // Set OTP expiry time for first OTP
-      const newExpiryTime = Math.floor(Date.now() / 1000) + 30;
-      localStorage.setItem('otpExpiryTime', String(newExpiryTime));
+          const newExpiryTime = Math.floor(Date.now() / 1000) + 30;
+          localStorage.setItem('otpExpiryTime', String(newExpiryTime));
           navigate("/otp", { state: { email: values.email } });
         }
       } catch (error) {

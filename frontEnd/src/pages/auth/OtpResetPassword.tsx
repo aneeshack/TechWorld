@@ -1,23 +1,24 @@
-import { useSelector } from 'react-redux';
+// import { useSelector } from 'react-redux';
 import logo from '../../assets/commonPages/logo.png';
 import otpPicture from '../../assets/auth/otp.avif'
 import { otpAction } from '../../redux/store/actions/auth/OtpAction';
 import { useEffect, useState } from 'react';
-import { RootState } from '../../redux/store';
+// import { RootState } from '../../redux/store';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Response } from '../../types/IForm';
 import { CLIENT_API } from '../../utilities/axios/Axios';
 
-const Otp = () => {
+const OtpResetPassword = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const [otp, setOtp] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { error, data} = useSelector((state:RootState)=>state.auth)
-  const [email]=useState(location.state?.email || localStorage.getItem('signupEmail') || "")
+  const [userRole] = useState(location.state.role)
+//   const { error, data} = useSelector((state:RootState)=>state.auth)
+  const [email]=useState(location.state?.email || localStorage.getItem('forgotPasswordEmail') || "")
   console.log('email',email)
   const RESEND_TIME =30;
   const [timeLeft, setTimeLeft] =useState(0);
@@ -28,7 +29,7 @@ const Otp = () => {
       toast.error('Email is missing! Redirecting to signup')
       navigate('/signup')
     }else{
-      localStorage.setItem('signupEmail',email)
+      // localStorage.setItem('forgotPasswordEmail',email)
     }
   },[email,navigate])
 
@@ -65,7 +66,7 @@ const Otp = () => {
 
     if(!email){
       toast.error('Email is missing! Please signup again.')
-      navigate('/signup',{state:{role:data?.role}})
+      navigate('/forgotPass',{state:{role: userRole}})
       return
     }
 
@@ -116,7 +117,7 @@ const Otp = () => {
 
           } else {
             setIsLoading(false);
-            navigate("/");
+            navigate("/resetPass",{state:{role:userRole,email:email}});
           }
 
          } catch (error) {
@@ -129,7 +130,7 @@ const Otp = () => {
 
   useEffect(() => {
     return () => {
-      localStorage.removeItem("signupEmail");
+      // localStorage.removeItem("forgotPasswordEmail");
       localStorage.removeItem("otpExpiryTime");
     };
   }, []);
@@ -151,7 +152,6 @@ const Otp = () => {
             Enter the OTP sent to your registered email/phone number.
           </p>
           <form className="flex flex-col" onSubmit={handleVerifyOtp}>
-          {error  && <p className="text-red-500 text-center mb-4">{error}</p>}
             <input
               type="text"
               placeholder="Enter OTP"
@@ -181,4 +181,4 @@ const Otp = () => {
   )
 }
 
-export default Otp
+export default OtpResetPassword

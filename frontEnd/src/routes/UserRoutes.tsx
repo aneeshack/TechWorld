@@ -6,6 +6,7 @@ import Otp from "../pages/auth/Otp"
 import ForgotPassword from "../pages/auth/ForgotPassword"
 import ResetPassword from "../pages/auth/ResetPassword"
 import TeachUs from "../pages/commonPages/TeachUs"
+import OtpResetPassword from "../pages/auth/OtpResetPassword"
 
 
 const UserRoutes = () => {
@@ -17,6 +18,7 @@ const UserRoutes = () => {
             <Route path="/signup" element={<Signup/>}/>
             <Route path="/login" element={<Login/>}/>
             <Route path="/otp" element={<Otp/>}/>
+            <Route path="/resetPassOtp" element={<OtpResetPassword/>}/>
             <Route path="/forgotPass" element={<ForgotPassword/>}/>
             <Route path="/resetPass" element={<ResetPassword/>}/>
 

@@ -22,7 +22,6 @@ export class UserController {
 
       const user = await this.userService.getUserById(req.user.id);
       res.status(200).json({ success: true, user });
-      return;
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ success: false, message: "Internal server error" });
@@ -182,4 +181,37 @@ export class UserController {
         res.status(400).json({ message: error.message })
     }
   }
+
+  async forgotPassword(req:Request, res:Response):Promise<void>{
+    try {
+      console.log('forgot password')
+      const {email,role}= req.body
+        console.log(email,role)
+      if (!role && !Object.values(Role).includes(role as Role)) {
+        res.status(400).json({ success: false, message: "Invalid or missing role." });
+        return;       
+      }
+      const user = await this.userService.forgotPassword(email, role)
+      res.status(200).json({success:true, message:'Otp send to your, email plase verify it.'})
+    } catch (error:any) {
+      res.status(400).json({ success:false, message: error.message })
+    }
+  }
+
+  async resetPassword(req:Request, res: Response):Promise<void>{
+    try {
+      const{email, role, password} = req.body
+      console.log('req.body',req.body)
+
+      if (!email || !role || !password) {
+        res.status(400).json({ success: false, message: "All fields are required" });
+        return;
+      }
+      const result =await this.userService.resetPassword(email, password,role)
+      res.status(200).json({success:true, message: result.message})
+    } catch (error:any) {
+      res.status(400).json({ success:false, message: error.message })
+    }
+  }
+  
 }

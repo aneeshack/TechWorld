@@ -13,5 +13,7 @@ userRouter.delete('/logout', userController.logout.bind(userController));
 userRouter.post('/login', userController.login.bind(userController));
 userRouter.post('/googleAuth', userController.googleAuthentication.bind(userController));
 userRouter.post('/register', userController.registerInstructor.bind(userController));
+userRouter.post('/forgotPass', userController.forgotPassword.bind(userController));
+userRouter.patch('/resetPass', userController.resetPassword.bind(userController));
 
 export default userRouter;

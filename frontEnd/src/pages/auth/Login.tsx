@@ -39,6 +39,9 @@ useEffect(() => {
   const handleChange =()=>{
     navigate('/signup',{state:{role:userRole}})
   }
+  const handleForgotPassword =()=>{
+    navigate('/forgotPass',{state:{role:userRole}})
+  }
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -148,14 +151,15 @@ useEffect(() => {
               LOGIN
             </button>
           </form>
-          {/* <div className="text-center mt-4">
+          <div className="text-center mt-4">
             <a
-              href="/forgotPass"
+              href=""
+              onClick={handleForgotPassword}
               className="text-sm text-blue-600 hover:underline"
             >
               Forgot Password?
             </a>
-          </div> */}
+          </div>
 
           <div className="flex items-center justify-center mt-5">
             <hr className="w-1/4 border-gray-300" />
