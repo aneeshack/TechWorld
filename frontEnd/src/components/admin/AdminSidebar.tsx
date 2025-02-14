@@ -62,7 +62,7 @@ const AdminSidebar: React.FC = () => {
           </li>
           <li>
             <Link
-              to=""
+              to="/admin/dashboard/users"
               className="flex items-center space-x-3 px-4 py-3 rounded-lg border border-green-600 hover:text-white hover:bg-green-800 bg-transparent transition-colors group"
             >
               <UserGroupIcon className="h-6 w-6 text-green-300 group-hover:text-white" />

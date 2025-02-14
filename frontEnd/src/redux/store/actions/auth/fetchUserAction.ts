@@ -12,7 +12,7 @@ export const fetchUserAction= createAsyncThunk(
                 console.log('error in fetch user', response)
                 return rejectWithValue(response.data)
             }
-            return response.data.user
+            return response.data
 
         } catch (error) {
             const e: AxiosError = error as AxiosError;

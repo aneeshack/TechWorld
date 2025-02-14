@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AnyAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { SignupFormData, Response, RequestStatus } from "../../../types/IForm";
 import { signupAction } from "../actions/auth/SignupAction";
 import { otpAction } from "../actions/auth/OtpAction";
@@ -41,6 +41,14 @@ const userSlice = createSlice({
     extraReducers: (builder) => {
         builder
 
+
+        .addCase('persist/REHYDRATE', (state, action: AnyAction) => {
+            console.log('Rehydrated state:', action.payload); // Log the rehydrated state
+            if (action.payload?.auth) {
+                return { ...state, ...action.payload.auth };
+            }
+            return state;
+        })
             // Register_form
             .addCase(signupAction.pending, 
                 (state: userState)=>{
@@ -67,9 +75,9 @@ const userSlice = createSlice({
                 state.error = null;
             })
             .addCase(fetchUserAction.fulfilled, 
-                (state: userState, action)=>{
+                (state: userState, action: PayloadAction<Response>)=>{
                 state.loading =false;
-                state.data = action.payload;
+                state.data = action.payload.data || null;
                 state.error = null;
             })
             .addCase(fetchUserAction.rejected, 

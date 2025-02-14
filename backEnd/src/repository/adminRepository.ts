@@ -2,7 +2,7 @@ import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { IUser, RequestStatus } from "../interfaces/user/IUser";
 import UserModel from "../models/userModel";
 
-export class AdminRespository implements IAdminRepository{
+export class AdminRepository implements IAdminRepository{
     async getAllRequests(): Promise<IUser[]> {
         try {
             const requests = await UserModel.find({role:'instructor', isRequested:true, requestStatus:'pending'})
@@ -17,17 +17,12 @@ export class AdminRespository implements IAdminRepository{
     async approveRequest(userId: string): Promise<IUser> {
         try {
             const updateRequest = await UserModel.findByIdAndUpdate(userId,{requestStatus: RequestStatus.Approved},{new :true})
-           
+            console.log('updated data',updateRequest)
             if(!updateRequest){
                 throw new Error('Error in update request')
             }
 
-            const approvedUser = await UserModel.findById(userId)
-            console.log('approved usre',approvedUser)
-            if( !approvedUser){
-                throw new Error('user not found')
-            }
-            return approvedUser
+            return updateRequest
         } catch (error) {
             console.log("adminRepository error:approve request", error);
             throw new Error(`${(error as Error).message}`);
@@ -49,8 +44,11 @@ export class AdminRespository implements IAdminRepository{
 
     async getAllUsers(): Promise<IUser[]> {
         try {
-            const users = await UserModel.find({role:{$in:['instructor', 'student']},isOtpVerified:true})
-
+            const users = await UserModel.find({
+                role:{$in:['instructor', 'student']},
+                 $or:[{isGoogleAuth:true},{isOtpVerified:true}]
+                })
+                console.log('users',users)
             return users
         } catch (error) {
             console.log("adminRepository error: get all users", error);

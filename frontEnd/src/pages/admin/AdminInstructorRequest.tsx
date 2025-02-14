@@ -91,7 +91,7 @@ const AdminInstructorRequest = () => {
 
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-5/6">
       <h2 className="text-2xl font-bold mb-6">Instructor Requests</h2>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200">
