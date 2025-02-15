@@ -25,6 +25,7 @@ useEffect(() => {
   if (userRole) {
     setUserRole(userRole);
   }
+  localStorage.removeItem('forgotPasswordEmail')
 }, [userRole]);
 
   useEffect(() => {
@@ -55,15 +56,17 @@ useEffect(() => {
         const data = { ...values}
         const loginResult = await dispatch(loginAction({...data, role: userRole }))
         const payload = loginResult.payload as Response;
-
+        console.log('payload',payload)
         if(!payload?.success){
           if(payload.message){
             toast.error(payload.message || 'login faild. Please try again.')
+            
           }
-        }else{
+          return
+        }
           toast.success('Login successful')
           navigate('/')
-        }
+        
       } catch (error) {
         console.error('login error',error)
       }

@@ -1,9 +1,3 @@
-
-
-
-
-
-
 import { useFormik } from 'formik';
 import background from '../../assets/instructor/background2.avif'
 import { registerValidationSchema } from '../../utilities/validation/RegistrationSchema';
@@ -27,28 +21,12 @@ const InstructorReg = () => {
   const user = useSelector((state:RootState)=>state.auth.data)
   const [profilePreview, setProfilePreview] = useState<string | null>(null)
   const [imageToCrop, setImageToCrop] = useState<string | null>(null);
-  // const [croppedImage, setCroppedImage] = useState<File | null>(null);
 
-  // const handleFileUpload = async(event: React.ChangeEvent<HTMLInputElement>,fieldName: string)=>{
+
   const handleFileUpload = async(event: React.ChangeEvent<HTMLInputElement>)=>{
     const file = event.target.files?.[0]
-    if(file){
-     
-        setImageToCrop(URL.createObjectURL(file)); // Set image for cropping
-   
-      // try {
-      // // const uploadedUrl = await uploadToCloudinary(file);
-      // // formik.setFieldValue(fieldName, uploadedUrl)
-      // // if(fieldName === 'profile.avatar'){
-      // //   setProfilePreview(URL.createObjectURL(file))
-      // // }
-   
-      // } catch (error) {
-      // //   console.error(`Error uploading ${fieldName}:`, error);
-      // // toast.error(`Failed to upload ${fieldName}. Please try again.`);
-      // console.log(error)
-      // }
-      
+    if(file){ 
+        setImageToCrop(URL.createObjectURL(file)); // Set image for cropping     
     }
   }
 
@@ -63,23 +41,7 @@ const InstructorReg = () => {
       toast.error("Failed to upload cropped image. Please try again.");
     }
   };
-  // const handleCropComplete = async (croppedBlob: Blob) => {
-  //   // setImageToCrop(null); // Close modal
-  //   try {
-  //   const file = new File([croppedBlob], "cropped-image.jpg", { type: "image/jpeg" });
-
-  //   setProfilePreview(URL.createObjectURL(file)); // Preview cropped image
-
-   
-  //     const uploadedUrl = await uploadToCloudinary(file);
-  //     formik.setFieldValue("profile.avatar", uploadedUrl); // Set cropped image URL in form
-  //   } catch (error) {
-  //     console.error("Error uploading cropped image:", error);
-  //     toast.error("Failed to upload cropped image. Please try again.");
-  //   }
-
-  //   setImageToCrop(null); // Close modal
-  // };
+ 
   const handleFile = async (event: React.ChangeEvent<HTMLInputElement>, fileType: string) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -91,8 +53,6 @@ const InstructorReg = () => {
         const fileUrl = await uploadToCloudinary(file);
         if (fileUrl) {
             console.log(`${fileType} uploaded successfully:`, fileUrl);
-            // You can set the uploaded file URL to state if needed
-            // setCvUrl(fileUrl);
             formik.setFieldValue("cv", fileUrl);
         } else {
             console.error("Failed to upload file");
@@ -161,7 +121,6 @@ const InstructorReg = () => {
 
         <div className="max-w-3xl mx-auto h-[500px] overflow-y-auto p-2">
         <form onSubmit={formik.handleSubmit} className="max-w-3xl mx-auto">
-        {/* <form onSubmit={(e) => { e.preventDefault(); formik.handleSubmit(); }} className="max-w-3xl mx-auto"> */}
           
         <div className="mb-6">
             
@@ -171,7 +130,7 @@ const InstructorReg = () => {
                 className='w-40 h-40 object-cover rounded-full border' />
               </div>
             )}
-       {imageToCrop && (
+          {imageToCrop && (
             <CropModal
               imageSrc={imageToCrop}
               onCropComplete={handleCropComplete}
@@ -186,7 +145,6 @@ const InstructorReg = () => {
               type="file"
               accept="image/jpeg, image/png, image/jpg"
               className="w-full p-3 border rounded-lg"
-              // onChange={(event)=>handleFileUpload(event, 'profile.avatar')}
               onChange={handleFileUpload}
             />
            

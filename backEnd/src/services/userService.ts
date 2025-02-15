@@ -58,6 +58,7 @@ export class UserService {
             if(!user){
                 throw new Error('Failed to update user')
             }
+
             const token = generateToken({id:user?._id,email, role:user?.role})
           
 
@@ -107,6 +108,8 @@ export class UserService {
             if(userData.role !==user.role){
                 throw new Error('Invalid credentials')
             }
+            
+          
             const token = generateToken({id:user?._id,email:user?.email, role:user?.role})
 
 
@@ -130,7 +133,7 @@ export class UserService {
         }
     }
 
-    async googleAuth(credentials: any, roleInput:Role):Promise<IUser |null>{
+    async googleAuth(credentials: any, roleInput:Role):Promise<{ message: string, user?:Partial<IUser>, token?: string }>{
         try {
             console.log("Received credentials:", credentials); 
 
@@ -191,13 +194,13 @@ export class UserService {
                 }
             }
 
-            const token = generateToken({id:user?._id,email, role:user?.role})
-           
-            if(!token){
-                throw new Error('token not generated')
+            if(user?.isBlocked){
+                throw new Error('admin blocked you. Please contact admin.')
             }
 
-            return user;
+            const token = generateToken({id:user?._id,email, role:user?.role})
+           
+            return {message: "google authentication successful.", user:user??undefined,token};
         } catch (error) {
             console.log('userService error:google signup',error)
             throw new Error(`${(error as Error).message}`)

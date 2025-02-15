@@ -26,6 +26,7 @@ export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunc
             email: decoded.email,
             role: decoded.role
         }
+        console.log('user',req.user)
         next();
     } catch (error) {
          res.status(401).json({ success: false, message: "Unauthorized: Invalid token" });

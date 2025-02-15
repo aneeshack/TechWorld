@@ -104,7 +104,7 @@ export class UserController {
 
   async logout(req: Request, res: Response):Promise<void>{
     try {
-      
+      console.log('inside loggout')
       clearTokenCookie(res)
       res.status(200).json({ success: true, message: 'Logged out successfully' })
     } catch (error:any) {
@@ -137,6 +137,10 @@ export class UserController {
       };
 
       const { message, user, token} = await this.userService.loginAction(userData);
+      if(user?.isBlocked){
+        throw new Error('admin blocked you. Please contact admin.')
+      }
+      
       if(!token){
         throw new Error('token not generated')
       }
@@ -145,7 +149,7 @@ export class UserController {
       console.log('successful login')
       res.status(201).json({ success: true, message: message, data:user });
     } catch (error:any) {
-        res.status(400).json({ message: error.message })
+        res.status(400).json({ success:false, message: error.message })
     }
   }
 
@@ -163,8 +167,15 @@ export class UserController {
 
       roleInput = userRole as Role;
       console.log('role',userRole)
-      const user = await this.userService.googleAuth(credentials,roleInput)
-      res.status(200).json({success:true, message:"google authentication success", data: user})
+      // const user = await this.userService.googleAuth(credentials,roleInput)
+      const { message, user, token} = await this.userService.googleAuth(credentials,roleInput)
+
+      if(!token){
+        throw new Error('token not generated')
+    }
+
+     setTokenCookie(res, token)
+      res.status(200).json({success:true, message:message, data: user})
 
     } catch (error: any) {
         res.status(400).json({ message: error.message })

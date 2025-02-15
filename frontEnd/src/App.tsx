@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import UserRoutes from "./routes/UserRoutes";
 // import { toast, ToastContainer } from "react-toastify"
 import { toast, ToastContainer } from "react-toastify";
@@ -19,19 +19,20 @@ import Registration from "./pages/instructor/Registration";
 const App = () => {
   const user = useSelector((state: RootState) => state.auth.data);
   const dispatch = useAppDispatch();
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
-      if (!user) {
+      if (!user || user.isBlocked) {
         await dispatch(fetchUserAction());
       } else if (user?.isBlocked) {
         dispatch(logoutAction());
         toast.error("Techworld team blocked your account! Please contact us");
+        navigate('/login',{state:{role:user?.role}})
       }
     };
     fetchUser()
-  }, [user, dispatch]);
+  }, [user, dispatch,navigate]);
 
   return (
     <>

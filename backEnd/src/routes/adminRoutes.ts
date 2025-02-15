@@ -1,15 +1,18 @@
 import { Router } from "express";
 import { AdminController } from "../controllers/adminController";
+import { validateUserId } from "../middlewares/validateUserId";
+import { handleValidationErrors } from "../middlewares/handleValidationErrors";
+import { authenticateUser } from "../middlewares/authMiddleware";
 
 const adminRouter = Router();
 const adminController = new AdminController();
 
-adminRouter.get('/instructorRequests', adminController.instructorRequests.bind(adminController));
-adminRouter.patch('/request/approve/:userId', adminController.approveInstructor.bind(adminController));
-adminRouter.patch('/request/reject/:userId', adminController.rejectInstructor.bind(adminController));
-adminRouter.get('/users', adminController.getAllUsers.bind(adminController));
-adminRouter.patch('/user/block/:userId', adminController.blockUser.bind(adminController));
-adminRouter.patch('/user/unblock/:userId', adminController.unBlockUser.bind(adminController));
+adminRouter.get('/instructorRequests',authenticateUser, adminController.instructorRequests.bind(adminController));
+adminRouter.patch('/request/approve/:userId', authenticateUser, validateUserId,handleValidationErrors, adminController.approveInstructor.bind(adminController));
+adminRouter.patch('/request/reject/:userId', authenticateUser, validateUserId,handleValidationErrors, adminController.rejectInstructor.bind(adminController));
+adminRouter.get('/users', authenticateUser, adminController.getAllUsers.bind(adminController));
+adminRouter.patch('/user/block/:userId',authenticateUser, validateUserId,handleValidationErrors, adminController.blockUser.bind(adminController));
+adminRouter.patch('/user/unblock/:userId', authenticateUser, validateUserId,handleValidationErrors, adminController.unBlockUser.bind(adminController));
 
 
 export default adminRouter
