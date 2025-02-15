@@ -6,7 +6,7 @@ const cloudName = env.CLOUD_NAME;
 
 
 export const uploadToCloudinary = async(file: File|string|undefined):Promise<string> =>{
-    console.log('nam',presetName,cloudName)
+    console.log('name',presetName,cloudName)
     if(file === undefined) return ""
     const formData = new FormData();
     formData.append('file', file);
@@ -15,7 +15,7 @@ export const uploadToCloudinary = async(file: File|string|undefined):Promise<str
         const {data} = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, 
         formData, 
         {withCredentials: false})
-        console.log('image or data from cloudinary:',data,data.secure_rul)
+        console.log('image or data from cloudinary:',data,data.secure_url)
         return data.secure_url;
 
     } catch (error) {

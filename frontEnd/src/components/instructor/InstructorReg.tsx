@@ -1,3 +1,9 @@
+
+
+
+
+
+
 import { useFormik } from 'formik';
 import background from '../../assets/instructor/background2.avif'
 import { registerValidationSchema } from '../../utilities/validation/RegistrationSchema';
@@ -9,6 +15,8 @@ import { uploadToCloudinary } from '../../utilities/axios/UploadCloudinary';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import CropModal from '../../pages/commonPages/CropModal';
 
 
 
@@ -17,32 +25,103 @@ const InstructorReg = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate()
   const user = useSelector((state:RootState)=>state.auth.data)
+  const [profilePreview, setProfilePreview] = useState<string | null>(null)
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  // const [croppedImage, setCroppedImage] = useState<File | null>(null);
 
-  const handleFileUpload = async(event: React.ChangeEvent<HTMLInputElement>,fieldName: string)=>{
+  // const handleFileUpload = async(event: React.ChangeEvent<HTMLInputElement>,fieldName: string)=>{
+  const handleFileUpload = async(event: React.ChangeEvent<HTMLInputElement>)=>{
     const file = event.target.files?.[0]
     if(file){
-      try {
-      const uploadedUrl = await uploadToCloudinary(file);
-      formik.setFieldValue(fieldName, uploadedUrl)
-
-      } catch (error) {
-        console.error(`Error uploading ${fieldName}:`, error);
-      toast.error(`Failed to upload ${fieldName}. Please try again.`);
-      }
+     
+        setImageToCrop(URL.createObjectURL(file)); // Set image for cropping
+   
+      // try {
+      // // const uploadedUrl = await uploadToCloudinary(file);
+      // // formik.setFieldValue(fieldName, uploadedUrl)
+      // // if(fieldName === 'profile.avatar'){
+      // //   setProfilePreview(URL.createObjectURL(file))
+      // // }
+   
+      // } catch (error) {
+      // //   console.error(`Error uploading ${fieldName}:`, error);
+      // // toast.error(`Failed to upload ${fieldName}. Please try again.`);
+      // console.log(error)
+      // }
       
     }
   }
+
+  const handleCropComplete = async (croppedFile: File) => {
+    try {
+      setProfilePreview(URL.createObjectURL(croppedFile));
+      const uploadedUrl = await uploadToCloudinary(croppedFile);
+      formik.setFieldValue("profile.avatar", uploadedUrl);
+      setImageToCrop(null); // Close modal after successful crop
+    } catch (error) {
+      console.error("Error uploading cropped image:", error);
+      toast.error("Failed to upload cropped image. Please try again.");
+    }
+  };
+  // const handleCropComplete = async (croppedBlob: Blob) => {
+  //   // setImageToCrop(null); // Close modal
+  //   try {
+  //   const file = new File([croppedBlob], "cropped-image.jpg", { type: "image/jpeg" });
+
+  //   setProfilePreview(URL.createObjectURL(file)); // Preview cropped image
+
+   
+  //     const uploadedUrl = await uploadToCloudinary(file);
+  //     formik.setFieldValue("profile.avatar", uploadedUrl); // Set cropped image URL in form
+  //   } catch (error) {
+  //     console.error("Error uploading cropped image:", error);
+  //     toast.error("Failed to upload cropped image. Please try again.");
+  //   }
+
+  //   setImageToCrop(null); // Close modal
+  // };
+  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>, fileType: string) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+        console.error("No file selected");
+        return;
+    }
+
+    try {
+        const fileUrl = await uploadToCloudinary(file);
+        if (fileUrl) {
+            console.log(`${fileType} uploaded successfully:`, fileUrl);
+            // You can set the uploaded file URL to state if needed
+            // setCvUrl(fileUrl);
+            formik.setFieldValue("cv", fileUrl);
+        } else {
+            console.error("Failed to upload file");
+        }
+    } catch (error) {
+        console.error("Error uploading file:", error);
+    }
+};
+
+
   const formik = useFormik({
     initialValues: {
       _id:user?._id|| '',
-      userName:"",
+      userName:user?.userName,
       profile:{
         dateOfBirth: '',
         avatar: null,
-        profileDescription:''
+        profileDescription:'',
+        gender: ''
       },
       contact: {
         phoneNumber:"",
+        address: {
+          street: '',
+          city: '',
+          state: '',
+          country: '',
+          pinCode: ''
+        }
       },
       cv:'',
       experience:'',
@@ -52,6 +131,7 @@ const InstructorReg = () => {
     validationSchema: registerValidationSchema,
     onSubmit: async(values)=>{
       try {
+        console.log("Submitting form", values);
         const result = await dispatch(RegisterAction({...values,_id:user?._id || ''}))
         const response = result.payload as Response;
 
@@ -69,6 +149,8 @@ const InstructorReg = () => {
     }
 
   })
+
+  
     return (
         <div 
   className="container-fluid p-4 md:p-8 bg-cover bg-center" 
@@ -76,12 +158,51 @@ const InstructorReg = () => {
 >
       <section className="container mx-auto mt-10 p-4 md:p-8 border-2 border-gray-100 shadow-lg bg-white rounded-lg max-w-3xl lg:max-w-5xl">
         <h2 className="text-2xl md:text-3xl text-green-900 font-bold mb-6 md:mb-10 text-center">Instructor Registration</h2>
+
+        <div className="max-w-3xl mx-auto h-[500px] overflow-y-auto p-2">
         <form onSubmit={formik.handleSubmit} className="max-w-3xl mx-auto">
+        {/* <form onSubmit={(e) => { e.preventDefault(); formik.handleSubmit(); }} className="max-w-3xl mx-auto"> */}
+          
+        <div className="mb-6">
+            
+            {profilePreview && (
+              <div className='mt-4 flex justify-center'>
+                <img src={profilePreview} alt="profile preview"
+                className='w-40 h-40 object-cover rounded-full border' />
+              </div>
+            )}
+       {imageToCrop && (
+            <CropModal
+              imageSrc={imageToCrop}
+              onCropComplete={handleCropComplete}
+              onClose={() => {
+                URL.revokeObjectURL(imageToCrop);
+                setImageToCrop(null);
+              }}
+            />
+          )}
+            <label className="block text-lg font-medium mb-2">Profile Picture</label>
+            <input
+              type="file"
+              accept="image/jpeg, image/png, image/jpg"
+              className="w-full p-3 border rounded-lg"
+              // onChange={(event)=>handleFileUpload(event, 'profile.avatar')}
+              onChange={handleFileUpload}
+            />
+           
+            { formik.touched.profile?.avatar && formik.errors.profile?.avatar   ? (
+              <div className='text-red-500 text-sm'>
+                {formik.errors.profile?.avatar }
+              </div>
+            ): null}
+          </div>
+
           <div className="mb-6">
             <label className="block text-lg font-medium mb-2">Full Name</label>
             <input
               type="text"
-              {...formik.getFieldProps('userName')}
+              value={user?.userName}
+              readOnly
               className="w-full p-3 border rounded-lg"
               placeholder="Enter your full name"
             />
@@ -90,6 +211,100 @@ const InstructorReg = () => {
                 {formik.errors.userName}
               </div>
             ): null}
+          </div>
+
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">Gender</label>
+            <select
+              {...formik.getFieldProps('profile.gender')}
+              className="w-full p-3 border rounded-lg"
+            >
+              <option value="">Select Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+            {formik.touched.profile?.gender && formik.errors.profile?.gender ? (
+              <div className="text-red-500 text-sm">{formik.errors.profile?.gender}</div>
+            ) : null}
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">Street</label>
+            <input
+              type="text"
+              {...formik.getFieldProps('contact.address.street')}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter street address"
+            />
+            {formik.touched.contact?.address?.street && formik.errors.contact?.address?.street ? (
+              <div className='text-red-500 text-sm'>{formik.errors.contact?.address?.street}</div>
+            ) : null}
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">City</label>
+            <input
+              type="text"
+              {...formik.getFieldProps('contact.address.city')}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter city"
+            />
+            {formik.touched.contact?.address?.city && formik.errors.contact?.address?.city ? (
+              <div className='text-red-500 text-sm'>{formik.errors.contact?.address?.city}</div>
+            ) : null}
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">State</label>
+            <input
+              type="text"
+              {...formik.getFieldProps('contact.address.state')}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter state"
+            />
+            {formik.touched.contact?.address?.state && formik.errors.contact?.address?.state ? (
+              <div className='text-red-500 text-sm'>{formik.errors.contact?.address?.state}</div>
+            ) : null}
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">Country</label>
+            <input
+              type="text"
+              {...formik.getFieldProps('contact.address.country')}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter country"
+            />
+            {formik.touched.contact?.address?.country && formik.errors.contact?.address?.country ? (
+              <div className='text-red-500 text-sm'>{formik.errors.contact?.address?.country}</div>
+            ) : null}
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">Pin Code</label>
+            <input
+              type="text"
+              {...formik.getFieldProps('contact.address.pinCode')}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter zip code"
+            />
+            {formik.touched.contact?.address?.pinCode && formik.errors.contact?.address?.pinCode ? (
+              <div className='text-red-500 text-sm'>{formik.errors.contact?.address?.pinCode}</div>
+            ) : null}
+          </div>
+
+
+          <div className="mb-6">
+            <label className="block text-lg font-medium mb-2">Email Address</label>
+            <input
+              type="text"
+              value={user?.email}
+              readOnly
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter your full name"
+            />
           </div>
 
           <div className="mb-6">
@@ -142,7 +357,7 @@ const InstructorReg = () => {
               type="file"
               accept=".pdf, .doc, .docx"
               className="w-full p-3 border rounded-lg"
-              onChange={(event)=> handleFileUpload(event, 'cv')}
+              onChange={(event)=> handleFile(event, 'cv')}
             />
              { formik.touched.cv && formik.errors.cv ? (
               <div className='text-red-500 text-sm'>
@@ -151,20 +366,7 @@ const InstructorReg = () => {
             ): null}
           </div>
   
-          <div className="mb-6">
-            <label className="block text-lg font-medium mb-2">Profile Picture</label>
-            <input
-              type="file"
-              accept="image/jpeg, image/png, image/jpg"
-              className="w-full p-3 border rounded-lg"
-              onChange={(event)=>handleFileUpload(event, 'profile.avatar')}
-            />
-            { formik.touched.profile?.avatar && formik.errors.profile?.avatar   ? (
-              <div className='text-red-500 text-sm'>
-                {formik.errors.profile?.avatar }
-              </div>
-            ): null}
-          </div>
+        
   
           <div className="mb-6">
             <label className="block text-lg font-medium mb-2">Years of Experience</label>
@@ -195,11 +397,12 @@ const InstructorReg = () => {
               </div>
             ): null}
           </div>
-  
-          <button className="bg-green-900 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg w-full" type='submit'>
+            
+          <button type='submit' className="bg-green-900 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg w-full" >
             Register as Instructor
           </button>
         </form>
+        </div>
       </section>
       </div>
     );

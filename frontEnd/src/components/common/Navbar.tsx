@@ -6,7 +6,7 @@ import {  useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
 import { useNavigate } from 'react-router-dom';
-import { Response } from '../../types/IForm';
+import { RequestStatus, Response } from '../../types/IForm';
 import { toast } from 'react-toastify';
 
 const Navbar = () => {
@@ -32,17 +32,17 @@ const Navbar = () => {
       }else if(user?.role === 'instructor'){
         console.log("Request Status:", user?.requestStatus);
           switch( user?.requestStatus){
-            case "pending":
+            case RequestStatus.Pending:
               toast.warning("Your application is being processed.", {
                 style: { backgroundColor: "#f1c40f", color: "#000" }, // yellow
               });
               break;
-            case 'rejected':
+            case RequestStatus.Rejected:
               toast.error("Your application has been rejected.", {
                 style: { backgroundColor: "#e74c3c", color: "#fff" }, // Red
               });
               break;
-            case 'approved':
+            case RequestStatus.Approved:
               toast.success("Approved! Redirecting...", {
                 style: { backgroundColor: "#2ecc71", color: "#fff" }, // Green
               });
@@ -117,12 +117,26 @@ const Navbar = () => {
         </div>
         {isOpen && (
         <div className="absolute right-0 mt-2 w-32 bg-white border border-gray-300 rounded-lg shadow-lg">
-          <button 
+          {userData.role === 'instructor' && (userData.requestStatus !==RequestStatus.Pending && userData.requestStatus !==RequestStatus.Rejected && userData.requestStatus !==RequestStatus.Approved )?
+        <button 
+        className="w-full px-4 py-2 text-left hover:bg-gray-200"
+        onClick={handleDashboard}
+      >
+        Update Profile
+      </button>:
+      <button 
+      className="w-full px-4 py-2 text-left hover:bg-gray-200"
+      onClick={handleDashboard}
+    >
+      Dashboard
+    </button>  
+        }
+          {/* <button 
             className="w-full px-4 py-2 text-left hover:bg-gray-200"
             onClick={handleDashboard}
           >
             Dashboard
-          </button>
+          </button> */}
           <button 
             className="w-full px-4 py-2 text-left hover:bg-gray-200"
             onClick={handleLogout}

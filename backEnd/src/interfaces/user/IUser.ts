@@ -16,8 +16,16 @@ export enum RequestStatus{
 interface Contact{
     phoneNumber?: string,
     social?: string,
-    address?: string,
+    address?: Address,
 }
+
+interface Address {
+    street?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    pinCode?: string;
+  } 
 
 enum Profession{
     Student = 'student',

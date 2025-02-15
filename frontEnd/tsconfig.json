@@ -1,4 +1,7 @@
 {
+  "compilerOptions": {
+    "types": ["react-easy-crop"]
+  },
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
