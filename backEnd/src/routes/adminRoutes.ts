@@ -15,4 +15,9 @@ adminRouter.patch('/user/block/:userId',authenticateUser, validateUserId,handleV
 adminRouter.patch('/user/unblock/:userId', authenticateUser, validateUserId,handleValidationErrors, adminController.unBlockUser.bind(adminController));
 
 
+adminRouter.post('/category/get-presigned-url', authenticateUser, adminController.getPresignedUrl.bind(adminController));
+adminRouter.post('/category/add', authenticateUser, adminController.addCategory.bind(adminController));
+adminRouter.get('/category/add', authenticateUser, adminController.addCategory.bind(adminController));
+
+
 export default adminRouter

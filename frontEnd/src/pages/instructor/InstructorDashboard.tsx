@@ -3,7 +3,7 @@ import NavbarDashboard from "../../components/common/NavbarDashboard"
 import InstructorSidebar from "../../components/instructor/InstructorSidebar"
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const InstructorDashboard = () => {
@@ -21,13 +21,14 @@ const InstructorDashboard = () => {
   },[user,navigate])
   
   return (
-    <div className="w-full flex align-middle">
+    <div className="w-full flex h-screen">
       <InstructorSidebar/>
-      <div className="w-4/5 flex flex-col ">
+      <div className="w-4/5 flex flex-col min-h-screen">
       <NavbarDashboard/>
-      <div className="flex-grow flex justify-center items-center">
+      <div className="flex-grow flex justify-center items-start overflow-auto ">
           {/* Future content will be placed here */}
-          <p className="text-xl text-gray-700"> Instructor Main Content Here</p>
+          {/* <p className="text-xl text-gray-700"> Instructor Main Content Here</p> */}
+          <Outlet/>
         </div>
       <FooterDashboard/>
       </div>

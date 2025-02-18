@@ -6,9 +6,11 @@ import { toast } from "react-toastify";
 import { useAppDispatch } from "../../hooks/Hooks";
 import { updateRequestStatus } from "../../redux/store/slices/UserSlice";
 import { store } from "../../redux/store";
+import { EyeIcon } from "@heroicons/react/24/outline";
+import { useNavigate } from "react-router-dom";
 const AdminInstructorRequest = () => {
 
-
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [requests, setRequests]= useState<SignupFormData[]>([])
 
@@ -91,37 +93,53 @@ const AdminInstructorRequest = () => {
 
 
   return (
-    <div className="p-6 w-5/6">
-      <h2 className="text-2xl font-bold mb-6">Instructor Requests</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr>
-              <th className="py-3 px-4 border-b text-left">Name</th>
-              <th className="py-3 px-4 border-b text-left">Qualification</th>
-              <th className="py-3 px-4 border-b text-left">Short Bio</th>
-              <th className="py-3 px-4 border-b text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {requests.map((request) => (
-              <tr key={request._id} className="hover:bg-gray-50">
-                <td className="py-3 px-4 border-b">{request.userName}</td>
-                <td className="py-3 px-4 border-b">{request.email}</td>
-                <td className="py-3 px-4 border-b">{request.profile?.profileDescription}</td>
-                <td className="py-3 px- border-b">
-                  <button onClick={()=>handleApprove(request._id?? "")} className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded mr-2">
-                    Approve
-                  </button>
-                  <button onClick={()=>handleReject(request._id?? "")}  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">
-                    Reject
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <div className="my-20 container mx-6 lg:mx-20">
+      {requests.length>0?(
+        <>
+  <h2 className="text-2xl font-bold mb-6 ">Instructor Requests</h2>
+  <div className="overflow-x-auto">
+    <table className="min-w-full bg-white border border-gray-200">
+      <thead>
+        <tr className="">
+          <th className="py-3 px-4 border-b text-left">Name</th>
+          <th className="py-3 px-4 border-b text-left">Qualification</th>
+          <th className="py-3 px-4 border-b text-left">View Profile</th>
+          <th className="py-3 px-7 border-b text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {requests.map((request) => (
+          <tr key={request._id} className="hover:bg-gray-50">
+            <td className="py-3 px-4 border-b">{request.userName}</td>
+            <td className="py-3 px-4 border-b">{request.email}</td>
+            <td className="py-3 px-4 border-b">    <button 
+              onClick={() => navigate(`/admin/dashboard/instructor/${request._id}`,{state:{request}})}  
+              className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded flex items-center "
+            >
+              <EyeIcon className="h-5 w-5 mr-2"  />
+              <span>View</span>
+            </button>
+            </td>
+            <td className="py-3 px-4 border-b">
+              <div className="flex flex-col md:flex-row md:items-center">  
+              <button onClick={()=>handleApprove(request._id?? "")} className="bg-green-500 hover:bg-green-600 text-white py-1 mb-1 px-3 rounded mr-2">
+                Approve
+              </button>
+              <button onClick={()=>handleReject(request._id?? "")}  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded">
+                Reject
+              </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  </>
+      ):(
+        <p className="text-center text-gray-500">No instructor requests found.</p>
+      )}
+    
     </div>
   );
 };

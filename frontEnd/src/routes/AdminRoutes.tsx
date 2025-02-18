@@ -1,19 +1,14 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Route, Routes } from 'react-router-dom'
 import AdminDashboard from '../pages/admin/AdminDashboard'
 import AdminHome from '../pages/admin/AdminHome'
 import AdminInstructorRequest from '../pages/admin/AdminInstructorRequest'
-import { useSelector } from 'react-redux'
-import { RootState } from '../redux/store'
-import { Role } from '../types/IForm'
-import UserList from '../pages/admin/userList'
+import UserList from '../pages/admin/UserList'
+import InstructorView from '../pages/admin/InstructorView'
+import Categories from '../pages/admin/Categories'
+import AddCategory from '../pages/admin/AddCategory'
 
 const AdminRoutes = () => {
-  const user = useSelector((state: RootState) => state.auth.data);
-console.log('user',user?.role)
-  if (!user || user?.role !== Role.Admin) {
-    console.log('no user')
-    return <Navigate to="/admin/login" />;
-  }
+
   return (
     <Routes>
         
@@ -22,6 +17,9 @@ console.log('user',user?.role)
         <Route index element={<AdminHome/>}/>
         <Route path='requests' element={<AdminInstructorRequest/>}/>
         <Route path='users' element={<UserList/>}/>
+        <Route path='instructor/:id' element={<InstructorView/>}/>
+        <Route path='categories' element={<Categories/>}/>
+        <Route path='categories/add' element={<AddCategory/>}/>
         
         </Route>
     </Routes>

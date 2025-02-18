@@ -47,6 +47,7 @@ const Signup = () => {
 
   const handleChange = ()=>{
     navigate('/login',{state:{role:userRole}})
+
   }
   
   const formik = useFormik({

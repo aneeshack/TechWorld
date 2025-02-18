@@ -1,5 +1,7 @@
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
+import { CategoryEntity } from "../interfaces/courses/category";
 import { IUser, RequestStatus } from "../interfaces/user/IUser";
+import { Category } from "../models/categoryModel";
 import UserModel from "../models/userModel";
 
 export class AdminRepository implements IAdminRepository{
@@ -81,4 +83,16 @@ export class AdminRepository implements IAdminRepository{
             throw new Error(`Error in finding requests: ${(error as Error).message}`);
         }
     }
+
+    async createCategory(categoryName: string, description: string, imageUrl: string):Promise<CategoryEntity|null>{
+        try {
+            const category =  new Category({categoryName, description, imageUrl}) 
+            await category.save()
+            return category
+        } catch (error) {
+            console.log("adminRepository error:unblock users", error);
+            throw new Error(`Error in finding requests: ${(error as Error).message}`);
+        }
+    }
+
 }

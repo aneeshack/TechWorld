@@ -1,11 +1,15 @@
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+// import { s3 } from "../config/awsConfig";
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
+import { CategoryEntity } from "../interfaces/courses/category";
 import { IUser } from "../interfaces/user/IUser";
 import { AdminRepository } from "../repository/adminRepository";
-
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { s3Client } from "../config/awsConfig";
 
 export class AdminService{
-    constructor(private adminRepository: IAdminRepository){}
-    // constructor(private adminRepository: AdminRepository){}
+    // constructor(private adminRepository: IAdminRepository){}
+    constructor(private adminRepository: AdminRepository){}
 
      async getAllRequsts():Promise<IUser[]>{
         try {
@@ -84,4 +88,65 @@ export class AdminService{
             throw new Error(`${(error as Error).message}`)
         }
      }
+
+    //  async getPresignedUrl(fileName: string, fileType: string):Promise<{presignedUrl: string, imageUrl: string}>{
+    //     try {
+    //         const s3Params = {
+    //             Bucket: process.env.AWS_S3_BUCKET_NAME,
+    //             key: `categories/${Date.now()}-${fileName}}`,
+    //             Expires: 60,
+    //             ContentType: fileType
+    //         }
+
+    //         const presignedUrl = await s3.getSignedUrlPromise('putObject',s3Params);
+    //         const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Params.key}`
+    //         console.log('image url ',imageUrl)
+
+    //         return { presignedUrl, imageUrl };
+    //     } catch (error) {
+    //         console.log('adminService error: presigned url',error)
+    //         throw new Error(`${(error as Error).message}`)
+    //     }
+    //  }
+
+
+    async getPresignedUrl(fileName: string, fileType: string): Promise<{ presignedUrl: string; imageUrl: string }> {
+        try {
+          const key = `categories/${Date.now()}-${fileName}`;
+    
+          const command = new PutObjectCommand({
+            Bucket: process.env.AWS_S3_BUCKET_NAME,
+            Key: key,
+            ContentType: fileType,
+          });
+    
+          // Generate a signed URL for uploading
+          const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 });
+    
+          // Construct the final image URL
+          const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    
+          console.log('Generated Image URL:', imageUrl);
+          return { presignedUrl, imageUrl };
+        } catch (error) {
+          console.error('S3Service Error: Presigned URL generation failed', error);
+          throw new Error(`Error generating presigned URL: ${(error as Error).message}`);
+        }
+      }
+
+     async createCategory(categoryName: string, description: string, imageUrl: string):Promise<CategoryEntity |null>{
+        try {
+
+            const newCategory = await this.adminRepository.createCategory(categoryName, description, imageUrl);
+            if(!newCategory){
+                throw new Error('User not found or already processed')
+            }
+            return newCategory
+        } catch (error) {
+            console.log('adminService error: approve instructor',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+     }
+
+
 }

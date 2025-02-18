@@ -57,7 +57,7 @@ export class UserController {
       const result = await this.userService.signup(userData);
       res.status(201).json({ success: true, message: result.message });
     } catch (error:any) {
-        res.status(400).json({ message: error.message })
+        res.status(400).json({ success: false, message: error.message })
     }
   }
 
@@ -74,7 +74,7 @@ export class UserController {
       res.status(200).json({success: true, message: result})
 
     } catch (error:any) {
-      res.status(400).json({ message: error.message })
+      res.status(400).json({success: false, message: error.message })
     }
   }
 
@@ -97,7 +97,7 @@ export class UserController {
 
     } catch (error:any) {
       console.log('controller error',error)
-      res.status(400).json({message: error.message})
+      res.status(400).json({success: false, message: error.message})
     }
   }
 
@@ -109,7 +109,7 @@ export class UserController {
       res.status(200).json({ success: true, message: 'Logged out successfully' })
     } catch (error:any) {
       console.log('controller error',error)
-      res.status(400).json({message: error.message})
+      res.status(400).json({success: false, message: error.message})
     }
   }
 
@@ -178,7 +178,7 @@ export class UserController {
       res.status(200).json({success:true, message:message, data: user})
 
     } catch (error: any) {
-        res.status(400).json({ message: error.message })
+        res.status(400).json({ success: false, message: error.message })
     }
   }
 
@@ -189,7 +189,7 @@ export class UserController {
       res.status(200).json({success:true, data: user})
 
     } catch (error: any) {
-        res.status(400).json({ message: error.message })
+        res.status(400).json({success: false, message: error.message })
     }
   }
 

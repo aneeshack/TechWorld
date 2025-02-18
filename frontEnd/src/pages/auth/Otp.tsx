@@ -18,7 +18,7 @@ const Otp = () => {
   const [isLoading, setIsLoading] = useState(false)
   const { error, data} = useSelector((state:RootState)=>state.auth)
   const [email]=useState(location.state?.email || localStorage.getItem('signupEmail') || "")
-  console.log('email',email)
+  // console.log('email',email)
   const RESEND_TIME =30;
   const [timeLeft, setTimeLeft] =useState(0);
   const [canResend, setCanResend] =useState(false)

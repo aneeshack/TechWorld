@@ -15,7 +15,7 @@ export class AdminController{
             const AllRequsts = await this.adminService.getAllRequsts()
             res.status(201).json({ success: true, data:AllRequsts });
         } catch (error:any) {
-            res.status(400).json({ message: error.message })
+            res.status(400).json({success: false, message: error.message })
         }  
     }
 
@@ -26,7 +26,7 @@ export class AdminController{
             const updatedUser = await this.adminService.approveRequest(userId)
             res.status(201).json({ success: true, message:"Instructor approved", updatedUser });
         } catch (error:any) {
-            res.status(400).json({ message: error.message })
+            res.status(400).json({success: false, message: error.message })
         }  
     }
 
@@ -37,7 +37,7 @@ export class AdminController{
             const updatedUser = await this.adminService.rejecteRequest(userId)
             res.status(201).json({ success: true, message:"Instructor rejected", updatedUser });
         } catch (error:any) {
-            res.status(400).json({ message: error.message })
+            res.status(400).json({success: false, message: error.message })
         }  
     }
 
@@ -46,7 +46,7 @@ export class AdminController{
             const allUsers = await this.adminService.getAllUsers()
             res.status(200).json({success:true, data:allUsers})
         } catch (error:any) {
-            res.status(400).json({ message: error.message })
+            res.status(400).json({success: false, message: error.message })
         }
     }
 
@@ -57,7 +57,7 @@ export class AdminController{
             const blockedUser = await this.adminService.blockUser(userId)
             res.status(201).json({ success:true, message:"user is blocked",blockedUser})
         } catch (error:any) {
-            res.status(400).json({ message: error.message })
+            res.status(400).json({success: false, message: error.message })
         }
     }
 
@@ -67,7 +67,44 @@ export class AdminController{
             const unblockedUser = await this.adminService.unBlockUser(userId)
             res.status(201).json({ success:true, message:"user is unblocked",unblockedUser})
         } catch (error:any) {
-            res.status(400).json({ message: error.message })
+            res.status(400).json({success: false, message: error.message })
+        }
+    }
+
+    async getPresignedUrl(req:Request, res: Response):Promise<void>{
+        try {
+            console.log('inside presigned url')
+            const { fileName, fileType } = req.body
+            console.log('req.body',fileName,fileType)
+            const { presignedUrl, imageUrl} = await this.adminService.getPresignedUrl(fileName, fileType)
+
+            res.json({ presignedUrl, imageUrl });
+            
+        } catch (error:any) {
+            res.status(500).json({success: false, message: error.message});
+        }
+    }
+
+    async addCategory(req:Request, res: Response):Promise<void>{
+        try {
+            console.log('add category')
+            const { categoryName, description, imageUrl } = req.body
+            console.log('req.body',req.body)
+            if(!categoryName || !description || !imageUrl){
+                 res.status(400).json({ success: false, message: "Invalid credentials" });
+                 return
+            }
+            const newCategory = await this.adminService.createCategory(categoryName, description, imageUrl )
+
+            if (!newCategory) {
+                 res.status(500).json({ success: false, message: "Category creation failed" });
+                 return
+            }
+
+            res.status(201).json({success:true, message:'Category added successfully',newCategory});
+            
+        } catch (error:any) {
+            res.status(500).json({success: false, message: error.message});
         }
     }
 }

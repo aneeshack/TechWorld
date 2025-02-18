@@ -13,11 +13,11 @@ const AdminDashboard = () => {
 
   
   return (
-    <div className="w-full flex align-middle">
-      <AdminSidebar/>
-      <div className="w-4/5 flex flex-col ">
+    <div className="w-full flex h-screen">
+      <AdminSidebar />
+      <div className=" w-full flex flex-col min-h-screen">
       <NavbarDashboard/>
-      <div className="flex-grow flex justify-center ">
+      <div className="flex-grow flex justify-center items-start overflow-auto ">
       <Outlet/>
         </div>
         

@@ -7,6 +7,9 @@ import ForgotPassword from "../pages/auth/ForgotPassword"
 import ResetPassword from "../pages/auth/ResetPassword"
 import TeachUs from "../pages/commonPages/TeachUs"
 import OtpResetPassword from "../pages/auth/OtpResetPassword"
+import CourseList from "../pages/commonPages/CourseList"
+import DistinctCourses from "../pages/commonPages/DistinctCourses"
+import Checkout from "../pages/commonPages/Checkout"
 
 
 const UserRoutes = () => {
@@ -24,6 +27,9 @@ const UserRoutes = () => {
 
             {/* common pages */}
             <Route path="/teachUs" element={<TeachUs/>}/>
+            <Route path="/courseList" element={<CourseList/>}/>
+            <Route path="/courseDetail" element={<DistinctCourses/>}/>
+            <Route path="/checkout" element={<Checkout/>}/>
 
         </Routes>
     </div>

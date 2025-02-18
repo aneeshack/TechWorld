@@ -5,7 +5,7 @@ import placeholder from '../../assets/commonPages/placeHolder.png'
 import {  useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { RequestStatus, Response } from '../../types/IForm';
 import { toast } from 'react-toastify';
 
@@ -99,11 +99,31 @@ const Navbar = () => {
 
         <div className="hidden sm:ml-6 sm:block">
           <div className="flex space-x-4">
-            <a href="/" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Home</a>
-            <a href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Courses</a>
-            <a href="/teachUs" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Teach Us</a>
-            <a href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Instructors</a>
-            <a href="#" className="rounded-md px-3 py-2 text-sm font-medium text-gray-500 bg-gray-50  hover:bg-green-700 hover:text-white">Contact Us</a>
+            <NavLink to="/" className={({ isActive }) =>
+              `rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-green-700 text-white" : "text-gray-500 bg-gray-50 hover:bg-green-700 hover:text-white"
+              }`
+            }>Home</NavLink>
+             <NavLink to="/courseList" className={({ isActive }) =>
+              `rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-green-700 text-white" : "text-gray-500 bg-gray-50 hover:bg-green-700 hover:text-white"
+              }`
+            }>Courses</NavLink> 
+            <NavLink to="/teachUs" className={({ isActive }) =>
+              `rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-green-700 text-white" : "text-gray-500 bg-gray-50 hover:bg-green-700 hover:text-white"
+              }`
+            }>Teach Us</NavLink> 
+            <NavLink to="/instructors" className={({ isActive }) =>
+              `rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-green-700 text-white" : "text-gray-500 bg-gray-50 hover:bg-green-700 hover:text-white"
+              }`
+            }>Instructors</NavLink> 
+            <NavLink to="/contactUs" className={({ isActive }) =>
+              `rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-green-700 text-white" : "text-gray-500 bg-gray-50 hover:bg-green-700 hover:text-white"
+              }`
+            }>Contact Us</NavLink>
           </div>
         </div>
       </div>
