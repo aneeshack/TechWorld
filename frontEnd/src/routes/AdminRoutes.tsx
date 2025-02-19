@@ -6,6 +6,8 @@ import UserList from '../pages/admin/UserList'
 import InstructorView from '../pages/admin/InstructorView'
 import Categories from '../pages/admin/Categories'
 import AddCategory from '../pages/admin/AddCategory'
+import EditCategory from '../pages/admin/EditCategory'
+
 
 const AdminRoutes = () => {
 
@@ -19,8 +21,9 @@ const AdminRoutes = () => {
         <Route path='users' element={<UserList/>}/>
         <Route path='instructor/:id' element={<InstructorView/>}/>
         <Route path='categories' element={<Categories/>}/>
-        <Route path='categories/add' element={<AddCategory/>}/>
-        
+        <Route path='category/add' element={<AddCategory/>}/>
+        <Route path='category/edit/:categoryId' element={<EditCategory/>}/>
+
         </Route>
     </Routes>
   )

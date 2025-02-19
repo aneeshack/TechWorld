@@ -95,4 +95,47 @@ export class AdminRepository implements IAdminRepository{
         }
     }
 
+    async allCategories(): Promise<CategoryEntity[]> {
+        try {
+            const categories = await Category.find({isActive:true})
+
+            return categories
+        } catch (error) {
+            console.log("adminRepository error:getAll categories", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
+    async getCategoryById(categoryId: string): Promise<CategoryEntity> {
+        try {
+            const category = await Category.findById(categoryId)
+
+            if(!category){
+                throw new Error('category not found')
+            }
+
+            return category
+        } catch (error) {
+            console.log("adminRepository error:getAll category", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
+    async updateCategory(categoryId:string, categoryData: Partial<CategoryEntity>): Promise<CategoryEntity> {
+        try {
+            const updatedCategory = await Category.findByIdAndUpdate(categoryId, 
+                {$set: categoryData},
+                {new :true}
+            )
+
+            if(!updatedCategory){
+                throw new Error('category not found')
+            }
+
+            return updatedCategory
+        } catch (error) {
+            console.log("adminRepository error:getAll category", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
 }

@@ -89,26 +89,6 @@ export class AdminService{
         }
      }
 
-    //  async getPresignedUrl(fileName: string, fileType: string):Promise<{presignedUrl: string, imageUrl: string}>{
-    //     try {
-    //         const s3Params = {
-    //             Bucket: process.env.AWS_S3_BUCKET_NAME,
-    //             key: `categories/${Date.now()}-${fileName}}`,
-    //             Expires: 60,
-    //             ContentType: fileType
-    //         }
-
-    //         const presignedUrl = await s3.getSignedUrlPromise('putObject',s3Params);
-    //         const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Params.key}`
-    //         console.log('image url ',imageUrl)
-
-    //         return { presignedUrl, imageUrl };
-    //     } catch (error) {
-    //         console.log('adminService error: presigned url',error)
-    //         throw new Error(`${(error as Error).message}`)
-    //     }
-    //  }
-
 
     async getPresignedUrl(fileName: string, fileType: string): Promise<{ presignedUrl: string; imageUrl: string }> {
         try {
@@ -148,5 +128,42 @@ export class AdminService{
         }
      }
 
+     async getAllCategories():Promise<CategoryEntity[]>{
+        try {
+            const categories = await this.adminRepository.allCategories();
+            if(!categories){
+                throw new Error('No categories found')
+            }
+            return categories
+        } catch (error) {
+            console.log('adminService error:get all categories',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+     }
 
+     async getCategoryById(categoryId: string):Promise<CategoryEntity>{
+        try {
+            const category = await this.adminRepository.getCategoryById(categoryId);
+            if(!category){
+                throw new Error('No category found')
+            }
+            return category
+        } catch (error) {
+            console.log('adminService error:get all category',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+     }
+
+     async updateCategory(categoryId:string, categoryData: Partial<CategoryEntity>):Promise<CategoryEntity>{
+        try {
+            const updateCategory = await this.adminRepository.updateCategory(categoryId,categoryData);
+            if(!updateCategory){
+                throw new Error('No category found, update failed')
+            }
+            return updateCategory
+        } catch (error) {
+            console.log('adminService error:get all category',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+     }
 }

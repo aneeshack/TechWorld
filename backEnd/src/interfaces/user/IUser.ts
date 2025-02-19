@@ -40,7 +40,7 @@ export enum Role{
 }
 
 
-export interface IUser  extends Document{
+export interface IUser extends Document{
     email: string,
     password: string,
     confirmPassword?: string,

@@ -107,4 +107,53 @@ export class AdminController{
             res.status(500).json({success: false, message: error.message});
         }
     }
+
+    async getAllCategories(req:Request, res: Response):Promise<void>{
+        try {
+            const allCategories = await this.adminService.getAllCategories()
+            console.log('all categories',allCategories)
+            res.status(201).json({ success: true, data:allCategories });
+        } catch (error:any) {
+            res.status(400).json({success: false, message: error.message })
+        }
+    }
+
+    async getSingleCategory(req:Request, res: Response):Promise<void>{
+        try {
+
+            const categoryId = req.params.categoryId;
+            console.log('cat id',categoryId)
+            const category = await this.adminService.getCategoryById(categoryId)
+
+            console.log('category',category)
+            res.status(200).json({ success: true, data:category });
+        } catch (error:any) {
+            res.status(400).json({success: false, message: error.message })
+        }
+    }
+
+    async editCategory(req:Request, res: Response):Promise<void>{
+        try {
+
+            const categoryId = req.params.categoryId;
+            console.log('category', categoryId)
+
+            if(!categoryId){
+                throw new Error('Category id not found')
+            }
+             
+            const { categoryName, description, imageUrl} = req.body
+            const updateCategory = await this.adminService.updateCategory(categoryId,{
+                categoryName,
+                description,
+                imageUrl
+            })
+
+            console.log('category',updateCategory)
+            res.status(200).json({ success: true, data:updateCategory });
+        } catch (error:any) {
+            res.status(400).json({success: false, message: error.message })
+        }
+    }
+
 }

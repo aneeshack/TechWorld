@@ -18,6 +18,9 @@ adminRouter.patch('/user/unblock/:userId', authenticateUser, validateUserId,hand
 adminRouter.post('/category/get-presigned-url', authenticateUser, adminController.getPresignedUrl.bind(adminController));
 adminRouter.post('/category/add', authenticateUser, adminController.addCategory.bind(adminController));
 adminRouter.get('/category/add', authenticateUser, adminController.addCategory.bind(adminController));
+adminRouter.get('/categories', authenticateUser, adminController.getAllCategories.bind(adminController));
+adminRouter.get('/category/:categoryId', authenticateUser, adminController.getSingleCategory.bind(adminController));
+adminRouter.put('/category/update/:categoryId', authenticateUser, adminController.editCategory.bind(adminController));
 
 
 export default adminRouter
