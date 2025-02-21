@@ -23,4 +23,4 @@ adminRouter.get('/category/:categoryId', authenticateUser, adminController.getSi
 adminRouter.put('/category/update/:categoryId', authenticateUser, adminController.editCategory.bind(adminController));
 
 
-export default adminRouter
+export default adminRouter;

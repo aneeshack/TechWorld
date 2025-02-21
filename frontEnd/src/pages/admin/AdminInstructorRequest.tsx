@@ -8,8 +8,9 @@ import { updateRequestStatus } from "../../redux/store/slices/UserSlice";
 import { store } from "../../redux/store";
 import { EyeIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-const AdminInstructorRequest = () => {
 
+
+const AdminInstructorRequest = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [requests, setRequests]= useState<SignupFormData[]>([])

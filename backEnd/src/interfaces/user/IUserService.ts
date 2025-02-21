@@ -1,6 +1,6 @@
 import { IUser } from "./IUser";
 
-export interface IUserService{
+export interface IAuthService{
     createUser(userData: Partial<IUser>): Promise<IUser>;
     // verifyOtp(email: string, otp: string): Promise<boolean>;
     // loginUser(email: string, password: string): Promise<{

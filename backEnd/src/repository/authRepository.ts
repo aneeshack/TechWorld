@@ -1,12 +1,13 @@
 import { IUser, RequestStatus } from "../interfaces/user/IUser";
-import { IUserRepository } from "../interfaces/user/IUserRepository";
+import { IAuthRepository } from "../interfaces/user/IAuthRepository";
 import OtpModel from "../models/otpModel";
 import UserModel from "../models/userModel";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
-export class UserRepository implements IUserRepository {
+export class AuthRepository implements IAuthRepository {
 
-  async findById(userId: string):Promise<IUser |null> {
+  async findById(userId: mongoose.Types.ObjectId):Promise<IUser |null> {
     return await UserModel.findById(userId)
   }
 
@@ -15,7 +16,7 @@ export class UserRepository implements IUserRepository {
     try {
       return await UserModel.findOne({ email });
     } catch (error) {
-      console.log("userRepository error:finbyemail", error);
+      console.log("authRepository error:finbyemail", error);
       throw new Error(`Error in finding Email: ${(error as Error).message}`);
     }
   }
@@ -25,7 +26,7 @@ export class UserRepository implements IUserRepository {
       const user = new UserModel(userData);
       return await user.save();
     } catch (error) {
-      console.log("userRepository error:createUser", error);
+      console.log("authRepository error:createUser", error);
       throw new Error(`Error in creating user: ${(error as Error).message}`);
     }
   }
@@ -48,7 +49,7 @@ export class UserRepository implements IUserRepository {
       }
       return user;
     } catch (error) {
-      console.log("userRepository error:updateUser", error);
+      console.log("authRepository error:updateUser", error);
       throw new Error(`Error in updating user: ${(error as Error).message}`);
     }
   }
@@ -58,7 +59,7 @@ export class UserRepository implements IUserRepository {
       const otp = new OtpModel(otpData);
       await otp.save();
     } catch (error) {
-      console.log("userRepository error:create otp", error);
+      console.log("authRepository error:create otp", error);
       throw new Error(`Error in creating otp: ${(error as Error).message}`);
     }
   }
@@ -69,7 +70,7 @@ export class UserRepository implements IUserRepository {
     try {
       return await OtpModel.findOne({ email });
     } catch (error) {
-      console.log("userRepository error: find otp by email", error);
+      console.log("authRepository error: find otp by email", error);
       throw new Error(
         `Error in finding otp by email: ${(error as Error).message}`
       );
@@ -80,7 +81,7 @@ export class UserRepository implements IUserRepository {
     try {
       const otp =await OtpModel.deleteOne({ email });
     } catch (error) {
-      console.log("userRepository error: delete otp", error);
+      console.log("authRepository error: delete otp", error);
       throw new Error(`Error in deleting otp: ${(error as Error).message}`);
     }
   }
@@ -103,7 +104,7 @@ export class UserRepository implements IUserRepository {
 
       return user;
     } catch (error) {
-      console.log("userRepository error: verify user", error);
+      console.log("authRepository error: verify user", error);
       throw new Error(` ${(error as Error).message}`);
     }
   }
@@ -123,7 +124,7 @@ export class UserRepository implements IUserRepository {
       console.log('register',user)
       return user;
     } catch (error) {
-      console.log("userRepository error: register instructor", error);
+      console.log("authRepository error: register instructor", error);
       throw new Error(` ${(error as Error).message}`);
     }
   }
@@ -132,7 +133,7 @@ export class UserRepository implements IUserRepository {
     try {
       await UserModel.updateOne({ _id: userId }, { $set: { password } });
     } catch (error) {
-      console.log("userRepository error: reset password", error);
+      console.log("authRepository error: reset password", error);
       throw new Error(` ${(error as Error).message}`);
     }
   }

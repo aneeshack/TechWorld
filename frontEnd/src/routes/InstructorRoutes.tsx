@@ -5,6 +5,7 @@ import InstructorCourses from "../pages/instructor/InstructorCourses"
 import InstructorProfile from "../pages/instructor/InstructorProfile"
 import CreateCourse from "../pages/instructor/CreateCourse"
 import AddLesson from "../pages/instructor/AddLesson"
+import AddAssessment from "../pages/instructor/addAssessment"
 
 
 const InstructorRoutes = () => {
@@ -19,7 +20,9 @@ const InstructorRoutes = () => {
         <Route path="courses" element={<InstructorCourses/>}/>
         <Route path="profile" element={<InstructorProfile/>}/>
         <Route path="createCourse" element={<CreateCourse/>}/>
+        <Route path="editCourse/:courseId" element={<CreateCourse/>}/>
         <Route path="addLesson" element={<AddLesson/>}/>
+        <Route path="addAssessment" element={<AddAssessment/>}/>
         
         </Route>
 

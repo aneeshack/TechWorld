@@ -1,6 +1,3 @@
-
-  
-
 import { useFormik } from "formik";
 import { categoryValidationSchema } from "../../utilities/validation/CategoryValidation";
 import { useEffect, useState } from "react";

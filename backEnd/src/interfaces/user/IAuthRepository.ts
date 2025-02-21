@@ -1,7 +1,8 @@
+import mongoose from "mongoose";
 import { IUser } from "./IUser";
 
-export interface IUserRepository {
-    findById(userId: string): Promise<IUser |null>;
+export interface IAuthRepository {
+    findById(userId: mongoose.Types.ObjectId): Promise<IUser |null>;
     findByEmail(email: string): Promise<IUser | null>;
     createUser(userData: Partial<IUser>): Promise<IUser>;
     updateUser(email: string, updateData: Partial<IUser>): Promise<IUser |null>;

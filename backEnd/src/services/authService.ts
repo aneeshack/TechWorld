@@ -1,17 +1,18 @@
 import { IUser, Role } from "../interfaces/user/IUser";
-import { IUserRepository } from "../interfaces/user/IUserRepository";
-import { UserRepository } from "../repository/userRepository";
+import { IAuthRepository } from "../interfaces/user/IAuthRepository";
+import { AuthRepository } from "../repository/authRepository";
 import { OtpGenerator } from "../util/auth/generateOtp";
 import { generateToken } from "../util/auth/jwt";
 import EmailService from "../util/auth/nodeMailer";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
 
-export class UserService {
-    constructor(private userRepository: UserRepository){}
+export class AuthService {
+    constructor(private authRepository: AuthRepository){}
 
-    async getUserById(userId: string): Promise<IUser |null>{
-        return this.userRepository.findById(userId)
+    async getUserById(userId: mongoose.Types.ObjectId): Promise<IUser |null>{
+        return this.authRepository.findById(userId)
     }
 
     async signup(userData: Partial<IUser>): Promise<{ message: string }>{
@@ -20,32 +21,32 @@ export class UserService {
                 throw new Error('Email and password is required');
             }
             
-            const existingUser = await this.userRepository.findByEmail(userData.email)
+            const existingUser = await this.authRepository.findByEmail(userData.email)
             if(existingUser){
                 throw new Error('User already exists')
             }
 
             userData.password = await bcrypt.hash(userData.password, 10)
-            await this.userRepository.createUser({...userData, isOtpVerified: false})
+            await this.authRepository.createUser({...userData, isOtpVerified: false})
 
             // generate and save otp
             const otp = OtpGenerator.generateOtp()
             console.log('otp',otp)
-            await this.userRepository.createOtp({email: userData.email, otp})
+            await this.authRepository.createOtp({email: userData.email, otp})
 
             const emailService = new EmailService()
             await emailService.sendMail(userData.email, "otp verification", otp)
 
             return {message: "Signup successful. Please verify your email."}
         } catch (error) {
-            console.log('userService error:signup',error)
+            console.log('authService error:signup',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
 
     async verifyOtp(email: string, otp: string):Promise<{message:string, token?:string, user?:Partial<IUser>}>{
         try {
-            const foundOtp = await this.userRepository.findOtpByEmail(email)
+            const foundOtp = await this.authRepository.findOtpByEmail(email)
             if(!foundOtp){
                  throw new Error('Otp expired')
             }
@@ -54,7 +55,7 @@ export class UserService {
                 throw new Error('Invalid Otp')
             }
            
-            const user = await this.userRepository.updateUser(email,{ isOtpVerified:true})
+            const user = await this.authRepository.updateUser(email,{ isOtpVerified:true})
             if(!user){
                 throw new Error('Failed to update user')
             }
@@ -62,34 +63,34 @@ export class UserService {
             const token = generateToken({id:user?._id,email, role:user?.role})
           
 
-            await this.userRepository.deleteOtp(email)
+            await this.authRepository.deleteOtp(email)
 
             return {message:'user signup successfull', token, user}
         } catch (error) {
-            console.log('userService error:verify Otp',error)
+            console.log('authService error:verify Otp',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
 
     async resendOtp(email: string):Promise<{message: string}>{
         try {
-            const user = await this.userRepository.findByEmail(email)
+            const user = await this.authRepository.findByEmail(email)
             if(!user){
                  throw new Error('user not found')
             }
-            await this.userRepository.deleteOtp(email)
+            await this.authRepository.deleteOtp(email)
              
              // generate and save otp
             const otp = OtpGenerator.generateOtp()
             console.log('otp',otp)
-            await this.userRepository.createOtp({email, otp})
+            await this.authRepository.createOtp({email, otp})
 
             const emailService = new EmailService()
             await emailService.sendMail(email, "otp verification", otp)
 
             return {message: "Signup successful. Please verify your email."}
         } catch (error) {
-            console.log('userService error:resend Otp',error)
+            console.log('authService error:resend Otp',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
@@ -100,7 +101,7 @@ export class UserService {
                 throw new Error('Email is required');
             }
             
-            const user = await this.userRepository.verifyUser(userData.email, userData?.password)
+            const user = await this.authRepository.verifyUser(userData.email, userData?.password)
             if(!user){
                 throw new Error('Invalid credentials')
             }
@@ -115,20 +116,20 @@ export class UserService {
 
             return {message: "Login successful.", user: user,token}
         } catch (error) {
-            console.log('userService error:login',error)
+            console.log('authService error:login',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
     
     async register(userData: Partial<IUser>):Promise<{message: string, user?:Partial<IUser>}>{
         try {
-            const user = await this.userRepository.updateRegister(userData)
+            const user = await this.authRepository.updateRegister(userData)
             if(!user){
                 throw new Error('can not find user')
             }
             return {message:'success', user}
         } catch (error) {
-            console.log('userService error:signup',error)
+            console.log('authService error:signup',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
@@ -158,14 +159,14 @@ export class UserService {
             }
 
 
-            let user = await this.userRepository.findByEmail(email);
+            let user = await this.authRepository.findByEmail(email);
 
             if(user && user?.role !==roleInput ){
                 throw new Error(`you signed in as ${user?.role}. Please use the ${user?.role} login page`)
             }
 
             if(!user){
-                user = await this.userRepository.createUser({
+                user = await this.authRepository.createUser({
                     email,
                     userName:name,
                     isGoogleAuth:true,
@@ -190,7 +191,7 @@ export class UserService {
                 }
 
                 if(Object.keys(updateData).length>0){
-                    user = await this.userRepository.updateUser(email, updateData)
+                    user = await this.authRepository.updateUser(email, updateData)
                 }
             }
 
@@ -202,14 +203,14 @@ export class UserService {
            
             return {message: "google authentication successful.", user:user??undefined,token};
         } catch (error) {
-            console.log('userService error:google signup',error)
+            console.log('authService error:google signup',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
 
     async forgotPassword(email: string, role:Role):Promise<{message: string}>{
         try {
-            const user = await this.userRepository.findByEmail(email)
+            const user = await this.authRepository.findByEmail(email)
             if(!user){
                 throw new Error('User not found. Please signup again')
             }
@@ -223,12 +224,12 @@ export class UserService {
                 throw new Error('Please login through google or signup')
             }
 
-            await this.userRepository.deleteOtp(email)
+            await this.authRepository.deleteOtp(email)
             // generate and save otp
             const otp = OtpGenerator.generateOtp()
             console.log('otp',otp)
 
-            await this.userRepository.createOtp({email, otp})
+            await this.authRepository.createOtp({email, otp})
 
             const emailService = new EmailService()
             await emailService.sendMail(email, "otp verification", otp)
@@ -236,7 +237,7 @@ export class UserService {
             return {message: "Signup successful. Please verify your email."}
 
         } catch (error) {
-            console.log('userService error:forgot password',error)
+            console.log('authService error:forgot password',error)
             throw new Error(`${(error as Error).message}`)
         }
     }
@@ -244,7 +245,7 @@ export class UserService {
     async resetPassword(email: string, password: string, role:Role):Promise<{message: string}>{
         try {
             console.log('inside reset password')
-            const user = await this.userRepository.findByEmail(email)
+            const user = await this.authRepository.findByEmail(email)
             if (!user) {
                 throw new Error("User not found");
               }
@@ -254,11 +255,11 @@ export class UserService {
             }
             
             const hashedPassword = await bcrypt.hash(password, 10); // Hashing password
-            await this.userRepository.updatePassword(user?._id as string, hashedPassword);
+            await this.authRepository.updatePassword(user?._id as string, hashedPassword);
 
             return {message: 'password reset successfully'}
         } catch (error) {
-            console.log('userService error:reset password',error)
+            console.log('authService error:reset password',error)
             throw new Error(`${(error as Error).message}`)
         }
     }

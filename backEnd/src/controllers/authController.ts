@@ -1,16 +1,16 @@
 import { Request, Response } from "express";
 import { IUser, Role } from "../interfaces/user/IUser";
-import { UserService } from "../services/userService";
-import { UserRepository } from "../repository/userRepository";
+import { AuthService } from "../services/authService";
+import { AuthRepository } from "../repository/authRepository";
 import { clearTokenCookie, setTokenCookie } from "../util/auth/jwt";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { error } from "console";
 
-export class UserController {
-  private userService: UserService;
+export class AuthController {
+  private authService: AuthService;
 
   constructor() {
-    this.userService = new UserService(new UserRepository());
+    this.authService = new AuthService(new AuthRepository());
   }
 
   async fetchUser(req: AuthRequest, res: Response): Promise<void> {
@@ -20,7 +20,7 @@ export class UserController {
         return;
       }
 
-      const user = await this.userService.getUserById(req.user.id);
+      const user = await this.authService.getUserById(req.user.id);
       res.status(200).json({ success: true, user });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -54,7 +54,7 @@ export class UserController {
         isOtpVerified: false,
       };
 
-      const result = await this.userService.signup(userData);
+      const result = await this.authService.signup(userData);
       res.status(201).json({ success: true, message: result.message });
     } catch (error:any) {
         res.status(400).json({ success: false, message: error.message })
@@ -70,7 +70,7 @@ export class UserController {
         return 
       }
 
-      const result = await this.userService.resendOtp(email)
+      const result = await this.authService.resendOtp(email)
       res.status(200).json({success: true, message: result})
 
     } catch (error:any) {
@@ -87,7 +87,7 @@ export class UserController {
         return
       }
 
-      const { message, token, user} = await this.userService.verifyOtp(email,otp)
+      const { message, token, user} = await this.authService.verifyOtp(email,otp)
       if(!token){
         throw new Error('token not generated')
       }
@@ -136,7 +136,7 @@ export class UserController {
         role: roleInput,
       };
 
-      const { message, user, token} = await this.userService.loginAction(userData);
+      const { message, user, token} = await this.authService.loginAction(userData);
       if(user?.isBlocked){
         throw new Error('admin blocked you. Please contact admin.')
       }
@@ -167,8 +167,8 @@ export class UserController {
 
       roleInput = userRole as Role;
       console.log('role',userRole)
-      // const user = await this.userService.googleAuth(credentials,roleInput)
-      const { message, user, token} = await this.userService.googleAuth(credentials,roleInput)
+      // const user = await this.authService.googleAuth(credentials,roleInput)
+      const { message, user, token} = await this.authService.googleAuth(credentials,roleInput)
 
       if(!token){
         throw new Error('token not generated')
@@ -185,7 +185,7 @@ export class UserController {
   async registerInstructor(req: Request, res: Response):Promise<void>{
     try {
       console.log('inside register instructor',req.body)
-      const user = await this.userService.register(req.body)
+      const user = await this.authService.register(req.body)
       res.status(200).json({success:true, data: user})
 
     } catch (error: any) {
@@ -202,7 +202,7 @@ export class UserController {
         res.status(400).json({ success: false, message: "Invalid or missing role." });
         return;       
       }
-      const user = await this.userService.forgotPassword(email, role)
+      const user = await this.authService.forgotPassword(email, role)
       res.status(200).json({success:true, message:'Otp send to your, email plase verify it.'})
     } catch (error:any) {
       res.status(400).json({ success:false, message: error.message })
@@ -218,7 +218,7 @@ export class UserController {
         res.status(400).json({ success: false, message: "All fields are required" });
         return;
       }
-      const result =await this.userService.resetPassword(email, password,role)
+      const result =await this.authService.resetPassword(email, password,role)
       res.status(200).json({success:true, message: result.message})
     } catch (error:any) {
       res.status(400).json({ success:false, message: error.message })

@@ -2,6 +2,11 @@
 const AddLesson = () => {
   return (
     <div className="w-xl lg:w-5/6 mx-auto p-6">
+      <a href="/instructor/dashboard/addLesson" className="flex justify-end">
+          <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
+            Add Assessment
+          </button>
+        </a>
       <h2 className="text-2xl font-semibold mb-4">Lesson 1 : Cooking Skills</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-4 md:col-span-2">

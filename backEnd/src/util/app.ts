@@ -2,8 +2,9 @@ import express,{ Request, Response } from 'express';
 import cors from 'cors';
 import { envConfig } from '../config/envConfig';
 import cookieParser from 'cookie-parser';
-import userRouter from '../routes/userRoutes';
 import adminRouter from '../routes/adminRoutes';
+import authRouter from '../routes/authRoutes';
+import instructorRouter from '../routes/instructorRoutes';
 
 const app = express()
 
@@ -18,7 +19,8 @@ app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
 
 
-app.use('/',userRouter)
+app.use('/',authRouter)
 app.use('/admin',adminRouter)
+app.use('/instructor',instructorRouter)
 
 export default app

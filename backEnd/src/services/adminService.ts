@@ -1,5 +1,4 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-// import { s3 } from "../config/awsConfig";
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { IUser } from "../interfaces/user/IUser";

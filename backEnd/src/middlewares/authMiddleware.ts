@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express"
 import jwt from 'jsonwebtoken';
+import mongoose from "mongoose";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret'
 export interface AuthRequest extends Request{
     user?: {
-        id: string,
+        id: mongoose.Types.ObjectId,
         email: string,
         role: string
     }
@@ -22,7 +23,7 @@ export const authenticateUser = (req: AuthRequest, res: Response, next: NextFunc
         const decoded = jwt.verify(token, JWT_SECRET) as {id:string, email: string, role:string}
 
         req.user = {
-            id:decoded.id,
+            id:new mongoose.Types.ObjectId(decoded.id),
             email: decoded.email,
             role: decoded.role
         }
