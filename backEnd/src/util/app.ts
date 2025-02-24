@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import adminRouter from '../routes/adminRoutes';
 import authRouter from '../routes/authRoutes';
 import instructorRouter from '../routes/instructorRoutes';
+import userRouter from '../routes/userRoutes';
 
 const app = express()
 
@@ -21,6 +22,7 @@ app.use(cookieParser())
 
 app.use('/',authRouter)
 app.use('/admin',adminRouter)
+app.use('/user',userRouter)
 app.use('/instructor',instructorRouter)
 
 export default app

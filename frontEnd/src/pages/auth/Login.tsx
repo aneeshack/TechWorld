@@ -21,12 +21,22 @@ const Login = () => {
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(location.state?.role);
 
-useEffect(() => {
-  if (userRole) {
-    setUserRole(userRole);
-  }
-  localStorage.removeItem('forgotPasswordEmail')
-}, [userRole]);
+  useEffect(() => {
+    if (userRole) {
+      setUserRole(userRole);
+    }
+    localStorage.removeItem('forgotPasswordEmail')
+  }, [userRole]);
+
+  useEffect(() => {
+    if (!userRole) {
+      // Redirect to home page if there's no role
+      navigate("/");
+      toast.error("Please select a role before logging in.");
+    } else {
+      localStorage.removeItem("forgotPasswordEmail");
+    }
+  }, [userRole, navigate]);
 
   useEffect(() => {
     console.log('role',userRole)

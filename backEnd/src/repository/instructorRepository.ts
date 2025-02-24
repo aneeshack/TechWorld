@@ -45,9 +45,43 @@ export class InstructorRepository implements IInstructorRepository{
 
     async getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]> {
         try {
-            return courseModel.find({instructor: instructorId})
-                .populate('category','categoryName')
-                .exec()
+
+            const courses = await courseModel.aggregate([
+                {$match: {instructor: instructorId}},
+                {
+                    $lookup:{
+                        from: 'categories',
+                        localField: 'category',
+                        foreignField: '_id',
+                        as:'category'
+                    }
+                },
+                {
+                    $unwind: '$category'
+                },
+               {
+                $lookup:{
+                    from:'lessons',
+                    localField:'lessons',
+                    foreignField: '_id',
+                    as:'lessons'
+                }
+               },
+               {
+                $addFields:{
+                    lessonCount: {
+                        $size:'$lessons'
+                    }
+                }
+               },{
+                $project:{
+                    lessons: 0,
+                }
+               }
+
+            ])
+            console.log('courses',courses)
+            return courses;
         } catch (error) {
             console.log("instructor repository error:get all course", error);
             throw new Error(` ${(error as Error).message}`);
@@ -67,18 +101,43 @@ export class InstructorRepository implements IInstructorRepository{
         }
     }
 
-    async addLesson(courseId: string, lessonData: Partial<ILesson>): Promise<ICourse | null> {
+    async courseLessons(courseId: string): Promise<ILesson[]> {
+        
+        try {
+            return await lessonModel.find({course: courseId}).exec()
+          
+        } catch (error) {
+            console.log("instructor repository error:get all lessons", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
+
+    async addLesson( lessonData: Partial<ILesson>): Promise<ILesson | null> {
         try {
             const newLesson = new lessonModel(lessonData);
             const savedLesson = await newLesson.save();
 
             return await courseModel.findByIdAndUpdate(
-                courseId,
+                lessonData.course,
                 {$push:{lessons:savedLesson._id}},
                 {new: true}
             )
         } catch (error) {
             console.log("instructor repository error:add lesson", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
+    async getSingleLesson(lessonId: string): Promise<ILesson | null> {
+        try {
+            const lesson = await lessonModel.findById(lessonId)
+            if (!lesson) {
+                throw new Error('No lesson found');
+            }
+            return lesson;
+        } catch (error) {
+            console.log("instructor repository error:get single lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -114,6 +173,15 @@ export class InstructorRepository implements IInstructorRepository{
             )
         } catch (error) {
             console.log("instructor repository error:edit assessment", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
+    async publishCourse(courseId: string): Promise<ICourse | null> {
+        try {
+            return await courseModel.findByIdAndUpdate(courseId,{isPublished:true}, {new: true})
+        } catch (error) {
+            console.log("instructor repository error:edit lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }

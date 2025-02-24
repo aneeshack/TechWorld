@@ -91,7 +91,7 @@ export class AdminService{
 
     async getPresignedUrl(fileName: string, fileType: string): Promise<{ presignedUrl: string; imageUrl: string }> {
         try {
-          const key = `categories/${Date.now()}-${fileName}`;
+            const key = `categories/${Date.now()}-${encodeURIComponent(fileName)}`;
     
           const command = new PutObjectCommand({
             Bucket: process.env.AWS_S3_BUCKET_NAME,

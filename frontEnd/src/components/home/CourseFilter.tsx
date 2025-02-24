@@ -1,27 +1,31 @@
 
 
-import { useState } from "react";
-import courseBanner from '../../assets/commonPages/course.png'
+import { useEffect, useState } from "react";
+import courseBanner from '../../assets/commonPages/course.jpg'
+import { CLIENT_API } from "../../utilities/axios/Axios";
+import { ICourse } from "../../types/ICourse";
+import { Link } from "react-router-dom";
 // import { Pagination, Star } from "lucide-react";
 
-const courses = new Array(6).fill({
-  title: "Create an LMS Website With LearnPress",
-  instructor: "Dr. Daniel Park",
-  duration: "2 Weeks",
-  students: "150 Students",
-  level: "All Levels",
-  lessons: "32 Lessons",
-  price: "$0 / Free",
-  image: courseBanner,
-});
 
 const CourseFilter = ()=> {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [courses, setCourses] = useState<ICourse[]>([]);
+
+ useEffect(() => {
+    CLIENT_API.get("/user/courses")
+      .then((response) => {
+        setCourses(response.data.data);
+      })
+      .catch((error) => {
+        console.log("api error", error);
+      });
+  }, []);
+
 
   return (
     <div className="container mx-auto p-6" >
         <div className="flex justify-center">
-        <img src={courseBanner} alt="course banner" className="h-40 w-full lg:h-72 lg:w-5/6 object-cover rounded-lg" />
+        <img src={courseBanner} alt="course banner" className="h-52 w-full lg:h-72 lg:w-5/6 object-cover rounded-lg" />
         </div>
       {/* Header */}
       {/* <div className="bg-green-100 mt-6 p-6 rounded-lg flex items-center justify-between">
@@ -29,7 +33,7 @@ const CourseFilter = ()=> {
       </div>
        */}
        <div className="my-6 p-6 rounded-lg flex justify-center  ">
-        <h1 className="rounded-md shadow-xl p-6 px-24 lg:px-48 text-2xl font-bold">EduWorld courses for all levels</h1>
+        <h1 className="rounded-md shadow-xl bg-blue-100 text-blue-800 p-6 px-24 lg:px-48 text-2xl font-bold">EduWorld courses for all levels</h1>
       </div>
        <div className="flex justify-center"> 
               
@@ -59,29 +63,29 @@ const CourseFilter = ()=> {
         </div>
         
         {/* Course List */}
-        <div className="col-span-9">
+        <div className="col-span-9 ml-10">
           <h2 className="text-3xl font-bold mb-4">All Courses</h2>
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             {courses.map((course, index) => (
+                <Link to={`/courseDetail/${course._id}`}>
               <div key={index} className="flex bg-white p-4 shadow rounded-lg">
-                <img src={course.image} alt="Course" className="w-40 h-24 rounded-lg object-cover" />
-                <div className="ml-4">
-                  <h3 className="text-lg font-semibold">{course.title}</h3>
-                  <p className="text-sm text-gray-600">By {course.instructor}</p>
-                  <div className="flex space-x-4 text-sm text-gray-500 mt-1">
-                    <span>{course.duration}</span>
-                    <span>{course.students}</span>
-                    <span>{course.level}</span>
-                    <span>{course.lessons}</span>
+                <img src={course.thumbnail} alt="Course" className="w-40 h-32 rounded-lg object-cover" />
+                <div className="ml-6">
+                  <h3 className="text-xl font-bold">{course.title}</h3>
+                  <p className="text-m  font-semibold text-blue-600">By {course.instructor.userName}</p>
+                  <div className="flex my-2 space-x-4 text-sm text-gray-500 mt-1">
+                    <span>{course.description}</span>
                   </div>
-                  <p className="text-green-600 font-semibold mt-2">{course.price}</p>
+                  <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-lg">{course.category.categoryName}</span>
+                  <p className="text-green-600 font-semibold mt-2">Rs: {course.price}</p>
                 </div>
               </div>
+                </Link> 
             ))}
           </div>
 
           {/* Pagination */}
-          <div className="flex justify-center mt-6 space-x-2">
+          {/* <div className="flex justify-center mt-6 space-x-2">
             {[1, 2, 3, 4].map((page) => (
               <button
                 key={page}
@@ -93,7 +97,7 @@ const CourseFilter = ()=> {
                 {page}
               </button>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
       </div>

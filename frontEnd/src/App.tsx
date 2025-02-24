@@ -40,6 +40,7 @@ const App = () => {
 
       <Routes>
         <Route path="/*" element={<UserRoutes />} />
+        
         <Route
           path="/student/*"
           element={

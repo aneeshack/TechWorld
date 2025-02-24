@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function AddAssessment() {
+export default function Assessment() {
   const [question, setQuestion] = useState("");
   const [options, setOptions] = useState([{ text: "", isCorrect: false }]);
 

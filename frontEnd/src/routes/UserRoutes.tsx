@@ -10,6 +10,8 @@ import OtpResetPassword from "../pages/auth/OtpResetPassword"
 import CourseList from "../pages/commonPages/CourseList"
 import DistinctCourses from "../pages/commonPages/DistinctCourses"
 import Checkout from "../pages/commonPages/Checkout"
+import ProtectedRoutes from "./ProtectedRoutes"
+import { Role } from "../types/IForm"
 
 
 const UserRoutes = () => {
@@ -28,8 +30,12 @@ const UserRoutes = () => {
             {/* common pages */}
             <Route path="/teachUs" element={<TeachUs/>}/>
             <Route path="/courseList" element={<CourseList/>}/>
-            <Route path="/courseDetail" element={<DistinctCourses/>}/>
-            <Route path="/checkout" element={<Checkout/>}/>
+            <Route path="/courseDetail/:courseId" element={<DistinctCourses/>}/>
+
+            {/* protected checkout route */}
+            <Route element={<ProtectedRoutes allowedRole={Role.Student} />}>
+              <Route path="/checkout/:courseId" element={<Checkout/>}/>
+            </Route>
 
         </Routes>
     </div>
