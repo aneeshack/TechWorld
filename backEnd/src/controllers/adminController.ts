@@ -19,6 +19,15 @@ export class AdminController{
         }  
     }
 
+    async rejectedInstructors(req: Request, res:Response):Promise<void>{
+        try {
+            const AllRequsts = await this.adminService.getAllRejectedRequests()
+            res.status(201).json({ success: true, data:AllRequsts });
+        } catch (error:any) {
+            res.status(400).json({success: false, message: error.message })
+        }  
+    }
+
     async approveInstructor(req: Request, res:Response):Promise<void>{
         try {
             console.log('inside admin requests approved')

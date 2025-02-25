@@ -149,7 +149,7 @@ const OtpResetPassword = () => {
       <div className="w-3/4 lg:w-[400px] bg-gray-50 p-8 rounded-xl shadow-md">
           <h1 className="text-2xl font-bold text-green-700 text-center mb-6">Verify OTP</h1>
           <p className="text-gray-600 text-sm text-center mb-6">
-            Enter the OTP sent to your registered email/phone number.
+            Enter the OTP sent to your registered email/phone number. 
           </p>
           <form className="flex flex-col" onSubmit={handleVerifyOtp}>
             <input

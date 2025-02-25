@@ -16,9 +16,9 @@ const Otp = () => {
   const navigate = useNavigate();
   const [otp, setOtp] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { error, data} = useSelector((state:RootState)=>state.auth)
+  const { data} = useSelector((state:RootState)=>state.auth)
   const [email]=useState(location.state?.email || localStorage.getItem('signupEmail') || "")
-  // console.log('email',email)
+  console.log('email',email,data?.role)
   const RESEND_TIME =30;
   const [timeLeft, setTimeLeft] =useState(0);
   const [canResend, setCanResend] =useState(false)
@@ -28,7 +28,7 @@ const Otp = () => {
       toast.error('Email is missing! Redirecting to signup')
       navigate('/signup')
     }else{
-      localStorage.setItem('signupEmail',email)
+      // localStorage.setItem('signupEmail',email)
     }
   },[email,navigate])
 
@@ -129,7 +129,7 @@ const Otp = () => {
 
   useEffect(() => {
     return () => {
-      localStorage.removeItem("signupEmail");
+      // localStorage.removeItem("signupEmail");
       localStorage.removeItem("otpExpiryTime");
     };
   }, []);
@@ -151,7 +151,7 @@ const Otp = () => {
             Enter the OTP sent to your registered email/phone number.
           </p>
           <form className="flex flex-col" onSubmit={handleVerifyOtp}>
-          {error  && <p className="text-red-500 text-center mb-4">{error}</p>}
+          {/* {error  && <p className="text-red-500 text-center mb-4">{error}</p>} */}
             <input
               type="text"
               placeholder="Enter OTP"

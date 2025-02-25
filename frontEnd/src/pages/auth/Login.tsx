@@ -32,7 +32,7 @@ const Login = () => {
     if (!userRole) {
       // Redirect to home page if there's no role
       navigate("/");
-      toast.error("Please select a role before logging in.");
+      toast.error("Please login through home page.");
     } else {
       localStorage.removeItem("forgotPasswordEmail");
     }

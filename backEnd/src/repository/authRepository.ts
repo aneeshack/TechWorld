@@ -14,7 +14,7 @@ export class AuthRepository implements IAuthRepository {
   
   async findByEmail(email: string): Promise<IUser | null> {
     try {
-      return await UserModel.findOne({ email });
+      return await UserModel.findOne({ email});
     } catch (error) {
       console.log("authRepository error:finbyemail", error);
       throw new Error(`Error in finding Email: ${(error as Error).message}`);

@@ -16,6 +16,17 @@ export class AdminRepository implements IAdminRepository{
         }
     }
 
+    async getAllRejectedRequests(): Promise<IUser[]> {
+        try {
+            const requests = await UserModel.find({role:'instructor', isRequested:true, requestStatus:RequestStatus.Rejected})
+
+            return requests
+        } catch (error) {
+            console.log("adminRepository error:getAllRequest", error);
+            throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
     async approveRequest(userId: string): Promise<IUser> {
         try {
             const updateRequest = await UserModel.findByIdAndUpdate(userId,{requestStatus: RequestStatus.Approved},{new :true})

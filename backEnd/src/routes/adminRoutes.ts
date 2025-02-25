@@ -8,6 +8,7 @@ const adminRouter = Router();
 const adminController = new AdminController();
 
 adminRouter.get('/instructorRequests',authenticateUser, adminController.instructorRequests.bind(adminController));
+adminRouter.get('/instructorRequests/rejected',authenticateUser, adminController.rejectedInstructors.bind(adminController));
 adminRouter.patch('/request/approve/:userId', authenticateUser, validateUserId,handleValidationErrors, adminController.approveInstructor.bind(adminController));
 adminRouter.patch('/request/reject/:userId', authenticateUser, validateUserId,handleValidationErrors, adminController.rejectInstructor.bind(adminController));
 adminRouter.get('/users', authenticateUser, adminController.getAllUsers.bind(adminController));

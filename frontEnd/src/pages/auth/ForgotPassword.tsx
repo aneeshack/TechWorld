@@ -16,11 +16,13 @@ const ForgotPassword = () => {
   const [userRole, setUserRole]= useState(location.state?.role)
 
   useEffect(()=>{
-    if(userRole){
-      setUserRole(userRole)
-      console.log('user role',userRole)
+    if(!userRole){
+      navigate('/')
+      toast.error("Please login through home page.");
     }
-  },[userRole])
+    setUserRole(userRole)
+    console.log('user role',userRole)
+  },[userRole, navigate])
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
     e.preventDefault();
@@ -75,7 +77,7 @@ const ForgotPassword = () => {
             Forgot Password
           </h1>
           <p className="text-gray-600 text-sm text-center mb-6">
-            Enter your registered email address to receive a password reset link.
+            Enter your registered email address to  password reset.
           </p>
           
           <form onSubmit={handleSubmit} className="flex flex-col">

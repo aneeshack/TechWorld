@@ -30,6 +30,6 @@ export const courseValidationSchema = Yup.object({
 
   price: Yup.number()
     .required("Price is required")
-    .min(0, "Price caanot be negative")
+    .min(1000, "Price can't be below Rs:1000")
    
 });

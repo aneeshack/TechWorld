@@ -12,6 +12,7 @@ import DistinctCourses from "../pages/commonPages/DistinctCourses"
 import Checkout from "../pages/commonPages/Checkout"
 import ProtectedRoutes from "./ProtectedRoutes"
 import { Role } from "../types/IForm"
+import PaymentSuccess from "../pages/commonPages/PaymentSuccess"
 
 
 const UserRoutes = () => {
@@ -35,6 +36,7 @@ const UserRoutes = () => {
             {/* protected checkout route */}
             <Route element={<ProtectedRoutes allowedRole={Role.Student} />}>
               <Route path="/checkout/:courseId" element={<Checkout/>}/>
+              <Route path="/payment-success" element={<PaymentSuccess/>}/>
             </Route>
 
         </Routes>

@@ -23,6 +23,20 @@ export class AdminService{
         }
      }
 
+
+     async getAllRejectedRequests():Promise<IUser[]>{
+        try {
+            const requests = await this.adminRepository.getAllRejectedRequests();
+            if(!requests){
+                throw new Error('No requests find')
+            }
+            return requests
+        } catch (error) {
+            console.log('adminService error:get all requests',error)
+            throw new Error(`${(error as Error).message}`)
+        }
+     }
+
      async approveRequest(userId: string):Promise<IUser |null>{
         try {
             const updatedUser = await this.adminRepository.approveRequest(userId);

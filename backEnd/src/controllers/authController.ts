@@ -21,6 +21,7 @@ export class AuthController {
       }
 
       const user = await this.authService.getUserById(req.user.id);
+      console.log('fetch user data',user)
       res.status(200).json({ success: true, user });
     } catch (error) {
       console.error("Error fetching user:", error);

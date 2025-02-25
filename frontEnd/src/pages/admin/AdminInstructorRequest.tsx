@@ -14,6 +14,7 @@ const AdminInstructorRequest = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [requests, setRequests]= useState<SignupFormData[]>([])
+  const [rejectedRequests, setRejectedRequests] = useState<SignupFormData[]>([]);
 
     useEffect(() => {
           CLIENT_API.get('/admin/instructorRequests')
@@ -22,6 +23,15 @@ const AdminInstructorRequest = () => {
           })
           .catch((error) => {
           console.log('api error',error)
+          });
+
+
+          CLIENT_API.get('/admin/instructorRequests/rejected')
+          .then((response) => {
+            setRejectedRequests(response.data.data);
+          })
+          .catch((error) => {
+            console.log('API error:', error);
           });
       }, []);
 
@@ -139,6 +149,41 @@ const AdminInstructorRequest = () => {
   </>
       ):(
         <p className="text-center text-gray-500">No instructor requests found.</p>
+      )}
+
+       {/* Rejected Instructor Requests */}
+       {rejectedRequests.length > 0 && (
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold mb-6 text-red-500">Rejected Instructor Requests</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="py-3 px-4 border-b text-left">Name</th>
+                  <th className="py-3 px-4 border-b text-left">Qualification</th>
+                  <th className="py-3 px-4 border-b text-left">View Profile</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rejectedRequests.map((request) => (
+                  <tr key={request._id} className="hover:bg-gray-50">
+                    <td className="py-3 px-4 border-b">{request.userName}</td>
+                    <td className="py-3 px-4 border-b">{request.email}</td>
+                    <td className="py-3 px-4 border-b">
+                      <button
+                        onClick={() => navigate(`/admin/dashboard/instructor/${request._id}`, { state: { request } })}
+                        className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded flex items-center "
+                      >
+                        <EyeIcon className="h-5 w-5 mr-2" />
+                        <span>View</span>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
     
     </div>

@@ -4,11 +4,11 @@ import CheckoutPage from "../../components/home/CheckoutPage"
 
 const Checkout = () => {
   return (
-    <div>
-        <Navbar/>
+    <>
+    <Navbar/>
         <CheckoutPage/>
-        <Footer/>
-    </div>
+    <Footer/>
+    </>
   )
 }
 

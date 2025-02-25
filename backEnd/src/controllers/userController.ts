@@ -32,25 +32,97 @@ export class UserController {
     }
   }
 
-  async processPayment(req: Request, res: Response): Promise<void> {
+  async getAllCategories(req:Request, res: Response):Promise<void>{
     try {
-      // Assume the request body contains: courseId, userId, and paymentInfo details
-      const { courseId, userId, amount, currency } = req.body;
-      const paymentIntent = await this.userService.processPayment(courseId, userId, amount, currency);
-      res.status(200).json({ success: true, message: "Payment processing...", data: paymentIntent.client_secret });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
+        const allCategories = await this.userService.getAllCategories()
+        console.log('all categories',allCategories)
+        res.status(201).json({ success: true, data:allCategories });
+    } catch (error:any) {
+        res.status(400).json({success: false, message: error.message })
     }
-  }
-
-  async confirmPayment(req: Request, res: Response): Promise<void> {
+}
+  
+  async createPaymentSession(req: Request, res: Response):Promise<void> {
     try {
-      const { paymentIntentId, userId, courseId } = req.body;
-      await this.userService.confirmPayment(paymentIntentId, userId, courseId);
+      console.log('create payment session',req.body)
+      const { userId, courseId, amount, courseName, courseThumbnail } = req.body;
       
-      res.status(200).json({ success: true, message: "Payment confirmed & course enrolled!" });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
+      if (!userId || !courseId || !amount || !courseName || !courseThumbnail) {
+        res.status(400).json({ success: false, message: "Missing required fields" });
+        return
+      }
+      
+      const session = await this.userService.initiatePayment(
+        userId,
+        courseId,
+        amount,
+        courseName,
+        courseThumbnail
+      );
+      console.log('session id in controller', session)
+      res.json({ success: true,message:'session created', data: session });
+    } catch (error:any) {
+      res.status(500).json({ success: false, message: error.message });
     }
+  };
+  
+ async getPaymentSession (req: Request, res: Response):Promise<void> {
+    try {
+      const { sessionId } = req.params;
+  
+      if (!sessionId) {
+         res.status(400).json({ success: false, message: "Session ID required" });
+         return
+      }
+  
+      const session = await this.userService.getPaymentStatus(sessionId);
+  
+      res.json({ success: true, data: session });
+    } catch (error:any) {
+      res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+async couresEnrollment(req: Request, res: Response):Promise<void> {
+  try {
+    const { userId, courseId, sessionId,completionStatus,amount, enrolledAt } = req.body;
+
+    if (!userId || !courseId || !sessionId || !completionStatus || !amount|| !enrolledAt ) {
+       res.status(400).json({ success: false, message: "Missing required fields." });
+       return
+    }
+
+    const enrollment = await this.userService.courseEnroll(userId, courseId, completionStatus, amount, enrolledAt);
+
+    if (!enrollment) {
+      res.status(500).json({ success: false, message: "Enrollment failed." });
+      return
+       
+    } 
+
+    res.status(201).json({ success: true, message: "Enrollment successful.", enrollment });
+  } catch (error:any) {
+    console.error("Enrollment error:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
+}
+
+async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
+  try {
+    console.log('inside fetch enrolled course')
+    const { userId } = req.params; 
+
+    if (!userId) {
+      res.status(400).json({ success: false, message: "User ID is required" });
+      return;
+    }
+
+    const enrolledCourses = await this.userService.getEnrolledCourses(userId);
+
+    res.status(200).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
+  } catch (error: any) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
 }
