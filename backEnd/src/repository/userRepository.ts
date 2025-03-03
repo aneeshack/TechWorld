@@ -29,6 +29,55 @@ export class UserRepository implements IUserRepository {
       throw new Error(`${(error as Error).message}`);
     }
   }
+  async findCourses(
+    searchTerm: string = "",
+    categoryIds: string[] = [],
+    priceMin?: number,
+    priceMax?: number,
+    sortOrder: "asc" | "desc" | "" = "",
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ courses: ICourse[]; total: number }> {
+    const query: any = {};
+  
+    if (searchTerm) {
+      query.title = { $regex: searchTerm, $options: "i" };
+    }
+  
+    if (categoryIds.length > 0) {
+      query.category = { $in: categoryIds };
+    }
+  
+    if (priceMin !== undefined || priceMax !== undefined) {
+      query.price = {};
+      if (priceMin !== undefined) query.price.$gte = priceMin;
+      if (priceMax !== undefined) query.price.$lte = priceMax;
+    }
+  
+    const sort: any = {};
+    if (sortOrder === "asc" || sortOrder === "desc") {
+      sort.price = sortOrder === "asc" ? 1 : -1;
+    }
+  
+    // Calculate skip value for pagination
+    const skip = (page - 1) * limit;
+  
+    // Execute query with pagination
+    const courses = await courseModel
+      .find(query)
+      .populate("category", "categoryName")
+      .populate("instructor", "userName")
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .exec();
+  
+    // Get total count of matching documents
+    const total = await courseModel.countDocuments(query);
+  
+    return { courses, total };
+  }
+
 
   async getSingleCourse(courseId: string): Promise<ICourse | null> {
     try {
@@ -113,10 +162,4 @@ export class UserRepository implements IUserRepository {
     }
   }
 
-  // async createPaymentSession(data: any): Promise<any> {
-  //   return {
-  //     id: `session_${Math.random().toString(36).substr(2, 9)}`,
-  //     ...data
-  //   };
-  // }
 }

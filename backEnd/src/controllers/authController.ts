@@ -5,13 +5,12 @@ import { AuthRepository } from "../repository/authRepository";
 import { clearTokenCookie, setTokenCookie } from "../util/auth/jwt";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { error } from "console";
+import { IAuthService } from "../interfaces/user/IAuthService";
 
 export class AuthController {
-  private authService: AuthService;
 
-  constructor() {
-    this.authService = new AuthService(new AuthRepository());
-  }
+  // constructor(private authService: IAuthService) {}
+  constructor(private authService: AuthService) {}
 
   async fetchUser(req: AuthRequest, res: Response): Promise<void> {
     try {

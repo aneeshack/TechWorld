@@ -61,7 +61,9 @@ export interface SignupFormData {
     isBlocked?: boolean,
     lastLoginDate?: Date,
     loginStreak?: number,
-    weeklyLogins?: boolean[]
+    weeklyLogins?: boolean[],
+    createdAt?: Date,
+    updatedAt?: Date
 }
 
 export interface Response{

@@ -9,6 +9,7 @@ import jwt from 'jsonwebtoken';
 import mongoose from "mongoose";
 
 export class AuthService {
+    // constructor(private authRepository: IAuthRepository){}
     constructor(private authRepository: AuthRepository){}
 
     async getUserById(userId: mongoose.Types.ObjectId): Promise<IUser |null>{
@@ -60,7 +61,7 @@ export class AuthService {
                 throw new Error('Failed to update user')
             }
 
-            const token = generateToken({id:user?._id,email, role:user?.role})
+            const token =  await generateToken({id:user?._id,email, role:user?.role})
           
 
             await this.authRepository.deleteOtp(email)
@@ -111,7 +112,7 @@ export class AuthService {
             }
             
           
-            const token = generateToken({id:user?._id,email:user?.email, role:user?.role})
+            const token = await generateToken({id:user?._id,email:user?.email, role:user?.role})
 
 
             return {message: "Login successful.", user: user,token}
@@ -199,7 +200,7 @@ export class AuthService {
                 throw new Error('admin blocked you. Please contact admin.')
             }
 
-            const token = generateToken({id:user?._id,email, role:user?.role})
+            const token = await generateToken({id:user?._id,email, role:user?.role})
            
             return {message: "google authentication successful.", user:user??undefined,token};
         } catch (error) {

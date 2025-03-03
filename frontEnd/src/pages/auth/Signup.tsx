@@ -33,8 +33,11 @@ const Signup = () => {
   useEffect(() => {
     if (userRole) {
       setUserRole(userRole);
+    }else{
+      navigate('/')
     }
-  }, [userRole]);
+    
+  }, [userRole,navigate]);
   useEffect(() => {
     console.log('role',userRole)
     if (userRole === Role.Instructor) {

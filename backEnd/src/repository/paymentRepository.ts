@@ -3,7 +3,7 @@ import { IPayment } from "../interfaces/courses/IPayment";
 import { paymentModel } from "../models/paymentModel";
 
 export class PaymentRepository {
-   private stripe: Stripe;  // Define Stripe as a property
+   private stripe: Stripe; 
  
    constructor() {
      this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -31,7 +31,7 @@ export class PaymentRepository {
                 name: courseName,
                 images: [courseThumbnail],
               },
-              unit_amount: amount * 100, // Stripe expects amount in cents/paise
+              unit_amount: amount * 100, 
             },
             quantity: 1,
           },

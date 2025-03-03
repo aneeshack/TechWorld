@@ -3,13 +3,13 @@ import { InstructorRepository } from "../repository/instructorRepository";
 import { InstructorService } from "../services/instructorService";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Role } from "../interfaces/user/IUser";
+import { lessonModel } from "../models/lessonModel";
+import { IInstructorService } from "../interfaces/user/IInstructorService";
 
 export class InstructorController {
-    private instructorService: InstructorService;
 
-    constructor(){
-        this.instructorService = new InstructorService(new InstructorRepository)
-    }
+   //  constructor(private instructorService: IInstructorService){}
+    constructor(private instructorService: InstructorService){}
 
     async fetchCategories (req: Request, res: Response):Promise<void>{
        try {
@@ -149,7 +149,7 @@ export class InstructorController {
     }
     console.log('lesson',lessonData)
     const lesson = await this.instructorService.addLesson(lessonData)
-    res.status(200).json({ success: true, message:"created the lesson", data:lesson });
+    res.status(200).json({ success: true, message:"created the lesson", data:{ lessonId: lesson?._id } });
    } catch (error:any) {
     res.status(400).json({success: false, message: error.message })
    }
@@ -215,4 +215,62 @@ export class InstructorController {
        res.status(400).json({success: false, message: error.message })
       }
    }
+
+
+
+ async addOrUpdateAssessment(req: Request, res: Response):Promise<void> {
+      try {
+         console.log('assesment')
+        const { lessonId } = req.params;
+      //   const { question, options } = req.body;
+      console.log('lessonid',lessonId)
+        const { questions } = req.body;
+         console.log('ass,ques',questions,lessonId)
+    
+        // Validate lesson existence
+        const lesson = await lessonModel.findById(lessonId);
+        if (!lesson) {
+           res.status(404).json({ message: "Lesson not found" });
+           return
+        }
+    
+        // Update assessment data
+        lesson.assessment = questions;
+        await lesson.save();
+    
+        res.status(200).json({ message: "Assessment saved successfully", lesson });
+      } catch (error) {
+        res.status(500).json({ message: "Server error", error });
+      }
+    };
+
+    async getInstructorProfile(req: Request, res: Response): Promise<void> {
+      try {
+          const userId = req.params.userId;
+          const instructorProfile = await this.instructorService.fetchInstructorProfile(userId);
+          
+         res.status(200).json({ success: true, message:'instructor profile fetched successfully!', data: instructorProfile });
+      } catch (error:any) {
+         res.status(400).json({success: false, message: error.message })
+      }
+  }
+
+  async updateProfile(req: Request, res: Response): Promise<void> {
+   try {
+     const { userId } = req.params;
+     const updateData = req.body;
+ 
+     const updatedInstructor = await this.instructorService.updateInstructorProfile(userId, updateData);
+ 
+     if (!updatedInstructor) {
+       res.status(404).json({ success: false, message: 'Instructor not found' });
+       return;
+     }
+ 
+     res.status(200).json({ success: true, data: updatedInstructor });
+   } catch (error) {
+     console.error('Error in InstructorController.updateProfile:', error);
+     res.status(500).json({ success: false, message: 'Server error' });
+   }
+ }
 }

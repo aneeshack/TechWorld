@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { CLIENT_API } from "../../utilities/axios/Axios";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddCategory = () => {
 
   const [imagePreview, setImagePreview] = useState<string|null>(null)
   const [selectedFile, setSelectedFile] = useState<File|null>(null)
-
+  const navigate = useNavigate()
 
   useEffect(()=>{
     return()=>{
@@ -48,7 +49,7 @@ const AddCategory = () => {
           ...values,
           imageUrl,  // Storing S3 image URL in the backend
         });
-
+        navigate('/admin/dashboard/categories')
         toast.success('Category created successfully!');
       formik.resetForm();
       setImagePreview(null);

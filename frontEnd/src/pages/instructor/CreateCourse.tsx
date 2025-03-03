@@ -124,11 +124,14 @@ const CreateCourse = () => {
 
   return (
     <div className="w-5xl lg:w-5/6 mx-auto p-6">
+      {isEditing ?(
       <a href={`/instructor/dashboard/lessons/${courseId}`} className="flex justify-end">
-        <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
-        { isEditing? 'Lessons': 'Add Lesson'}
-        </button>
+      <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
+      Lessons
+      </button>
       </a>
+      ):null}
+     
       <h2 className="text-2xl font-semibold mb-4">
         { isEditing? 'Edit Course': 'Create Course'}
       </h2>

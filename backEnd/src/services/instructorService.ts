@@ -1,16 +1,17 @@
 import mongoose from "mongoose";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { ICourse } from "../interfaces/courses/ICourse";
-import { InstructorRepository } from "../repository/instructorRepository";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../config/awsConfig";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ILesson } from "../interfaces/courses/ILesson";
 import { IInstructorRepository } from "../interfaces/user/IInstructorRepository";
+import { IUser } from "../interfaces/user/IUser";
+import { InstructorRepository } from "../repository/instructorRepository";
 
 export class InstructorService {
-  // constructor(private instructorRepository: InstructorRepository) {}
   constructor(private instructorRepository: IInstructorRepository) {}
+  // constructor(private instructorRepository: InstructorRepository) {}
 
   async getCategories(): Promise<CategoryEntity[]> {
     try {
@@ -178,7 +179,7 @@ export class InstructorService {
   }
 
   async publishCourse(
-    courseId: string,
+    courseId: string
   ): Promise<ICourse | null> {
     try {
       const course = await this.instructorRepository.publishCourse(
@@ -191,6 +192,32 @@ export class InstructorService {
       return course;
     } catch (error) {
       console.log("instructorService error: publish course", error);
+      throw new Error(`${(error as Error).message}`);
+    }
+  }
+
+  async fetchInstructorProfile(userId: string): Promise<IUser | null> {
+    try {
+      const instructor = await this.instructorRepository.getInstructorProfile(userId);
+      if (!instructor) {
+          throw new Error("Instructor not found");
+      }
+      return instructor;
+    } catch (error) {
+      console.log("instructorService error: instructor profile", error);
+      throw new Error(`${(error as Error).message}`);
+    }
+}
+
+  async updateInstructorProfile(userId: string, updateData: Partial<IUser>): Promise<IUser | null> {
+    try {
+      const instructor = await this.instructorRepository.updateInstructor(userId, updateData);
+      if (!instructor) {
+        throw new Error('Instructor not found');
+      }
+      return instructor;
+    } catch (error) {
+      console.log("instructorService error: instructor profile updating", error);
       throw new Error(`${(error as Error).message}`);
     }
   }

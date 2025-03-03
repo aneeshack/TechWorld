@@ -49,10 +49,10 @@ const lessonSchema = new Schema<ILesson>({
     ref:'courses',
     required: true
   },
-  assessment: {
+  assessment: [{
     type: assessmentSchema,
     required: false
-  }
+  }]
 });
 
 lessonSchema.pre<ILesson>("save", async function (next) {

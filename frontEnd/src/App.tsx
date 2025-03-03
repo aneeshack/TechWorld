@@ -20,19 +20,43 @@ const App = () => {
   const user = useSelector((state: RootState) => state.auth.data);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  console.log('user',user)
 
+  
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     if (!user || user.isBlocked) {
+  //       await dispatch(fetchUserAction());
+  //     } else if (user?.isBlocked) {
+  //       dispatch(logoutAction());
+  //       toast.error("Techworld team blocked your account! Please contact us");
+  //       navigate('/login',{state:{role:user?.role}})
+  //     }
+  //   };
+  //   fetchUser()
+  // }, [user, dispatch,navigate]);
+  
   useEffect(() => {
     const fetchUser = async () => {
-      if (!user || user.isBlocked) {
-        await dispatch(fetchUserAction());
-      } else if (user?.isBlocked) {
+      if (!user) {
+        const result = await dispatch(fetchUserAction());
+        const fetchedUser = result.payload;
+  
+        if (fetchedUser?.isBlocked) {
+          dispatch(logoutAction());
+          toast.error("Techworld team blocked your account! Please contact us");
+          navigate("/login", { state: { role: fetchedUser.role }, replace: true });
+        }
+      } else if (user.isBlocked) {
         dispatch(logoutAction());
         toast.error("Techworld team blocked your account! Please contact us");
-        navigate('/login',{state:{role:user?.role}})
+        navigate("/login", { state: { role: user.role }, replace: true });
       }
     };
-    fetchUser()
-  }, [user, dispatch,navigate]);
+  
+    fetchUser();
+  }, [user, dispatch, navigate]);
+ 
 
   return (
     <>

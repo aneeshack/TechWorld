@@ -11,15 +11,19 @@ export class UserService {
     private userRepository: UserRepository,
     private paymentRepo: PaymentRepository = new PaymentRepository(),
   ) {}
-
-  async getAllCourses(): Promise<ICourse[]> {
-    try {
-      return await this.userRepository.getAllCourses();
-    } catch (error) {
-      console.log('user service error:get all courses',error)
-      throw new Error(`${(error as Error).message}`)
-    }
+  
+  async getFilteredCourses(
+    searchTerm: string,
+    categoryIds: string[],
+    priceMin?: number,
+    priceMax?: number,
+    sortOrder: "" | "asc" | "desc" | undefined = "",
+    page: number = 1,
+    limit: number = 10
+  ): Promise<{ courses: ICourse[]; total: number }> {
+    return this.userRepository.findCourses(searchTerm, categoryIds, priceMin, priceMax, sortOrder, page, limit);
   }
+
 
   async getSingleCourse(courseId: string): Promise<ICourse | null> {
     try {
@@ -49,7 +53,7 @@ export class UserService {
     amount: number,
     courseName: string,
     courseThumbnail: string
-  ) {
+  ):Promise<{sessionId: string}> {
     console.log('initite payment')
     const session = await this.paymentRepo.createCheckoutSession(
       userId,
@@ -62,26 +66,9 @@ export class UserService {
     return { sessionId: session.id };
   }
 
-  async getPaymentStatus(sessionId: string) {
+  async getPaymentStatus(sessionId: string):Promise<any> {
     return await this.paymentRepo.getSession(sessionId);
   }
-
-  // async processPayment(paymentData: {
-  //   courseId: string;
-  //   userId: string;
-  //   amount: number;
-  //   courseName: string;
-  //   courseThumbnail: string;
-  // }): Promise<any> {
-  //   try {
-  //     const session = await this.userRepository.createPaymentSession(paymentData);
-  //     return session;
-  //   } catch (error) {
-  //     console.log('user service error:process payment ',error)
-  //     throw new Error(`${(error as Error).message}`)
-  //   }
-  // }
-
 
   async courseEnroll (userId: string, courseId: string, completionStatus:string, amount:number, enrolledAt:Date):Promise<IEnrollment>{
     try {

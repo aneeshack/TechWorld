@@ -13,6 +13,7 @@ import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
+import { User } from "lucide-react";
 
 
 const InstructorSidebar: React.FC = () => {
@@ -86,7 +87,7 @@ const InstructorSidebar: React.FC = () => {
                 ${isActive ? "bg-green-800 text-white" : "bg-transparent hover:bg-green-800 hover:text-white"}`
               }
             >
-              <UserGroupIcon className="h-6 w-6 text-green-300 group-hover:text-white" />
+              <User className="h-6 w-6 text-green-300 group-hover:text-white" />
               <span className="font-medium hover:text-white">Profile</span>
             </NavLink>
           </li>

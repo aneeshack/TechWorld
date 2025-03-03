@@ -26,7 +26,7 @@ const InstructorRoutes = () => {
         <Route path="lesson/:courseId/add" element={<AddLesson/>}/>
         <Route path="editLesson/:courseId/:lessonId" element={<AddLesson/>}/>
         <Route path="lessons/:courseId" element={<LessonsList/>}/>
-        <Route path="addAssessment" element={<Assessment/>}/>
+        <Route path="addAssessment/:lessonId" element={<Assessment/>}/>
         
         </Route>
 

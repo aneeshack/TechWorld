@@ -23,7 +23,6 @@ const AdminRoutes = () => {
         <Route path='categories' element={<Categories/>}/>
         <Route path='category/add' element={<AddCategory/>}/>
         <Route path='category/edit/:categoryId' element={<EditCategory/>}/>
-
         </Route>
     </Routes>
   )

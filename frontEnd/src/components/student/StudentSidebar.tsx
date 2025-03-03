@@ -3,7 +3,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { 
   // HomeIcon,
   BookOpenIcon,
-  // UserGroupIcon,
   Cog6ToothIcon,
   ArrowLeftOnRectangleIcon,
   ChartBarIcon
@@ -13,6 +12,7 @@ import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
+import { User } from "lucide-react";
 
 
 const StudentSidebar: React.FC = () => {
@@ -66,15 +66,15 @@ const StudentSidebar: React.FC = () => {
               <span className="font-medium hover:text-white">Dashboard</span>
             </NavLink>
           </li>
-          {/* <li>
+          <li>
             <NavLink
-              to=""
+              to="/student/dashboard/profile"
               className="flex items-center space-x-3 px-4 py-3 rounded-lg border border-green-600 hover:text-white hover:bg-green-800 bg-transparent transition-colors group"
             >
-              <UserGroupIcon className="h-6 w-6 text-green-300 group-hover:text-white" />
-              <span className="font-medium hover:text-white">Users</span>
+              <User className="h-6 w-6 text-green-300 group-hover:text-white" />
+              <span className="font-medium hover:text-white">Profile</span>
             </NavLink>
-          </li> */}
+          </li>
           <li>
             <NavLink
               to="/student/dashboard/courses"

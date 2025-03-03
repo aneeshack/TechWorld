@@ -2,14 +2,11 @@ import { Request, Response } from "express";
 import { IUser } from "../interfaces/user/IUser";
 import { AdminRepository } from "../repository/adminRepository";
 import { AdminService } from "../services/adminService";
+import { IAdminService } from "../interfaces/admin/IAdminService";
 
 export class AdminController{
-    private adminService: AdminService;
-
-    constructor(){
-        this.adminService = new AdminService(new AdminRepository)
-    }
-
+    constructor(private adminService: IAdminService){}
+    
     async instructorRequests(req: Request, res:Response):Promise<void>{
         try {
             const AllRequsts = await this.adminService.getAllRequsts()

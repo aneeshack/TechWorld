@@ -7,8 +7,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client } from "../config/awsConfig";
 
 export class AdminService{
-    // constructor(private adminRepository: IAdminRepository){}
-    constructor(private adminRepository: AdminRepository){}
+    constructor(private adminRepository: IAdminRepository){}
 
      async getAllRequsts():Promise<IUser[]>{
         try {

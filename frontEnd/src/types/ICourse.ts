@@ -1,7 +1,7 @@
 
 export interface IAssessment {
-    question: string,
-    options: {
+    question?: string,
+    options?: {
         text: string,
         isCorrect: boolean
     }[]

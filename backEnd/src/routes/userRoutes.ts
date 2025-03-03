@@ -1,19 +1,25 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController";
 import { authenticateUser } from "../middlewares/authMiddleware";
+import { UserRepository } from "../repository/userRepository";
+import { AuthService } from "../services/authService";
+import { UserService } from "../services/userService";
+import { authenticateStudent } from "../middlewares/studentAuth";
 
 const userRouter = Router();
-const userController = new UserController();
+const userRepository = new UserRepository();
+const userService = new UserService(userRepository)
+const userController = new UserController(userService);
 
-userRouter.get('/courses', userController.fetchAllCourses.bind(userController));
+userRouter.get('/courses', userController.getFilteredCourses.bind(userController));
 userRouter.get('/course/:courseId', userController.fetchSingleCourse.bind(userController));
 userRouter.get('/categories', userController.getAllCategories.bind(userController));
 
 
 // payment
-userRouter.post('/payment/process', authenticateUser, userController.createPaymentSession.bind(userController));
-userRouter.get('/payment/status/:sessionId', authenticateUser, userController.getPaymentSession.bind(userController));
-userRouter.post('/course/enrolled', authenticateUser, userController.couresEnrollment.bind(userController));
-userRouter.get('/enrolled/:userId', authenticateUser, userController.fetchEnrolledCourses.bind(userController));
+userRouter.post('/payment/process', authenticateStudent, userController.createPaymentSession.bind(userController));
+userRouter.get('/payment/status/:sessionId', authenticateStudent, userController.getPaymentSession.bind(userController));
+userRouter.post('/course/enrolled', authenticateStudent, userController.couresEnrollment.bind(userController));
+userRouter.get('/enrolled/:userId', authenticateStudent, userController.fetchEnrolledCourses.bind(userController));
 
 export default userRouter;

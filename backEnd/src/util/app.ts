@@ -6,6 +6,7 @@ import adminRouter from '../routes/adminRoutes';
 import authRouter from '../routes/authRoutes';
 import instructorRouter from '../routes/instructorRoutes';
 import userRouter from '../routes/userRoutes';
+import studentRouter from '../routes/studentRoutes';
 
 const app = express()
 
@@ -24,5 +25,6 @@ app.use('/',authRouter)
 app.use('/admin',adminRouter)
 app.use('/user',userRouter)
 app.use('/instructor',instructorRouter)
+app.use('/student',studentRouter)
 
 export default app

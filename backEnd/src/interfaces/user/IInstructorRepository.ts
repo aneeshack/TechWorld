@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { CategoryEntity } from "../courses/category";
 import { ICourse } from "../courses/ICourse";
 import { IAssessment, ILesson } from "../courses/ILesson";
+import { IUser } from "./IUser";
 
 export interface IInstructorRepository {
     fetchCategories(): Promise<CategoryEntity[]>;
@@ -16,4 +17,6 @@ export interface IInstructorRepository {
     publishCourse(courseId: string): Promise<ICourse| null>;
     addAssessment(lessonId: string, assessmentData: Partial<IAssessment>): Promise<ILesson | null>;
     editAssessment(lessonId: string, updatedData: Partial<IAssessment>): Promise<ILesson | null>; 
+    getInstructorProfile(userId: string): Promise<IUser | null>;
+    updateInstructor(userId: string, updateData: Partial<IUser>): Promise<IUser | null>
 }

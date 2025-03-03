@@ -6,6 +6,8 @@ import { IInstructorRepository } from "../interfaces/user/IInstructorRepository"
 import { Category } from "../models/categoryModel";
 import { courseModel } from "../models/courseModel";
 import { lessonModel } from "../models/lessonModel";
+import { IUser } from "../interfaces/user/IUser";
+import UserModel from "../models/userModel";
 
 export class InstructorRepository implements IInstructorRepository{
 
@@ -118,11 +120,12 @@ export class InstructorRepository implements IInstructorRepository{
             const newLesson = new lessonModel(lessonData);
             const savedLesson = await newLesson.save();
 
-            return await courseModel.findByIdAndUpdate(
+             await courseModel.findByIdAndUpdate(
                 lessonData.course,
                 {$push:{lessons:savedLesson._id}},
                 {new: true}
             )
+            return savedLesson
         } catch (error) {
             console.log("instructor repository error:add lesson", error);
             throw new Error(` ${(error as Error).message}`);
@@ -183,6 +186,28 @@ export class InstructorRepository implements IInstructorRepository{
         } catch (error) {
             console.log("instructor repository error:edit lesson", error);
             throw new Error(` ${(error as Error).message}`);
+        }
+    }
+
+    async getInstructorProfile(userId: string): Promise<IUser | null> {
+        try {
+            return await UserModel.findById(userId);
+        } catch (error) {
+            console.error("Error fetching instructor profile:", error);
+            throw new Error("Failed to fetch instructor profile");
+        }
+    }
+
+    async updateInstructor(userId: string, updateData: Partial<IUser>): Promise<IUser | null> {
+        try {
+            return UserModel.findOneAndUpdate(
+              { _id: new mongoose.Types.ObjectId(userId), role: 'instructor' },
+              { $set: updateData },
+              { new: true } // Return the updated document
+            ).exec();
+        } catch (error) {
+            console.error("Error updating instructor profile:", error);
+            throw new Error("Failed to update instructor profile");
         }
     }
 }
