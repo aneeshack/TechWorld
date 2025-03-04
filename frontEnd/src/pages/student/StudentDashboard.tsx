@@ -22,9 +22,8 @@ const StudentDashboard = () => {
       <StudentSidebar/>
       <div className="w-4/5 flex flex-col min-h-screen">
       <NavbarDashboard/>
-      <div className="flex-grow flex justify-center items-center overflow-auto ">
-          {/* Future content will be placed here */}
-          {/* <p className="text-xl text-gray-700">Student Main Content Here</p> */}
+      {/* <div className="flex-grow flex justify-center items-center overflow-auto "> */}
+      <div className="flex-grow overflow-auto pt-5">        
           <Outlet/>
         </div>
       <FooterDashboard/>

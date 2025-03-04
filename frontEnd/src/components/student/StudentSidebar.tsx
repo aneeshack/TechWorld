@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { 
   // HomeIcon,
   BookOpenIcon,
-  Cog6ToothIcon,
+  // Cog6ToothIcon,
   ArrowLeftOnRectangleIcon,
   ChartBarIcon
 } from "@heroicons/react/24/outline";
@@ -12,7 +12,7 @@ import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
-import { User } from "lucide-react";
+import { CreditCard, User } from "lucide-react";
 
 
 const StudentSidebar: React.FC = () => {
@@ -86,11 +86,11 @@ const StudentSidebar: React.FC = () => {
           </li>
           <li>
             <NavLink
-              to=""
+              to="/student/dashboard/purchase"
               className="flex items-center space-x-3 px-4 py-3 rounded-lg border hover:text-white border-green-600 hover:bg-green-800 bg-transparent transition-colors group"
             >
-              <Cog6ToothIcon className="h-6 w-6 text-green-300  group-hover:text-white" />
-              <span className="font-medium ">Settings</span>
+              <CreditCard className="h-6 w-6 text-green-300  group-hover:text-white" />
+              <span className="font-medium ">Payment</span>
             </NavLink>
           </li>
         </ul>

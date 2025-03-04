@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { StudentService } from "../services/studentService";
-import { InstructorService } from "../services/instructorService";
 
 export class StudentController{
     constructor(
@@ -37,4 +36,24 @@ export class StudentController{
           res.status(500).json({ success: false, message: 'Server error' });
         }
       }
+
+    async getStudentPayments(req: Request, res: Response):Promise<void> {
+        try {
+          const userId = req.params.userId; 
+          console.log('student payment',userId)
+      
+          const payments = await this.studentService.getPaymentsByUserId(userId);
+      
+          res.status(200).json({
+            success: true,
+            data: payments, 
+            message: "Payments retrieved successfully",
+          });
+        } catch (error:any) {
+          res.status(500).json({
+            success: false,
+            message: `Error fetching payments: ${error.message}`,
+          });
+        }
+      };
 }

@@ -1,3 +1,4 @@
+import { IPayment } from "../interfaces/courses/IPayment";
 import { IUser } from "../interfaces/user/IUser";
 import { StudentRepository } from "../repository/studentRepository";
 
@@ -26,6 +27,19 @@ export class StudentService{
           return student;
         } catch (error) {
           console.log("studentService error: student profile updating", error);
+          throw new Error(`${(error as Error).message}`);
+        }
+      }
+
+      async getPaymentsByUserId(userId: string): Promise<IPayment[] | null> {
+        try {
+          const studentPayment = await this.studentRepository.fetchPayment(userId);
+          if (!studentPayment) {
+            throw new Error('student Payment history not found');
+          }
+          return studentPayment;
+        } catch (error) {
+          console.log("studentService error: student payment updating", error);
           throw new Error(`${(error as Error).message}`);
         }
       }

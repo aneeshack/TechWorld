@@ -3,6 +3,7 @@ import StudentDashboard from "../pages/student/StudentDashboard"
 import StudentHome from "../pages/student/StudentHome"
 import StudentCourses from "../pages/student/StudentCourses"
 import StudentProfile from "../pages/student/StudentProfile"
+import PurchaseHistory from "../pages/student/PurchaseHistory"
 
 
 const StudentRoutes = () => {
@@ -15,6 +16,7 @@ const StudentRoutes = () => {
               <Route index element={<StudentHome/>}/>
               <Route path="courses" element={<StudentCourses/>}/>
               <Route path="profile" element={<StudentProfile/>}/>
+              <Route path="purchase" element={<PurchaseHistory/>}/>
 
 
             <Route />

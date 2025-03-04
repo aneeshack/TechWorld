@@ -13,6 +13,7 @@ const studentController = new StudentController(studentService);
 
 studentRouter.get('/profile/:userId',authenticateStudent, studentController.getProfile.bind(studentController));
 studentRouter.put('/profile/:userId',authenticateStudent, studentController.updateProfile.bind(studentController));
+studentRouter.get('/payment/:userId',authenticateStudent, studentController.getStudentPayments.bind(studentController));
 
 
 export default studentRouter;

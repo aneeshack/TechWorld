@@ -1,543 +1,274 @@
-import React, { useState, useEffect } from 'react';
-import { Calendar, CreditCard, Filter, ChevronDown, ChevronUp, DollarSign, Book, CheckCircle, AlertCircle, Clock, RotateCw } from 'lucide-react';
-import { IEnrollment } from '../../types/IEnrollment';
 
-// TypeScript interfaces based on your Mongoose models
-interface User {
-  _id: string;
-  userName: string;
-}
+// // import { CreditCard, Calendar, AlertCircle, CheckCircle, XCircle, DollarSign } from 'lucide-react';
+// import { Calendar} from 'lucide-react';
+// import { IPayment } from '../../types/IPayment';
+// import { useEffect, useState } from 'react';
+// import { CLIENT_API } from '../../utilities/axios/Axios';
+// import { useSelector } from 'react-redux';
+// import { RootState } from '../../redux/store';
 
-interface Course {
-  _id: string;
-  title: string;
-  thumbnail?: string;
-  price: number;
-}
+// const PurchaseHistory = () => {
 
-interface Payment {
-  _id: string;
-  userId: string;
-  courseId: string;
-  method?: string;
-  status: 'pending' | 'completed' | 'failed' | 'refunded';
-  type?: 'credit' | 'debit';
-  amount: number;
-  createdAt: string;
-  updatedAt: string;
-  course?: Course; // For populated data
-}
+//   const user = useSelector((state: RootState) => state.auth.data);
+//   const [purchaseHistory, setPurchaseHistory] = useState<IPayment[]>([]);
 
-interface Enrollment {
-  _id: string;
-  userId: string;
-  courseId: string;
-  enrolledAt: string;
-  completionStatus: 'enrolled' | 'in-progress' | 'completed';
-  progress: {
-    completedLessons: string[];
-    completedAssessments: string[];
-    overallCompletionPercentage: number;
-  };
-  course?: Course; // For populated data
-}
+//  useEffect(() => {
+//     const fetchInstructorData = async () => {
+//       try {
+//         const response = await CLIENT_API.get(`/student/payment/${user?._id}`);
+//         console.log('Fetched student Data:', response.data.data);
+//         setPurchaseHistory(response.data.data);
+//       } catch (err) {
+//         console.error('Error fetching student data:', err);
+//       }
+//     };
 
-const PurchaseHistory: React.FC = () => {
-  // State for payments and enrollments
-  const [payments, setPayments] = useState<Payment[]>([]);
-  const [enrollments, setEnrollments] = useState<IEnrollment[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<'payments' | 'enrollments'>('payments');
-  
-  // Filter states
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [dateFilter, setDateFilter] = useState<'all' | 'last-week' | 'last-month' | 'last-year'>('all');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-  
-  // Sample data - replace with actual API calls
+//     fetchInstructorData();
+//   }, [user?._id]);
+
+//   return (
+//     <div className="lg:w-5/6 max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md my-10">
+//       {/* Header */}
+//       <div className="flex items-center justify-between mb-6">
+//         <h1 className="text-3xl font-bold text-gray-800">Purchase History</h1>
+//         <div className="flex items-center gap-2 text-gray-600">
+//           <Calendar size={20} />
+//           <span>{new Date().toLocaleDateString()}</span>
+//         </div>
+//       </div>
+
+//       {/* Table */}
+//       <div className="overflow-x-auto">
+//         <table className="w-full table-auto border-collapse">
+//           <thead>
+//             <tr className="bg-gray-100 text-gray-700 text-left">
+//               <th className="px-4 py-3 font-semibold">Course</th>
+//               {/* <th className="px-4 py-3 font-semibold">Payment Method</th> */}
+//               <th className="px-4 py-3 font-semibold">Status</th>
+//               {/* <th className="px-4 py-3 font-semibold">Type</th> */}
+//               <th className="px-4 py-3 font-semibold">Amount</th>
+//               <th className="px-4 py-3 font-semibold">Date</th>
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {purchaseHistory &&  purchaseHistory.length === 0 ? (
+//               <tr>
+//                 <td colSpan={6} className="px-4 py-6 text-center text-gray-500">
+//                   No purchase history available.
+//                 </td>
+//               </tr>
+//             ) : (
+//              purchaseHistory.map((purchase) => (
+//                 <tr key={purchase?.courseId?._id} className="border-b hover:bg-gray-50">
+//                   <td className="px-4 py-4">{purchase.courseId?.title}</td>
+//                   {/* <td className="px-4 py-4 flex items-center gap-2">
+//                     <CreditCard size={18} className="text-gray-500" />
+//                     {purchase.method}
+//                   </td> */}
+//                   <td className="px-4 py-4 flex items-center gap-2 ">
+//                     <span className="capitalize">{purchase?.status}</span>
+//                   </td> 
+//                   {/* <td className="px-4 py-4 capitalize">{purchase.type}</td> */}
+//                   <td className="px-4 py-4">₹{purchase?.amount?.toFixed(2) || 'Not specified'}</td>
+//                   <td className="px-4 py-4">{purchase.createdAt ? new Date(purchase?.createdAt).toDateString().slice(4) : 'N/A'}</td>
+//                 </tr>
+//               ))
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+
+//     </div>
+//   );
+// };
+
+// export default PurchaseHistory;
+
+import { CreditCard, Calendar, AlertCircle, CheckCircle, XCircle, DollarSign } from 'lucide-react';
+import { IPayment } from '../../types/IPayment';
+import { useEffect, useState } from 'react';
+import { CLIENT_API } from '../../utilities/axios/Axios';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+
+const PurchaseHistory = () => {
+  const user = useSelector((state: RootState) => state.auth.data);
+  const [purchaseHistory, setPurchaseHistory] = useState<IPayment[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      const samplePayments: Payment[] = [
-        {
-          _id: '1',
-          userId: 'user1',
-          courseId: 'course1',
-          method: 'Credit Card',
-          status: 'completed',
-          type: 'debit',
-          amount: 49.99,
-          createdAt: '2025-02-15T10:30:00Z',
-          updatedAt: '2025-02-15T10:35:00Z',
-          course: {
-            _id: 'course1',
-            title: 'Advanced JavaScript Masterclass',
-            thumbnail: '/api/placeholder/80/45',
-            price: 49.99
-          }
-        },
-        {
-          _id: '2',
-          userId: 'user1',
-          courseId: 'course2',
-          method: 'PayPal',
-          status: 'completed',
-          type: 'debit',
-          amount: 29.99,
-          createdAt: '2025-02-01T14:22:00Z',
-          updatedAt: '2025-02-01T14:25:00Z',
-          course: {
-            _id: 'course2',
-            title: 'React for Beginners',
-            thumbnail: '/api/placeholder/80/45',
-            price: 29.99
-          }
-        },
-        {
-          _id: '3',
-          userId: 'user1',
-          courseId: 'course3',
-          method: 'Credit Card',
-          status: 'refunded',
-          type: 'credit',
-          amount: 59.99,
-          createdAt: '2025-01-20T09:15:00Z',
-          updatedAt: '2025-01-25T11:40:00Z',
-          course: {
-            _id: 'course3',
-            title: 'Complete Python Bootcamp',
-            thumbnail: '/api/placeholder/80/45',
-            price: 59.99
-          }
-        },
-        {
-          _id: '4',
-          userId: 'user1',
-          courseId: 'course4',
-          method: 'Bank Transfer',
-          status: 'pending',
-          type: 'debit',
-          amount: 79.99,
-          createdAt: '2025-02-28T16:45:00Z',
-          updatedAt: '2025-02-28T16:45:00Z',
-          course: {
-            _id: 'course4',
-            title: 'Data Science Fundamentals',
-            thumbnail: '/api/placeholder/80/45',
-            price: 79.99
-          }
-        }
-      ];
-
-      const sampleEnrollments: Enrollment[] = [
-        {
-          _id: '1',
-          userId: 'user1',
-          courseId: 'course1',
-          enrolledAt: '2025-02-15T10:35:00Z',
-          completionStatus: 'in-progress',
-          progress: {
-            completedLessons: ['lesson1', 'lesson2', 'lesson3'],
-            completedAssessments: ['assessment1'],
-            overallCompletionPercentage: 45
-          },
-          course: {
-            _id: 'course1',
-            title: 'Advanced JavaScript Masterclass',
-            thumbnail: '/api/placeholder/80/45',
-            price: 49.99
-          }
-        },
-        {
-          _id: '2',
-          userId: 'user1',
-          courseId: 'course2',
-          enrolledAt: '2025-02-01T14:25:00Z',
-          completionStatus: 'completed',
-          progress: {
-            completedLessons: ['lesson1', 'lesson2', 'lesson3', 'lesson4', 'lesson5'],
-            completedAssessments: ['assessment1', 'assessment2'],
-            overallCompletionPercentage: 100
-          },
-          course: {
-            _id: 'course2',
-            title: 'React for Beginners',
-            thumbnail: '/api/placeholder/80/45',
-            price: 29.99
-          }
-        },
-        {
-          _id: '3',
-          userId: 'user1',
-          courseId: 'course4',
-          enrolledAt: '2025-02-28T16:45:00Z',
-          completionStatus: 'enrolled',
-          progress: {
-            completedLessons: [],
-            completedAssessments: [],
-            overallCompletionPercentage: 0
-          },
-          course: {
-            _id: 'course4',
-            title: 'Data Science Fundamentals',
-            thumbnail: '/api/placeholder/80/45',
-            price: 79.99
-          }
-        }
-      ];
-      
-      setPayments(samplePayments);
-      setEnrollments(sampleEnrollments);
-      setLoading(false);
-    }, 1000);
-  }, []);
-  
-  // Filter payments based on filters
-  const filteredPayments = payments.filter(payment => {
-    // Status filter
-    if (statusFilter !== 'all' && payment.status !== statusFilter) {
-      return false;
-    }
-    
-    // Date filter
-    if (dateFilter !== 'all') {
-      const paymentDate = new Date(payment.createdAt);
-      const now = new Date();
-      
-      if (dateFilter === 'last-week') {
-        const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        if (paymentDate < lastWeek) return false;
-      } else if (dateFilter === 'last-month') {
-        const lastMonth = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        if (paymentDate < lastMonth) return false;
-      } else if (dateFilter === 'last-year') {
-        const lastYear = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-        if (paymentDate < lastYear) return false;
+    const fetchInstructorData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await CLIENT_API.get(`/student/payment/${user?._id}`);
+        console.log('Fetched student Data:', response.data.data);
+        setPurchaseHistory(response.data.data);
+      } catch (err) {
+        console.error('Error fetching student data:', err);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
     
-    return true;
-  }).sort((a, b) => {
-    const dateA = new Date(a.createdAt).getTime();
-    const dateB = new Date(b.createdAt).getTime();
-    return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
-  });
-  
-  // Helper function to format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
-  
-  // Helper for payment status badge
-  const PaymentStatusBadge: React.FC<{ status: Payment['status'] }> = ({ status }) => {
-    switch (status) {
+    fetchInstructorData();
+  }, [user?._id]);
+
+  // Function to determine status display properties
+  const getStatusProps = (status: string) => {
+    switch (status?.toLowerCase()) {
       case 'completed':
-        return (
-          <span className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-            <CheckCircle size={12} />
-            Completed
-          </span>
-        );
+      case 'success':
+        return {
+          icon: <CheckCircle size={16} className="text-green-500" />,
+          bgColor: 'bg-green-50',
+          textColor: 'text-green-700'
+        };
       case 'pending':
-        return (
-          <span className="flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-            <Clock size={12} />
-            Pending
-          </span>
-        );
+        return {
+          icon: <AlertCircle size={16} className="text-yellow-500" />,
+          bgColor: 'bg-yellow-50',
+          textColor: 'text-yellow-700'
+        };
       case 'failed':
-        return (
-          <span className="flex items-center gap-1 bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
-            <AlertCircle size={12} />
-            Failed
-          </span>
-        );
-      case 'refunded':
-        return (
-          <span className="flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-            <RotateCw size={12} />
-            Refunded
-          </span>
-        );
+      case 'cancelled':
+        return {
+          icon: <XCircle size={16} className="text-red-500" />,
+          bgColor: 'bg-red-50',
+          textColor: 'text-red-700'
+        };
       default:
-        return null;
+        return {
+          icon: <AlertCircle size={16} className="text-gray-500" />,
+          bgColor: 'bg-gray-50',
+          textColor: 'text-gray-700'
+        };
     }
-  };
-  
-  // Helper for enrollment status badge
-  const EnrollmentStatusBadge: React.FC<{ status: Enrollment['completionStatus'] }> = ({ status }) => {
-    switch (status) {
-      case 'completed':
-        return (
-          <span className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
-            <CheckCircle size={12} />
-            Completed
-          </span>
-        );
-      case 'in-progress':
-        return (
-          <span className="flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
-            <Clock size={12} />
-            In Progress
-          </span>
-        );
-      case 'enrolled':
-        return (
-          <span className="flex items-center gap-1 bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
-            <Book size={12} />
-            Enrolled
-          </span>
-        );
-      default:
-        return null;
-    }
-  };
-  
-  // Progress bar component
-  const ProgressBar: React.FC<{ percentage: number }> = ({ percentage }) => {
-    return (
-      <div className="w-full bg-gray-200 rounded-full h-2">
-        <div 
-          className="bg-green-600 h-2 rounded-full" 
-          style={{ width: `${percentage}%` }}
-        ></div>
-      </div>
-    );
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
-      </div>
-    );
-  }
-  
+  // Calculate total amount spent
+  const totalSpent = purchaseHistory
+    .filter(p => p?.status?.toLowerCase() === 'completed' || p?.status?.toLowerCase() === 'success')
+    .reduce((sum, purchase) => sum + (purchase?.amount || 0), 0);
+
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6">
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        {/* Header */}
-        <div className="bg-green-600 p-6 text-white">
-          <h1 className="text-2xl font-bold">Purchase History</h1>
-          <p className="text-green-100 mt-1">View your course purchases and enrollment progress</p>
-          
-          <div className="flex gap-2 mt-4">
-            <button 
-              className={`px-4 py-2 rounded-t-lg font-medium transition ${activeTab === 'payments' ? 'bg-white text-green-600' : 'bg-green-700 text-white hover:bg-green-800'}`}
-              onClick={() => setActiveTab('payments')}
-            >
-              Payments
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-t-lg font-medium transition ${activeTab === 'enrollments' ? 'bg-white text-green-600' : 'bg-green-700 text-white hover:bg-green-800'}`}
-              onClick={() => setActiveTab('enrollments')}
-            >
-              Enrollments
-            </button>
+    <div className="lg:w-5/6 max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md my-10">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 pb-6 border-b border-gray-200">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">Purchase History</h1>
+          <p className="text-gray-500 mt-1">Track all your course purchases</p>
+        </div>
+        <div className="flex items-center gap-2 text-gray-600 mt-4 sm:mt-0 bg-gray-50 px-3 py-2 rounded-md">
+          <Calendar size={18} />
+          <span>{new Date().toLocaleDateString()}</span>
+        </div>
+      </div>
+      
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="bg-blue-50 rounded-lg p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-blue-800 font-medium">Total Purchases</h3>
+            <CreditCard size={20} className="text-blue-500" />
           </div>
+          <p className="text-2xl font-bold text-blue-900">{purchaseHistory.length}</p>
         </div>
         
-        {/* Filter Section */}
-        {activeTab === 'payments' && (
-          <div className="p-4 bg-green-50 border-b border-green-100">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center">
-                <Filter size={16} className="text-green-600 mr-2" />
-                <span className="text-green-800 font-medium">Filters:</span>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <select 
-                  className="px-3 py-1 bg-white border border-green-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="all">All Statuses</option>
-                  <option value="completed">Completed</option>
-                  <option value="pending">Pending</option>
-                  <option value="failed">Failed</option>
-                  <option value="refunded">Refunded</option>
-                </select>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <select 
-                  className="px-3 py-1 bg-white border border-green-200 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-                  value={dateFilter}
-                  onChange={(e) => setDateFilter(e.target.value as any)}
-                >
-                  <option value="all">All Time</option>
-                  <option value="last-week">Last Week</option>
-                  <option value="last-month">Last Month</option>
-                  <option value="last-year">Last Year</option>
-                </select>
-              </div>
-              
-              <button 
-                className="flex items-center gap-1 px-3 py-1 bg-white border border-green-200 rounded-md text-sm hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-400 ml-auto"
-                onClick={() => setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')}
-              >
-                <span>Sort by Date</span>
-                {sortDirection === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-            </div>
+        <div className="bg-green-50 rounded-lg p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-green-800 font-medium">Total Amount</h3>
+            <DollarSign size={20} className="text-green-500" />
           </div>
-        )}
+          <p className="text-2xl font-bold text-green-900">₹{totalSpent.toFixed(2)}</p>
+        </div>
         
-        {/* Payments Content */}
-        {activeTab === 'payments' && (
-          <div className="p-4 sm:p-6">
-            {filteredPayments.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-green-50 text-green-800">
-                    <tr>
-                      <th className="px-4 py-2 text-left">Course</th>
-                      <th className="px-4 py-2 text-left">Date</th>
-                      <th className="px-4 py-2 text-left">Method</th>
-                      <th className="px-4 py-2 text-left">Amount</th>
-                      <th className="px-4 py-2 text-left">Status</th>
-                      <th className="px-4 py-2 text-left">Type</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {filteredPayments.map((payment) => (
-                      <tr key={payment._id} className="hover:bg-green-50/50">
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-3">
-                            <img 
-                              src={payment.course?.thumbnail} 
-                              alt={payment.course?.title} 
-                              className="w-12 h-8 rounded object-cover" 
-                            />
-                            <div className="font-medium text-gray-800">{payment.course?.title}</div>
+        <div className="bg-purple-50 rounded-lg p-4 shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <h3 className="text-purple-800 font-medium">Recent Purchase</h3>
+            <Calendar size={20} className="text-purple-500" />
+          </div>
+          <p className="text-lg font-semibold text-purple-900 truncate">
+            {purchaseHistory.length > 0 && purchaseHistory[0]?.createdAt
+              ? new Date(purchaseHistory[0].createdAt).toLocaleDateString()
+              : 'N/A'}
+          </p>
+        </div>
+      </div>
+
+      {/* Loading State */}
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+        </div>
+      ) : (
+        /* Table Section */
+        <div className="bg-gray-50 p-5 rounded-lg">
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto border-collapse bg-white rounded-lg overflow-hidden">
+              <thead>
+                <tr className="bg-gray-100 text-gray-700 text-left">
+                  <th className="px-6 py-3 font-semibold">Course</th>
+                  <th className="px-6 py-3 font-semibold">Status</th>
+                  <th className="px-6 py-3 font-semibold">Amount</th>
+                  <th className="px-6 py-3 font-semibold">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {purchaseHistory && purchaseHistory.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
+                      <div className="flex flex-col items-center">
+                        <CreditCard size={40} className="text-gray-300 mb-2" />
+                        <p className="text-lg font-medium">No purchase history available</p>
+                        <p className="text-sm text-gray-400 mt-1">Your purchased courses will appear here</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  purchaseHistory.map((purchase) => {
+                    const { icon, bgColor, textColor } = getStatusProps(purchase?.status || '');
+                    return (
+                      <tr key={purchase?.courseId?._id} className="border-b hover:bg-blue-50 transition-colors">
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="font-medium text-gray-800">{purchase.courseId?.title}</p>
+                            <p className="text-xs text-gray-500 mt-1">ID: {purchase.courseId?._id?.substring(0, 8) || 'N/A'}...</p>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <Calendar size={14} className="text-gray-400" />
-                            {formatDate(payment.createdAt)}
+                        <td className="px-6 py-4">
+                          <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full ${bgColor} ${textColor}`}>
+                            {icon}
+                            <span className="text-sm font-medium capitalize">{purchase?.status}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-gray-600">
-                          <div className="flex items-center gap-1">
-                            <CreditCard size={14} className="text-gray-400" />
-                            {payment.method || "N/A"}
+                        <td className="px-6 py-4 font-medium">₹{purchase?.amount?.toFixed(2) || 'Not specified'}</td>
+                        <td className="px-6 py-4">
+                          <div className="text-gray-700">{purchase.createdAt ? new Date(purchase?.createdAt).toDateString().slice(4) : 'N/A'}</div>
+                          <div className="text-xs text-gray-500">
+                            {purchase.createdAt ? new Date(purchase?.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}
                           </div>
-                        </td>
-                        <td className="px-4 py-3 font-medium">
-                          <div className="flex items-center gap-1">
-                            <DollarSign size={14} className="text-gray-400" />
-                            {payment.amount.toFixed(2)}
-                          </div>
-                        </td>
-                        <td className="px-4 py-3">
-                          <PaymentStatusBadge status={payment.status} />
-                        </td>
-                        <td className="px-4 py-3 text-gray-600 capitalize">
-                          {payment.type || "N/A"}
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                <div className="flex justify-center mb-4">
-                  <CreditCard size={48} className="text-gray-300" />
-                </div>
-                <h3 className="text-lg font-medium mb-1">No payments found</h3>
-                <p>Try adjusting your filters or check back later.</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Enrollments Content */}
-        {activeTab === 'enrollments' && (
-          <div className="p-4 sm:p-6">
-            {enrollments.length > 0 ? (
-              <div className="grid gap-6 md:grid-cols-2">
-                {enrollments.map((enrollment) => (
-                  <div key={enrollment._id} className="bg-white border border-green-100 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
-                    <div className="flex items-center p-4 border-b border-green-100">
-                      <img 
-                        src={enrollment.course?.thumbnail} 
-                        alt={enrollment.course?.title} 
-                        className="w-20 h-12 object-cover rounded mr-4" 
-                      />
-                      <div>
-                        <h3 className="font-medium text-gray-900">{enrollment.course?.title}</h3>
-                        <div className="flex items-center gap-2 mt-1">
-                          <EnrollmentStatusBadge status={enrollment.completionStatus} />
-                          <span className="text-xs text-gray-500">
-                            Enrolled on {formatDate(enrollment.enrolledAt)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="p-4">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-sm text-gray-600">Progress</span>
-                        <span className="text-sm font-medium">{enrollment.progress.overallCompletionPercentage}%</span>
-                      </div>
-                      <ProgressBar percentage={enrollment.progress.overallCompletionPercentage} />
-                      
-                      <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
-                        <div>
-                          <div className="text-gray-500">Completed Lessons</div>
-                          <div className="font-medium">{enrollment.progress.completedLessons.length}</div>
-                        </div>
-                        <div>
-                          <div className="text-gray-500">Completed Assessments</div>
-                          <div className="font-medium">{enrollment.progress.completedAssessments.length}</div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="bg-green-50 p-3 flex justify-between items-center">
-                      <span className="text-green-600 font-medium">${enrollment.course?.price.toFixed(2)}</span>
-                      <button className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition">
-                        Continue Learning
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12 text-gray-500">
-                <div className="flex justify-center mb-4">
-                  <Book size={48} className="text-gray-300" />
-                </div>
-                <h3 className="text-lg font-medium mb-1">No enrollments found</h3>
-                <p>You haven't enrolled in any courses yet.</p>
-              </div>
-            )}
-          </div>
-        )}
-        
-        {/* Summary Footer */}
-        <div className="bg-green-50 p-4 border-t border-green-100">
-          <div className="flex flex-wrap justify-between items-center gap-4">
-            <div>
-              <p className="text-green-800">Showing {activeTab === 'payments' ? filteredPayments.length : enrollments.length} {activeTab}</p>
-              {activeTab === 'payments' && (
-                <p className="text-sm text-green-600 mt-1">
-                  Total spent: ${filteredPayments.reduce((total, payment) => 
-                    payment.status === 'completed' && payment.type === 'debit' ? total + payment.amount : total, 0).toFixed(2)}
-                </p>
-              )}
-            </div>
-            
-            <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
-              Download History
-            </button>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
+      )}
+      
+      {/* Footer with totals - Only show if we have purchases */}
+      {!isLoading && purchaseHistory.length > 0 && (
+        <div className="mt-6 flex justify-end">
+          <div className="bg-gray-50 rounded-lg px-6 py-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <span className="text-gray-600">Total Amount:</span>
+              <span className="text-xl font-bold text-gray-800">₹{totalSpent.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

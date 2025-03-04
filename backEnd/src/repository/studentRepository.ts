@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import { IStudentRepository } from "../interfaces/student/IStudentRepository";
 import { IUser } from "../interfaces/user/IUser";
 import UserModel from "../models/userModel";
+import { IPayment } from "../interfaces/courses/IPayment";
+import { paymentModel } from "../models/paymentModel";
 
 export class StudentRepository implements IStudentRepository{
 
@@ -21,6 +23,19 @@ export class StudentRepository implements IStudentRepository{
               { $set: updateData },
               { new: true } // Return the updated document
             ).exec();
+        } catch (error) {
+            console.error("Error updating student profile:", error);
+            throw new Error("Failed to update student profile");
+        }
+    }
+
+    async fetchPayment(userId: string): Promise<IPayment[] | null> {
+        try {
+          const payments = await paymentModel
+                        .find({userId})
+                        .populate('courseId','title')
+            console.log('payment',payments)
+            return payments
         } catch (error) {
             console.error("Error updating student profile:", error);
             throw new Error("Failed to update student profile");
