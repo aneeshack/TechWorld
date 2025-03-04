@@ -14,7 +14,6 @@ const assessmentSchema = new Schema<IAssessment>({
 const lessonSchema = new Schema<ILesson>({
   lessonNumber: {
     type: Number,
-    unique: true,
   },
   title: {
     type: String,
@@ -59,7 +58,7 @@ lessonSchema.pre<ILesson>("save", async function (next) {
   const lessonModel = mongoose.model<ILesson>("lessons");
   if (!this.lessonNumber) {
     try {
-      const lastLesson = await lessonModel.findOne().sort({ lessonNumber: -1 });
+      const lastLesson = await lessonModel.findOne({course: this.course}).sort({ lessonNumber: -1 });
       this.lessonNumber = lastLesson ? lastLesson.lessonNumber + 1 : 1; // Start from 1 if no lessons exist 
       next();   
     } catch (error) {

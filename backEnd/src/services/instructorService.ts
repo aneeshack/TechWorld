@@ -196,6 +196,33 @@ export class InstructorService {
     }
   }
 
+  async addAssessment(lessonId: string, questions: any): Promise<ILesson> {
+    try {
+
+      if (!lessonId) {
+        throw new Error("Lesson ID is required");
+      }
+      if (!questions || !Array.isArray(questions)) {
+        throw new Error("Questions must be provided as an array");
+      }
+
+      let lesson: ILesson | null;
+      lesson = await this.instructorRepository.getLessonById(lessonId);
+      if (!lesson) {
+        throw new Error("Lesson not found");
+      }
+
+      // Update assessment
+      let updatedLesson: ILesson;
+      updatedLesson = await this.instructorRepository.updateLessonAssessment(lessonId, questions);
+
+      return updatedLesson;
+    } catch (error) {
+      console.error("Error in InstructorService.addOrUpdateAssessment:", error);
+      throw error; // Propagate error to controller
+    }
+  }
+
   async fetchInstructorProfile(userId: string): Promise<IUser | null> {
     try {
       const instructor = await this.instructorRepository.getInstructorProfile(userId);

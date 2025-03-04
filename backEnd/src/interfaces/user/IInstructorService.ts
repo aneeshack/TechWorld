@@ -17,5 +17,6 @@ export interface IInstructorService{
     updateLesson(lessonId: string,updateData: Partial<ILesson>): Promise<ILesson | null>;
     publishCourse(courseId: string): Promise<ICourse | null>;
     fetchInstructorProfile(userId: string): Promise<IUser | null>;
-    updateInstructorProfile(userId: string, updateData: Partial<IUser>): Promise<IUser | null>
+    updateInstructorProfile(userId: string, updateData: Partial<IUser>): Promise<IUser | null>;
+    addAssessment(lessonId: string, questions: any): Promise<ILesson>
 }

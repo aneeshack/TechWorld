@@ -18,7 +18,7 @@ export interface ILesson{
     course?:string,
     pdf?: string,
     isTrial: boolean,
-    assessment?: IAssessment 
+    assessment?: [IAssessment] 
 }
 
 export interface IInstructor {

@@ -19,7 +19,10 @@ const NavbarDashboard = () => {
       <Link to='/'>
       <div className="relative z-50 cursor-pointer pr-8">
         <div className="flex items-center w-[200px] gap-4 px-2 py-3 border border-gray-300 rounded-lg shadow-md cursor-pointer">
-          <img src={placeholder} alt="Profile" className="w-12 h-12" />
+          <img 
+          // src={placeholder} 
+          src={ user?.profile?.avatar ?? placeholder}
+          alt="Profile" className="w-14 h-14 rounded-full" />
           <p className="text-gray-900 font-semibold">{name}</p>
           <img src={bell} alt="bell icon" className='w-12 h-12'/>
       </div>

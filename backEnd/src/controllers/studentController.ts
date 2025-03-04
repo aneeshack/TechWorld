@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { StudentService } from "../services/studentService";
+import { IStudentService } from "../interfaces/student/IStudentService";
 
 export class StudentController{
     constructor(
-        private studentService: StudentService,
+        private studentService: IStudentService,
     ){}
 
     async getProfile(req: Request, res: Response): Promise<void> {

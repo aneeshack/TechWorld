@@ -1,89 +1,3 @@
-
-// // import { CreditCard, Calendar, AlertCircle, CheckCircle, XCircle, DollarSign } from 'lucide-react';
-// import { Calendar} from 'lucide-react';
-// import { IPayment } from '../../types/IPayment';
-// import { useEffect, useState } from 'react';
-// import { CLIENT_API } from '../../utilities/axios/Axios';
-// import { useSelector } from 'react-redux';
-// import { RootState } from '../../redux/store';
-
-// const PurchaseHistory = () => {
-
-//   const user = useSelector((state: RootState) => state.auth.data);
-//   const [purchaseHistory, setPurchaseHistory] = useState<IPayment[]>([]);
-
-//  useEffect(() => {
-//     const fetchInstructorData = async () => {
-//       try {
-//         const response = await CLIENT_API.get(`/student/payment/${user?._id}`);
-//         console.log('Fetched student Data:', response.data.data);
-//         setPurchaseHistory(response.data.data);
-//       } catch (err) {
-//         console.error('Error fetching student data:', err);
-//       }
-//     };
-
-//     fetchInstructorData();
-//   }, [user?._id]);
-
-//   return (
-//     <div className="lg:w-5/6 max-w-6xl mx-auto p-6 bg-white rounded-lg shadow-md my-10">
-//       {/* Header */}
-//       <div className="flex items-center justify-between mb-6">
-//         <h1 className="text-3xl font-bold text-gray-800">Purchase History</h1>
-//         <div className="flex items-center gap-2 text-gray-600">
-//           <Calendar size={20} />
-//           <span>{new Date().toLocaleDateString()}</span>
-//         </div>
-//       </div>
-
-//       {/* Table */}
-//       <div className="overflow-x-auto">
-//         <table className="w-full table-auto border-collapse">
-//           <thead>
-//             <tr className="bg-gray-100 text-gray-700 text-left">
-//               <th className="px-4 py-3 font-semibold">Course</th>
-//               {/* <th className="px-4 py-3 font-semibold">Payment Method</th> */}
-//               <th className="px-4 py-3 font-semibold">Status</th>
-//               {/* <th className="px-4 py-3 font-semibold">Type</th> */}
-//               <th className="px-4 py-3 font-semibold">Amount</th>
-//               <th className="px-4 py-3 font-semibold">Date</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {purchaseHistory &&  purchaseHistory.length === 0 ? (
-//               <tr>
-//                 <td colSpan={6} className="px-4 py-6 text-center text-gray-500">
-//                   No purchase history available.
-//                 </td>
-//               </tr>
-//             ) : (
-//              purchaseHistory.map((purchase) => (
-//                 <tr key={purchase?.courseId?._id} className="border-b hover:bg-gray-50">
-//                   <td className="px-4 py-4">{purchase.courseId?.title}</td>
-//                   {/* <td className="px-4 py-4 flex items-center gap-2">
-//                     <CreditCard size={18} className="text-gray-500" />
-//                     {purchase.method}
-//                   </td> */}
-//                   <td className="px-4 py-4 flex items-center gap-2 ">
-//                     <span className="capitalize">{purchase?.status}</span>
-//                   </td> 
-//                   {/* <td className="px-4 py-4 capitalize">{purchase.type}</td> */}
-//                   <td className="px-4 py-4">₹{purchase?.amount?.toFixed(2) || 'Not specified'}</td>
-//                   <td className="px-4 py-4">{purchase.createdAt ? new Date(purchase?.createdAt).toDateString().slice(4) : 'N/A'}</td>
-//                 </tr>
-//               ))
-//             )}
-//           </tbody>
-//         </table>
-//       </div>
-
-//     </div>
-//   );
-// };
-
-// export default PurchaseHistory;
-
 import { CreditCard, Calendar, AlertCircle, CheckCircle, XCircle, DollarSign } from 'lucide-react';
 import { IPayment } from '../../types/IPayment';
 import { useEffect, useState } from 'react';
@@ -232,7 +146,7 @@ const PurchaseHistory = () => {
                         <td className="px-6 py-4">
                           <div>
                             <p className="font-medium text-gray-800">{purchase.courseId?.title}</p>
-                            <p className="text-xs text-gray-500 mt-1">ID: {purchase.courseId?._id?.substring(0, 8) || 'N/A'}...</p>
+                            {/* <p className="text-xs text-gray-500 mt-1">ID: {purchase.courseId?._id?.substring(0, 8) || 'N/A'}...</p> */}
                           </div>
                         </td>
                         <td className="px-6 py-4">

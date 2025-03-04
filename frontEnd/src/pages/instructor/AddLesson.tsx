@@ -6,10 +6,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { CLIENT_API } from "../../utilities/axios/Axios";
 import axios from "axios";
+import { ILesson } from "../../types/ICourse";
 
 const AddLesson = () => {
   const [videoSrc, setVideoSrc] = useState<string|null>(null)
   const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [lesson, setLesson] = useState<ILesson | null>(null);
   const [isEditing, setIsEditing] = useState(false)
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
   const { courseId, lessonId } = useParams(); 
@@ -35,6 +37,7 @@ const AddLesson = () => {
             course: lesson.course,
 
           });
+          setLesson(response.data.data)
           setThumbnailPreview(lesson.thumbnail);
           setVideoSrc(lesson.video);
         })
@@ -168,9 +171,11 @@ const AddLesson = () => {
   return (
     <div className="w-5/6 border shadow-lg mx-auto my-4 p-6">
       {isEditing ?(
-        <a href={`/instructor/dashboard/addAssessment/${lessonId}`} className="flex justify-end">
-        <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
-           Assessment
+        // <a href={`/instructor/dashboard/addAssessment/${lessonId}`} className="flex justify-end">
+<a href={`/instructor/dashboard/${lesson?.assessment && lesson.assessment.length > 0 ? "editAssessment" : "addAssessment"}/${lessonId}`}>       
+ <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
+           {/* Assessment */}
+           {lesson?.assessment && lesson.assessment.length > 0 ? "Edit Assessment" : "Add Assessment"}
         </button>
       </a>
       ) :null}

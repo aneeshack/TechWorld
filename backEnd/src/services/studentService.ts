@@ -1,9 +1,10 @@
 import { IPayment } from "../interfaces/courses/IPayment";
+import { IStudentRepository } from "../interfaces/student/IStudentRepository";
 import { IUser } from "../interfaces/user/IUser";
 import { StudentRepository } from "../repository/studentRepository";
 
 export class StudentService{
-    constructor(private studentRepository: StudentRepository){}
+    constructor(private studentRepository: IStudentRepository){}
 
      async fetchStudentProfile(userId: string): Promise<IUser | null> {
         try {

@@ -7,7 +7,7 @@ import { StudentController } from "../controllers/studentController";
 
 const studentRouter = Router();
 const studentRepository = new StudentRepository();
-const studentService = new StudentService(studentRepository)
+export const studentService = new StudentService(studentRepository)
 const studentController = new StudentController(studentService);
 
 

@@ -1,5 +1,5 @@
 interface Profile{
-    avatar?: string | File | null,
+    avatar?: string | null,
     dateOfBirth?: string,
     gender?: string,
     profileDescription?: string

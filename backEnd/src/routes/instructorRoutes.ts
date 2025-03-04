@@ -4,11 +4,12 @@ import { authenticateUser } from "../middlewares/authMiddleware";
 import { InstructorRepository } from "../repository/instructorRepository";
 import { InstructorService } from "../services/instructorService";
 import { authenticateInstructor } from "../middlewares/instructorAuth";
+import { studentService } from "./studentRoutes";
 
 const instructorRouter = Router();
 const instructorRepository = new InstructorRepository();
 const instructorService = new InstructorService(instructorRepository);
-const instructorController = new InstructorController(instructorService);
+const instructorController = new InstructorController(instructorService, studentService);
 
 instructorRouter.get('/fetchCategories',authenticateInstructor, instructorController.fetchCategories.bind(instructorController));
 instructorRouter.get('/allCourses',authenticateInstructor, instructorController.fetchAllCourses.bind(instructorController));

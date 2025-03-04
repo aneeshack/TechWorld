@@ -6,9 +6,10 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { RequestStatus, Response } from '../../types/IForm';
+import { RequestStatus, Response, SignupFormData } from '../../types/IForm';
 import { toast } from 'react-toastify';
-import { Menu, X, ChevronDown, User, LogOut, Home, BookOpen, Users, Mail, Briefcase } from 'lucide-react';
+// import { Menu, X, ChevronDown, User, LogOut, Home, BookOpen, Users, Mail, Briefcase } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, Home, BookOpen, Briefcase } from 'lucide-react';
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -16,7 +17,8 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const user = useSelector((state: RootState) => state.auth.data);
-  const [userData, setUserData] = useState(user);
+  const [userData, setUserData] = useState<SignupFormData | null>(user);
+  console.log('userdata',userData)
 
   useEffect(() => {
     setUserData(user)
@@ -96,8 +98,8 @@ const Navbar = () => {
     { path: '/', label: 'Home', icon: <Home size={16} /> },
     { path: '/courseList', label: 'Courses', icon: <BookOpen size={16} /> },
     { path: '/teachUs', label: 'Teach Us', icon: <Briefcase size={16} /> },
-    { path: '/instructors', label: 'Instructors', icon: <Users size={16} /> },
-    { path: '/contactUs', label: 'Contact Us', icon: <Mail size={16} /> }
+    // { path: '/instructors', label: 'Instructors', icon: <Users size={16} /> },
+    // { path: '/contactUs', label: 'Contact Us', icon: <Mail size={16} /> }
   ];
 
   // Function to close dropdown when clicking outside
@@ -167,9 +169,10 @@ const Navbar = () => {
                     onClick={toggleDropDown}
                   >
                     <img
-                      src={placeholder}
+                      src={ userData?.profile?.avatar ?? placeholder}
+                      // src={avatarUrl} 
                       alt="Profile"
-                      className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                      className="w-14 h-14 rounded-full object-cover border border-gray-200"
                     />
                     <span className="text-gray-800 font-medium hidden sm:block">
                       {userData.userName?.slice(0, 15)}

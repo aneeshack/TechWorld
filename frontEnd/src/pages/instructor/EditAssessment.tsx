@@ -1,34 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IAssessment } from "../../types/ICourse";
 import { CLIENT_API } from "../../utilities/axios/Axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function Assessment() {
+export default function EditAssessment() {
+  const { lessonId } = useParams();
+  const navigate = useNavigate();
+  const [questions, setQuestions] = useState<IAssessment[]>([]);
 
-  const { lessonId } = useParams(); 
-  console.log('lessonid',lessonId)
-  const navigate = useNavigate()
-  const [questions, setQuestions] = useState<IAssessment[]>([
-    {
-      question: "",
-      options: [
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-      ],
-    },
-  ]);
+  useEffect(() => {
+    if (lessonId) {
+      CLIENT_API.get(`/instructor/lesson/${lessonId}`)
+        .then((response) => {
+          const lesson = response.data.data;
+          if (lesson.assessment && lesson.assessment.length > 0) {
+            setQuestions(lesson.assessment);
+          } else {
+            toast.error("No assessment found for this lesson");
+            navigate(`/instructor/dashboard/addAssessment/${lessonId}`);
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching assessment:", error);
+          toast.error("Failed to load assessment");
+        });
+    }
+  }, [lessonId, navigate]);
 
-  // Handle question text change
   const handleQuestionChange = (qIndex: number, value: string) => {
     const updatedQuestions = [...questions];
-    updatedQuestions[qIndex].question = value; 
+    updatedQuestions[qIndex].question = value;
     setQuestions(updatedQuestions);
   };
 
-  // Handle option text change
   const handleOptionChange = (qIndex: number, oIndex: number, value: string) => {
     const updatedQuestions = [...questions];
     if (!updatedQuestions[qIndex].options) updatedQuestions[qIndex].options = []; 
@@ -36,17 +41,15 @@ export default function Assessment() {
     setQuestions(updatedQuestions);
   };
 
-  // Mark the selected option as correct
   const handleCorrectAnswer = (qIndex: number, oIndex: number) => {
     const updatedQuestions = [...questions];
     updatedQuestions[qIndex].options = updatedQuestions[qIndex].options?.map((opt, i) => ({
-      ...opt,
-      isCorrect: i === oIndex, // Set only the selected option as correct
-    }));
+        ...opt,
+        isCorrect: i === oIndex, 
+      }));;
     setQuestions(updatedQuestions);
   };
 
-  // Add a new question
   const addQuestion = () => {
     if (questions.length < 5) {
       setQuestions([
@@ -64,42 +67,38 @@ export default function Assessment() {
     }
   };
 
-  // Save the assessment (send data to backend)
-  const saveAssessment = () => {
+  const saveAssessment = async () => {
     if (questions.length === 0) {
       toast.error("Please add at least one question before saving.");
       return;
     }
-
     const isValid = questions.every((q) =>{
-      //   q.question?.trim() !== "" && q.options?.some((opt) => opt.text.trim() !== "")
-      const hasQuestionText = q.question?.trim() !== "";
-        const hasValidOption = q.options?.some((opt) => opt.text.trim() !== "");
-        const hasCorrectAnswer = q.options?.some((opt) => opt.isCorrect === true);
-        return hasQuestionText && hasValidOption && hasCorrectAnswer;
-    });
-  
+    //   q.question?.trim() !== "" && q.options?.some((opt) => opt.text.trim() !== "")
+    const hasQuestionText = q.question?.trim() !== "";
+      const hasValidOption = q.options?.some((opt) => opt.text.trim() !== "");
+      const hasCorrectAnswer = q.options?.some((opt) => opt.isCorrect === true);
+      return hasQuestionText && hasValidOption && hasCorrectAnswer;
+  });
+
     if (!isValid) {
       toast.error("Each question must have text and at least one valid option.");
       return;
     }
-    console.log("Saving assessment:", questions);
-    CLIENT_API.post(`/instructor/lesson/${lessonId}/assessment`,{questions})
-    .then((response)=>{
-      console.log('response',response,response.data.data)
-      navigate('/instructor/dashboard/courses')
-      toast.success(response.data.message)
 
-    })
-    .catch((error)=>{
-      console.log(error)
-    })
+    try {
+      const response = await CLIENT_API.post(`/instructor/lesson/${lessonId}/assessment`, { questions });
+      toast.success(response.data.message);
+      navigate("/instructor/dashboard/courses");
+    } catch (error) {
+      console.error("Error updating assessment:", error);
+      toast.error("Failed to update assessment");
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 text-center mb-4">Add Assessment</h2>
+        <h2 className="text-2xl font-bold text-green-700 text-center mb-4">Edit Assessment</h2>
 
         {questions.map((question, qIndex) => (
           <div key={qIndex} className="mb-6">
@@ -148,7 +147,7 @@ export default function Assessment() {
           className="w-full mt-6 bg-green-700 text-white font-bold py-2 rounded-lg hover:bg-green-800 transition"
           onClick={saveAssessment}
         >
-          Save Assessment
+          Update Assessment
         </button>
       </div>
     </div>

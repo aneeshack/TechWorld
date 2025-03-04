@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { CLIENT_API } from "../../utilities/axios/Axios";
-import { toast } from "react-toastify";
 import { ILesson } from "../../types/ICourse";
 
 
@@ -20,7 +19,7 @@ const LessonsList = () => {
     })
     .catch((error) => {
     console.error("Error fetching lessons", error);
-    toast.error("Failed to load lessons");
+    // toast.error("Failed to load lessons");
     });
       }, [courseId]);
   return (

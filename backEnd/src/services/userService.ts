@@ -6,9 +6,8 @@ import { IEnrollment } from "../interfaces/user/IEnrollment";
 import { CategoryEntity } from "../interfaces/courses/category";
 
 export class UserService {
-  // constructor(private userRepository: IUserRepository){}
   constructor(
-    private userRepository: UserRepository,
+    private userRepository: IUserRepository,
     private paymentRepo: PaymentRepository = new PaymentRepository(),
   ) {}
   
@@ -24,6 +23,18 @@ export class UserService {
     return this.userRepository.findCourses(searchTerm, categoryIds, priceMin, priceMax, sortOrder, page, limit);
   }
 
+  async getAllCourses(): Promise<ICourse[] | null> {
+    try {
+      const courses = await this.userRepository.getAllCourses();
+      if(!courses){
+        throw new Error('No courses found')
+      }
+      return courses
+    } catch (error) {
+      console.log('user service error:get sigle course',error)
+      throw new Error(`${(error as Error).message}`)
+    }
+  }
 
   async getSingleCourse(courseId: string): Promise<ICourse | null> {
     try {
@@ -33,8 +44,9 @@ export class UserService {
       throw new Error(`${(error as Error).message}`)
     }
   }
+
   
-  async getAllCategories():Promise<CategoryEntity[]>{
+  async getAllCategories():Promise<CategoryEntity[] | null>{
       try {
           const categories = await this.userRepository.allCategories();
           if(!categories){
@@ -94,7 +106,7 @@ export class UserService {
     }
   }
 
-  async getEnrolledCourses(userId: string): Promise<IEnrollment[]> {
+  async getEnrolledCourses(userId: string): Promise<IEnrollment[] |null> {
     try {
       const enrolledCourses = await this.userRepository.enrolledCourses(userId)
   

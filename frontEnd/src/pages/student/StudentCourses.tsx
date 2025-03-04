@@ -25,8 +25,9 @@ const StudentCourses = () => {
         <h2 className="text-2xl font-bold text-gray-800">Enrolled Courses</h2>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {enrolledCourses && enrolledCourses.map((course) => (
+      {enrolledCourses && enrolledCourses.length >0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        { enrolledCourses.map((course) => (
           <div
             key={course.courseId}
             className="bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl transition duration-300"
@@ -63,6 +64,20 @@ const StudentCourses = () => {
           </div>
         ))}
       </div>
+      ):(
+        <div className="text-center py-10">
+          <h3 className="text-xl font-semibold text-gray-600">No Enrolled Courses</h3>
+          <p className="text-gray-500 mt-2">
+            You haven’t enrolled in any courses yet. Explore available courses to get started!
+          </p>
+          <Link to="/courseList">
+            <button className="mt-4 px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition">
+              Browse Courses
+            </button>
+          </Link>
+        </div>
+      )}
+      
     </div>
   );
 };

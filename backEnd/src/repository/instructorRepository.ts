@@ -189,6 +189,33 @@ export class InstructorRepository implements IInstructorRepository{
         }
     }
 
+    async getLessonById(lessonId: string): Promise<ILesson | null> {
+        try {
+          const lesson = await lessonModel.findById(lessonId);
+          return lesson;
+        } catch (error) {
+          console.error("Error in InstructorRepository.getLessonById:", error);
+          throw new Error(`Error fetching lesson: ${(error as Error).message}`);
+        }
+      }
+
+      async updateLessonAssessment(lessonId: string, questions: any): Promise<ILesson> {
+        try {
+          const lesson = await lessonModel.findByIdAndUpdate(
+            lessonId,
+            { assessment: questions },
+            { new: true, runValidators: true }
+          );
+          if (!lesson) {
+            throw new Error("Lesson not found during update");
+          }
+          return lesson;
+        } catch (error) {
+          console.error("Error in InstructorRepository.updateLessonAssessment:", error);
+          throw new Error(`Error updating lesson assessment: ${(error as Error).message}`);
+        }
+      }
+
     async getInstructorProfile(userId: string): Promise<IUser | null> {
         try {
             return await UserModel.findById(userId);

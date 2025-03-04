@@ -12,6 +12,7 @@ const userService = new UserService(userRepository)
 const userController = new UserController(userService);
 
 userRouter.get('/courses', userController.getFilteredCourses.bind(userController));
+userRouter.get('/allCourses', userController.getAllCourses.bind(userController));
 userRouter.get('/course/:courseId', userController.fetchSingleCourse.bind(userController));
 userRouter.get('/categories', userController.getAllCategories.bind(userController));
 

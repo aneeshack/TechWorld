@@ -38,7 +38,7 @@ export class UserRepository implements IUserRepository {
     page: number = 1,
     limit: number = 10
   ): Promise<{ courses: ICourse[]; total: number }> {
-    const query: any = {};
+    const query: any = {isPublished: true};
   
     if (searchTerm) {
       query.title = { $regex: searchTerm, $options: "i" };
@@ -79,6 +79,7 @@ export class UserRepository implements IUserRepository {
   }
 
 
+
   async getSingleCourse(courseId: string): Promise<ICourse | null> {
     try {
       const course =  await courseModel.findOne({ _id: courseId, isPublished: true })
@@ -86,7 +87,7 @@ export class UserRepository implements IUserRepository {
         .populate("instructor", "userName")
         .populate({
           path:'lessons',
-          select: 'lessonNumber title thumbnail video ',
+          select: 'lessonNumber title thumbnail video description ',
           options: {sort: {lessonNumber:1}}
         })
         .exec();

@@ -6,8 +6,8 @@ import mongoose from "mongoose";
 
 export class UserController {
 
-  // constructor(private userService: IUserService){};
-  constructor(private userService: UserService){};
+  constructor(private userService: IUserService){};
+  // constructor(private userService: UserService){};
 
 async getFilteredCourses(req: Request, res: Response): Promise<void> {
   try {
@@ -66,6 +66,21 @@ async getFilteredCourses(req: Request, res: Response): Promise<void> {
   } catch (error) {
     console.error("Error fetching filtered courses:", error);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+}
+
+
+async getAllCourses(req: Request, res: Response): Promise<void> {
+  try {
+
+    const courses = await this.userService.getAllCourses();
+    if (!courses) {
+      res.status(404).json({ success: false, message: "Courses not found" });
+      return;
+    }
+    res.status(200).json({ success: true, message: "Fetched courses", data: courses });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
   }
 }
 

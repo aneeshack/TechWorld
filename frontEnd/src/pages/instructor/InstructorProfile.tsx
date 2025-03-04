@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { SignupFormData } from '../../types/IForm';
 import profilePic from '../../assets/commonPages/placeHolder.png';
+import { uploadToCloudinary } from '../../utilities/axios/UploadCloudinary';
+import { FormErrors } from '../../types/formErrors';
 
 const InstructorProfile = () => {
   const user = useSelector((state: RootState) => state.auth.data);
@@ -14,6 +16,43 @@ const InstructorProfile = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false); // Toggle edit mode
   const [formData, setFormData] = useState<Partial<SignupFormData>>({}); // Form state for editing
+  const [avatarPreview, setAvatarPreview] = useState<string | null>((instructor?.profile?.avatar as string) || profilePic)
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  const validateForm =()=> {
+    const newErrors :FormErrors ={};
+    const phoneRegex = /^[0-9]{10}$/;
+    if (isEditing) {
+      // Qualification validation
+      if (!formData.qualification?.trim()) {
+        newErrors.qualification = 'Qualification is required';
+      } else if (formData.qualification.length > 50) {
+        newErrors.qualification = 'Qualification too long (max 50 characters)';
+      }
+  
+      // Date of Birth validation
+      if (formData.profile?.dateOfBirth) {
+        const dobDate = new Date(formData.profile.dateOfBirth);
+        const today = new Date();
+        if (dobDate > today) {
+          newErrors.dateOfBirth = 'Date of birth cannot be in the future';
+        }
+      }
+  
+      // Gender validation
+      if (!formData.profile?.gender) {
+        newErrors.gender = 'Gender is required';
+      }
+  
+      // Phone number validation
+      if (formData.contact?.phoneNumber && !phoneRegex.test(formData.contact.phoneNumber)) {
+        newErrors.phoneNumber = 'Invalid phone number (10 digits required)';
+      }
+    }
+  
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
 
 
   useEffect(() => {
@@ -22,6 +61,7 @@ const InstructorProfile = () => {
         setLoading(true);
         const response = await CLIENT_API.get(`/instructor/profile/${user?._id}`);
         console.log('Fetched Instructor Data:', response.data.data);
+        setAvatarPreview(response.data.data.profile?.avatar)
         setInstructor(response.data.data);
         setFormData(response.data.data); // Initialize formData with fetched data
         setLoading(false);
@@ -55,10 +95,14 @@ const InstructorProfile = () => {
   // Handle profile update submission
   const handleUpdateProfile = async () => {
     try {
+      if (!validateForm()) return;
+      console.log('formdata',formData)
       const response = await CLIENT_API.put(`/instructor/profile/${user?._id}`, formData);
       console.log('Update Response:', response.data);
+      setAvatarPreview(response.data.data.profile?.avatar)
       setInstructor(response.data.data);
       setIsEditing(false); 
+      setErrors({});
     } catch (err) {
       console.error('Error updating profile:', err);
       setError('Failed to update profile.');
@@ -70,14 +114,62 @@ const InstructorProfile = () => {
   if (error) return <div className="text-center p-6 text-red-500">{error}</div>;
   if (!instructor) return <div className="text-center p-6">No profile data available.</div>;
 
-  const avatarSrc = (instructor?.profile?.avatar as string) || profilePic;
 
+
+  const handleFile = async (
+      event: React.ChangeEvent<HTMLInputElement>,
+    ) => {
+      const file = event.target.files?.[0];
+      if (!file) {
+        return;
+      }
+  
+      try {
+        const fileUrl = await uploadToCloudinary(file);
+        if (fileUrl) {
+          setAvatarPreview(fileUrl)
+          setFormData((prev) => ({
+            ...prev,
+            profile: {
+              ...prev.profile,
+              avatar: fileUrl,
+            },
+          }));
+
+        } else {
+          console.error("Failed to upload file");
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
+      }
+    };
   return (
     <div className="max-w-6xl mx-auto p-6 lg:w-5/6 bg-white rounded-lg shadow-md my-10">
       {/* Header with instructor basic info */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6 pb-6 border-b">
         <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center">
-          <img src={avatarSrc} alt="profile picture" className="w-full h-full object-cover rounded-full" />
+          {/* <img src={} alt="profile picture" className="w-full h-full object-cover rounded-full" /> */}
+          {isEditing ? (
+    <label className="w-full h-full rounded-full cursor-pointer">
+      <img
+        src={avatarPreview || profilePic}
+        alt="profile picture"
+        className="w-full h-full object-cover rounded-full "
+      />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(event)=>handleFile(event)}
+        className="hidden"
+      />
+    </label>
+  ) : (
+    <img
+      src={avatarPreview || profilePic}
+      alt="profile picture"
+      className="w-full h-full object-cover rounded-full"
+    />
+  )}
         </div>
         
         <div className="flex-1">
@@ -198,6 +290,7 @@ const InstructorProfile = () => {
             <div>
               <h2 className="text-xl font-semibold mb-3">Expertise</h2>
               {isEditing ? (
+                <>
                 <input
                   type="text"
                   name="qualification"
@@ -205,6 +298,10 @@ const InstructorProfile = () => {
                   onChange={handleInputChange}
                   className="w-full border border-green-600 rounded p-2 outline-none"
                 />
+                {errors.qualification && (
+                  <p className="text-red-500 text-sm mt-1">{errors.qualification}</p>
+                )}
+                </>
               ) : (
                 <div className="flex flex-wrap gap-2">{instructor?.qualification}</div>
               )}
@@ -219,6 +316,7 @@ const InstructorProfile = () => {
               <div>
                 <h3 className="font-medium">Phone</h3>
                 {isEditing ? (
+                  <>
                   <input
                     type="text"
                     name="phoneNumber"
@@ -226,6 +324,10 @@ const InstructorProfile = () => {
                     onChange={handleInputChange}
                     className="border-b-2 border-green-600 outline-none w-full"
                   />
+                  {errors.phoneNumber && (
+                    <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+                  )}
+                  </>
                 ) : (
                   <p className="text-gray-700">{instructor?.contact?.phoneNumber}</p>
                 )}
@@ -241,7 +343,7 @@ const InstructorProfile = () => {
                     type="email"
                     name="email"
                     value={formData.email || ''}
-                    onChange={handleInputChange}
+                    readOnly
                     className="border-b-2 border-green-600 outline-none w-full"
                   />
                 ) : (

@@ -10,7 +10,7 @@ import { IAuthService } from "../interfaces/user/IAuthService";
 export class AuthController {
 
   // constructor(private authService: IAuthService) {}
-  constructor(private authService: AuthService) {}
+  constructor(private authService: IAuthService) {}
 
   async fetchUser(req: AuthRequest, res: Response): Promise<void> {
     try {

@@ -9,8 +9,8 @@ import jwt from 'jsonwebtoken';
 import mongoose from "mongoose";
 
 export class AuthService {
-    // constructor(private authRepository: IAuthRepository){}
-    constructor(private authRepository: AuthRepository){}
+    constructor(private authRepository: IAuthRepository){}
+    // constructor(private authRepository: AuthRepository){}
 
     async getUserById(userId: mongoose.Types.ObjectId): Promise<IUser |null>{
         return this.authRepository.findById(userId)
