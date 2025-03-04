@@ -224,5 +224,23 @@ export class AuthController {
       res.status(400).json({ success:false, message: error.message })
     }
   }
+
+  async verifyForgotPasswordOtp(req: Request, res: Response): Promise<void> {
+    try {
+      const { email, otp } = req.body;
+
+      if (!email || !otp) {
+        res.status(400).json({ success: false, message: 'Email and OTP are required' });
+        return;
+      }
+
+      const { message } = await this.authService.verifyForgotPasswordOtp(email, otp);
+      res.status(200).json({ success: true, message });
+    } catch (error: any) {
+      console.log('controller error: verifyForgotPasswordOtp', error);
+      res.status(400).json({ success: false, message: error.message });
+    }
+  }
+
   
 }

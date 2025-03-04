@@ -11,5 +11,5 @@ export interface IAuthService{
     googleAuth(credentials: any, roleInput:Role):Promise<{ message: string, user?:Partial<IUser>, token?: string }>;
     forgotPassword(email: string, role:Role):Promise<{message: string}>;
     resetPassword(email: string, password: string, role:Role):Promise<{message: string}>;
-    
+    verifyForgotPasswordOtp(email: string, otp: string): Promise<{ message: string }>
 }

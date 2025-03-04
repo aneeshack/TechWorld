@@ -264,4 +264,25 @@ export class AuthService {
             throw new Error(`${(error as Error).message}`)
         }
     }
+
+    async verifyForgotPasswordOtp(email: string, otp: string): Promise<{ message: string }> {
+        try {
+          const foundOtp = await this.authRepository.findOtpByEmail(email);
+          if (!foundOtp) {
+            throw new Error('OTP expired or not found');
+          }
+    
+          if (foundOtp.otp !== otp) {
+            throw new Error('Invalid OTP');
+          }
+    
+          // No need to update user here; we'll handle reset in the next step
+          await this.authRepository.deleteOtp(email);
+    
+          return { message: 'OTP verified for password reset' };
+        } catch (error) {
+          console.log('authService error: verifyForgotPasswordOtp', error);
+          throw new Error(`${(error as Error).message}`);
+        }
+      }
 }

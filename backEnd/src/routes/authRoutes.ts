@@ -19,5 +19,6 @@ authRouter.post('/googleAuth', authController.googleAuthentication.bind(authCont
 authRouter.post('/register', authController.registerInstructor.bind(authController));
 authRouter.post('/forgotPass', authController.forgotPassword.bind(authController));
 authRouter.patch('/resetPass', authController.resetPassword.bind(authController));
+authRouter.post('/verifyForgotPasswordOtp', authController.verifyForgotPasswordOtp.bind(authController));
 
 export default authRouter;

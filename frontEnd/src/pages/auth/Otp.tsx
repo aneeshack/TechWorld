@@ -22,7 +22,7 @@ const Otp = () => {
   const RESEND_TIME =30;
   const [timeLeft, setTimeLeft] =useState(0);
   const [canResend, setCanResend] =useState(false)
-
+  
   useEffect(()=>{
     if(!email){
       toast.error('Email is missing! Redirecting to signup')

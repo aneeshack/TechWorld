@@ -42,6 +42,7 @@ const ForgotPassword = () => {
         // Set OTP expiry time for first OTP
         const newExpiryTime = Math.floor(Date.now() / 1000) + 30;
         localStorage.setItem('otpExpiryTime', String(newExpiryTime));
+        console.log('success redirect to resetPassotp')
         navigate('/resetPassOtp',{state:{role: userRole, email: email}})
         
       }

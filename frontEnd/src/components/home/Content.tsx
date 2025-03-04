@@ -25,7 +25,7 @@ const Content = () => {
                <p className="text-center text-gray-500 text-xl">No courses found</p>
             ):(
              courses?.map((course)=>(
-            <div className="bg-gray-100 p-6 rounded-lg shadow-md">
+            <div key={course._id} className="bg-gray-100 p-6 rounded-lg shadow-md">
               <img className="h-40 w-full object-cover rounded-md" src={course.thumbnail} alt="Graphic Design" />
               <h3 className="text-xl font-semibold mt-4 text-green-900">{course.title}</h3>
               <p className="text-gray-700 mt-2">{course.description}</p>
