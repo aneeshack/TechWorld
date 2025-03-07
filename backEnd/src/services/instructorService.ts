@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { ICourse } from "../interfaces/courses/ICourse";
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../config/awsConfig";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ILesson } from "../interfaces/courses/ILesson";
@@ -10,8 +10,8 @@ import { IUser } from "../interfaces/user/IUser";
 import { InstructorRepository } from "../repository/instructorRepository";
 
 export class InstructorService {
-  constructor(private instructorRepository: IInstructorRepository) {}
-  // constructor(private instructorRepository: InstructorRepository) {}
+  // constructor(private instructorRepository: IInstructorRepository) {}
+  constructor(private instructorRepository: InstructorRepository) {}
 
   async getCategories(): Promise<CategoryEntity[]> {
     try {
@@ -248,4 +248,31 @@ export class InstructorService {
       throw new Error(`${(error as Error).message}`);
     }
   }
+
+  async getPresignedUrlForVideo(lessonId: string): Promise<string> {
+    try {
+      const lesson = await this.instructorRepository.findLessonById(lessonId);
+      
+      if (!lesson || !lesson.video) {
+        throw new Error('Lesson or video not found');
+      }
+
+      const videoKey = lesson.video.split(".amazonaws.com/")[1];
+      
+      const params = {
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: videoKey,
+        Expires: 300, // URL expires in 5 minutes
+      };
+
+      const command = new GetObjectCommand(params);
+      const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
+      
+      return presignedUrl;
+    } catch (error) {
+      console.log("instructorService error: instructor profile updating", error);
+      throw new Error(`${(error as Error).message}`);
+    }
+  }
+
 }

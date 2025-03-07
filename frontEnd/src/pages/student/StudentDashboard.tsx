@@ -18,18 +18,17 @@ const StudentDashboard = () => {
   },[user,navigate])
   
   return (
-    <div className="w-full flex h-screen">
-      <StudentSidebar/>
-      <div className="w-4/5 flex flex-col min-h-screen">
-      <NavbarDashboard/>
-      {/* <div className="flex-grow flex justify-center items-center overflow-auto "> */}
-      <div className="flex-grow overflow-auto pt-5">        
-          <Outlet/>
+    <div className="flex h-screen w-full overflow-hidden">
+      <StudentSidebar />
+      <div className="flex-1 flex flex-col min-h-screen">
+        <NavbarDashboard />
+        <div className="flex-1 overflow-y-auto pt-5">
+          <Outlet />
         </div>
-      <FooterDashboard/>
+        <FooterDashboard />
       </div>
     </div>
-  )
+  );
 }
 
 export default StudentDashboard

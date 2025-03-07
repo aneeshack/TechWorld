@@ -41,4 +41,5 @@ export class StudentRepository implements IStudentRepository{
             throw new Error("Failed to update student profile");
         }
     }
+    
 }

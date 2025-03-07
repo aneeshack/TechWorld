@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { uploadToCloudinary } from "../../utilities/axios/UploadCloudinary";
 import { useFormik } from "formik";
 import { lessonValidationSchema } from "../../utilities/validation/LessonValidation";
@@ -16,33 +16,65 @@ const AddLesson = () => {
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null)
   const { courseId, lessonId } = useParams(); 
   const navigate = useNavigate();
-
+  const refreshTimeout = useRef<NodeJS.Timeout | number | null>(null);
 
   useEffect(() => {
     console.log("Course ID:", courseId);
   }, [courseId]);
 
   useEffect(() => {
-    if (lessonId) {
-      setIsEditing(true);
-      CLIENT_API.get(`/instructor/lesson/${lessonId}`)
-        .then((response) => {
-          const lesson = response.data.data;
-          formik.setValues({
-            title: lesson.title,
-            thumbnail: lesson.thumbnail,
-            pdf: lesson.pdf,
-            description: lesson.description,
-            video: lesson.video,
-            course: lesson.course,
 
-          });
-          setLesson(response.data.data)
-          setThumbnailPreview(lesson.thumbnail);
-          setVideoSrc(lesson.video);
-        })
-        .catch((error) => console.error("Error fetching course", error));
-    }
+    const fetchLessonAndVideo = async () => {
+      if (!lessonId) return;
+
+      try {
+        setIsEditing(true)
+        const response = await CLIENT_API.get(`/instructor/lesson/${lessonId}`);
+        const lessonData = response.data.data;
+        
+        setLesson(lessonData);
+        formik.setValues({
+          title: lessonData.title,
+          thumbnail: lessonData.thumbnail,
+          pdf: lessonData.pdf,
+          description: lessonData.description,
+          video: lessonData.video,
+          course: lessonData.course,
+        });
+
+        // Fetch presigned URL for the video
+        if (lessonData.video) {
+          await fetchPresignedUrl();
+        }
+      } catch (error) {
+        console.error("Error fetching lesson:", error);
+      }
+    };
+
+    const fetchPresignedUrl = async () => {
+      try {
+        const presignedResponse = await CLIENT_API.get(
+          `/instructor/lesson/getPresignedUrlForVideo/${lessonId}`
+        );
+        const presignedUrl = presignedResponse.data.presignedUrl;
+        setVideoSrc(presignedUrl);
+
+        console.log("Fetched new presigned URL");
+
+        // Set a timeout to refresh URL before expiry (270 seconds = 4m 30s)
+        refreshTimeout.current = setTimeout(fetchPresignedUrl, 270000);
+      } catch (error) {
+        console.error("Error fetching presigned URL:", error);
+        toast.error("Unable to load video preview.");
+      }
+    };
+
+    fetchLessonAndVideo();
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
+    };
   }, [lessonId]);
 
 

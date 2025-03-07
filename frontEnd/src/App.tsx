@@ -21,20 +21,6 @@ const App = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   console.log('user',user)
-
-  
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     if (!user || user.isBlocked) {
-  //       await dispatch(fetchUserAction());
-  //     } else if (user?.isBlocked) {
-  //       dispatch(logoutAction());
-  //       toast.error("Techworld team blocked your account! Please contact us");
-  //       navigate('/login',{state:{role:user?.role}})
-  //     }
-  //   };
-  //   fetchUser()
-  // }, [user, dispatch,navigate]);
   
   useEffect(() => {
     const fetchUser = async () => {

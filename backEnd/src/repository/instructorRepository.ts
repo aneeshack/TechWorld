@@ -92,10 +92,12 @@ export class InstructorRepository implements IInstructorRepository{
 
     async getSingleCourse(courseId: string): Promise<ICourse | null> {
         try {
+            console.log('third')
             const course = await courseModel.findById(courseId)
             if (!course) {
                 throw new Error('No course found');
             }
+            console.log('course instu repo',course)
             return course;
         } catch (error) {
             console.log("instructor repository error:get single course", error);
@@ -237,4 +239,13 @@ export class InstructorRepository implements IInstructorRepository{
             throw new Error("Failed to update instructor profile");
         }
     }
+
+    async findLessonById(lessonId: string):Promise<ILesson| null> {
+        try {
+          const lesson = await lessonModel.findById(lessonId);
+          return lesson;
+        } catch (error:any) {
+          throw new Error(`Error fetching lesson: ${error.message}`);
+        }
+      }
 }

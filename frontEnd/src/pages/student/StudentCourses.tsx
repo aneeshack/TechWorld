@@ -54,7 +54,7 @@ const StudentCourses = () => {
                 </p> */}
               </div>
               <div className="mt-4 flex justify-center">
-                <Link to={`/student/course/${course.courseId}`}>
+                <Link to={`/student/dashboard/course/${course.courseId}`}>
                   <button className="border rounded-md px-4 py-2 text-white font-bold bg-blue-600 hover:bg-blue-700 transition">
                     Continue Learning
                   </button>

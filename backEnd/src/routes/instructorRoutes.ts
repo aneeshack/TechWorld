@@ -8,8 +8,8 @@ import { studentService } from "./studentRoutes";
 
 const instructorRouter = Router();
 const instructorRepository = new InstructorRepository();
-const instructorService = new InstructorService(instructorRepository);
-const instructorController = new InstructorController(instructorService, studentService);
+export const instructorService = new InstructorService(instructorRepository);
+const instructorController = new InstructorController(instructorService);
 
 instructorRouter.get('/fetchCategories',authenticateInstructor, instructorController.fetchCategories.bind(instructorController));
 instructorRouter.get('/allCourses',authenticateInstructor, instructorController.fetchAllCourses.bind(instructorController));
@@ -24,10 +24,8 @@ instructorRouter.post('/lesson/add',authenticateInstructor, instructorController
 instructorRouter.get('/lessons/:courseId',authenticateInstructor, instructorController.fetchAllLessons.bind(instructorController));
 instructorRouter.get('/lesson/:lessonId',authenticateInstructor, instructorController.fetchSingleLesson.bind(instructorController));
 instructorRouter.put('/lesson/:lessonId',authenticateInstructor, instructorController.updateLesson.bind(instructorController));
-
-// instructorRouter.put('/lesson/edit/:lessonId',authenticateInstructor, instructorController.editLesson.bind(instructorController));
-// instructorRouter.post('/assessment/add',authenticateInstructor, instructorController.addAssessment.bind(instructorController));
 instructorRouter.post('/lesson/:lessonId/assessment',authenticateInstructor, instructorController.addOrUpdateAssessment.bind(instructorController));
+instructorRouter.get('/lesson/getPresignedUrlForVideo/:lessonId',authenticateInstructor, instructorController.presSignedUrlForVideo.bind(instructorController));
 
 
 instructorRouter.get('/profile/:userId',authenticateInstructor, instructorController.getInstructorProfile.bind(instructorController));

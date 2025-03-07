@@ -1,18 +1,17 @@
 import { Request, Response } from "express";
-import { InstructorRepository } from "../repository/instructorRepository";
 import { InstructorService } from "../services/instructorService";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Role } from "../interfaces/user/IUser";
 import { lessonModel } from "../models/lessonModel";
 import { IInstructorService } from "../interfaces/user/IInstructorService";
-import { StudentService } from "../services/studentService";
+import { s3Client } from "../config/awsConfig";
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export class InstructorController {
   constructor(
-    private instructorService: InstructorService,
-    private studentService: StudentService
+    private instructorService: IInstructorService,
   ) {}
-   // constructor(private instructorService: InstructorService, ){}
 
   async fetchCategories(req: Request, res: Response): Promise<void> {
     try {
@@ -294,18 +293,8 @@ export class InstructorController {
       console.log("lessonid", lessonId);
       console.log("ass,ques", questions, lessonId);
 
-      // Validate lesson existence
+
       const lesson = await this.instructorService.addAssessment(lessonId, questions);
-      // const lesson = await lessonModel.findById(lessonId);
-      // if (!lesson) {
-      //   res.status(404).json({ message: "Lesson not found" });
-      //   return;
-      // }
-
-      // // Update assessment data
-      // lesson.assessment = questions;
-      // await lesson.save();
-
       res
         .status(200)
         .json({ message: "Assessment saved successfully", lesson });
@@ -356,4 +345,19 @@ export class InstructorController {
       res.status(500).json({ success: false, message: "Server error" });
     }
   }
+
+  async presSignedUrlForVideo(req: Request, res: Response): Promise<void> {
+    try {
+      const { lessonId } = req.params;
+  
+      const presignedUrl = await this.instructorService.getPresignedUrlForVideo(lessonId)
+     
+      console.log('presinged url',presignedUrl)
+      res.json({ presignedUrl });
+    } catch (error) {
+      console.error("Error in InstructorController :get presigned url for video", error);
+      res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
+
 }

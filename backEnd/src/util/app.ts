@@ -10,6 +10,7 @@ import studentRouter from '../routes/studentRoutes';
 
 const app = express()
 
+
 const corsOptions ={
     origin: envConfig.http.ORIGIN,
     methods: 'GET, HEAD, PUT, POST, PATCH, DELETE',

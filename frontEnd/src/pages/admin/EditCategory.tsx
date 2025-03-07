@@ -114,8 +114,8 @@ const EditCategory = () => {
           <label className="block text-gray-700 font-medium">Category Name</label>
           <input 
             type="text" 
-            value={formik.values.categoryName} 
-            // {...formik.getFieldProps('categoryName')}
+            // value={formik.values.categoryName} 
+            {...formik.getFieldProps('categoryName')}
             className="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-800" 
           />
           {formik.touched.categoryName && formik.errors.categoryName ? (
