@@ -173,22 +173,4 @@ async couresEnrollment(req: Request, res: Response):Promise<void> {
   }
 }
 
-async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
-  try {
-    console.log('inside fetch enrolled course')
-    const { userId } = req.params; 
-
-    if (!userId) {
-      res.status(400).json({ success: false, message: "User ID is required" });
-      return;
-    }
-
-    const enrolledCourses = await this.userService.getEnrolledCourses(userId);
-
-    res.status(200).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
-  } catch (error: any) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-}
-
 }

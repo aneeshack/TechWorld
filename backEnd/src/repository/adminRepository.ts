@@ -1,6 +1,6 @@
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { CategoryEntity } from "../interfaces/courses/category";
-import { IUser, RequestStatus } from "../interfaces/user/IUser";
+import { IUser, RequestStatus } from "../interfaces/database/IUser";
 import { Category } from "../models/categoryModel";
 import UserModel from "../models/userModel";
 

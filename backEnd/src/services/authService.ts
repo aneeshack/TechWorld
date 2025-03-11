@@ -1,4 +1,4 @@
-import { IUser, Role } from "../interfaces/user/IUser";
+import { IUser, Role } from "../interfaces/database/IUser";
 import { IAuthRepository } from "../interfaces/user/IAuthRepository";
 import { AuthRepository } from "../repository/authRepository";
 import { OtpGenerator } from "../util/auth/generateOtp";

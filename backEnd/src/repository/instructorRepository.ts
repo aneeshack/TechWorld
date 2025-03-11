@@ -2,11 +2,11 @@ import mongoose from "mongoose";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { ICourse } from "../interfaces/courses/ICourse";
 import { IAssessment, ILesson } from "../interfaces/courses/ILesson";
-import { IInstructorRepository } from "../interfaces/user/IInstructorRepository";
+import { IInstructorRepository } from "../interfaces/instructor/IInstructorRepository";
 import { Category } from "../models/categoryModel";
 import { courseModel } from "../models/courseModel";
 import { lessonModel } from "../models/lessonModel";
-import { IUser } from "../interfaces/user/IUser";
+import { IUser } from "../interfaces/database/IUser";
 import UserModel from "../models/userModel";
 
 export class InstructorRepository implements IInstructorRepository{

@@ -2,7 +2,7 @@ import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { UserRepository } from "../repository/userRepository";
 import { ICourse } from "../interfaces/courses/ICourse";
 import { PaymentRepository } from "../repository/paymentRepository";
-import { IEnrollment } from "../interfaces/user/IEnrollment";
+import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { CategoryEntity } from "../interfaces/courses/category";
 
 export class UserService {
@@ -106,19 +106,5 @@ export class UserService {
     }
   }
 
-  async getEnrolledCourses(userId: string): Promise<IEnrollment[] |null> {
-    try {
-      const enrolledCourses = await this.userRepository.enrolledCourses(userId)
-  
-      if (!enrolledCourses) {
-        throw new Error("enrolledCourses not found");
-      }
-  
-      return enrolledCourses;
-    } catch (error:any) {
-      console.log('user service error:enrolled courses ',error)
-      throw new Error(`${(error as Error).message}`)
-    }
-  }
-  
+
 }

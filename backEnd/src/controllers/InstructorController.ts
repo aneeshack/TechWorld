@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { InstructorService } from "../services/instructorService";
 import { AuthRequest } from "../middlewares/authMiddleware";
-import { Role } from "../interfaces/user/IUser";
+import { Role } from "../interfaces/database/IUser";
 import { lessonModel } from "../models/lessonModel";
-import { IInstructorService } from "../interfaces/user/IInstructorService";
+import { IInstructorService } from "../interfaces/instructor/IInstructorService";
 import { s3Client } from "../config/awsConfig";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";

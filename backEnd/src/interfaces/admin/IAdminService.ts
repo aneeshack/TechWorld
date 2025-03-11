@@ -1,5 +1,5 @@
 import { CategoryEntity } from "../courses/category";
-import { IUser } from "../user/IUser";
+import { IUser } from "../database/IUser";
 
 export interface IAdminService{
     getAllRequsts():Promise<IUser[]>

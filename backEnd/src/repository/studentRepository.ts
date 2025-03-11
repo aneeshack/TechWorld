@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
 import { IStudentRepository } from "../interfaces/student/IStudentRepository";
-import { IUser } from "../interfaces/user/IUser";
+import { IUser } from "../interfaces/database/IUser";
 import UserModel from "../models/userModel";
 import { IPayment } from "../interfaces/courses/IPayment";
 import { paymentModel } from "../models/paymentModel";
+import { IEnrollment } from "../interfaces/database/IEnrollment";
+import { enrollmentModel } from "../models/enrollmentModel";
 
 export class StudentRepository implements IStudentRepository{
 
@@ -41,5 +43,68 @@ export class StudentRepository implements IStudentRepository{
             throw new Error("Failed to update student profile");
         }
     }
+
+     async enrolledCourses(userId: string ):Promise<IEnrollment[] | null>{
+        try {
+          // const enrolledCourses = await enrollmentModel.find({userId:userId})
+          const enrolledCourses = await enrollmentModel.aggregate([
+            { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+            {
+              $lookup:{
+                from:'courses',
+                localField: 'courseId',
+                foreignField:'_id',
+                as:'courseDetails'
+              }
+            },
+            {
+              $unwind:'$courseDetails'
+            },
+            {
+                $lookup:{
+                    from: 'categories',
+                    localField: 'courseDetails.category',
+                    foreignField: '_id',
+                    as:'courseDetails.category'
+                }
+            },
+            {
+                $unwind:'$courseDetails.category'
+            },
+            {
+                $lookup:{
+                    from: 'users',
+                    localField: 'courseDetails.instructor',
+                    foreignField: '_id',
+                    as:'courseDetails.instructor'
+                }
+            },
+            {
+                $unwind:'$courseDetails.instructor'
+            },
+            {
+              $project: {
+                _id:1,
+                userId:1,
+                courseId:1,
+                'courseDetails.title':1,
+                "courseDetails.description": 1,
+                "courseDetails.thumbnail": 1,
+                "courseDetails.category": 1,
+                "courseDetails.lessonCount": 1,
+                "courseDetails.instructor._id" :1,
+                "courseDetails.instructor.userName":1,
+              }
+            }
+          ])
+    
+          console.log('enrolled course',enrolledCourses)
+          return  enrolledCourses;
+    
+        } catch (error) {
+          console.log("user Repository error: enrolled courses", error);
+          throw new Error(`${(error as Error).message}`);
+        }
+      }
     
 }

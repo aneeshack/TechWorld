@@ -16,8 +16,13 @@ export interface IEnrollment{
     title: string;
     description: string;
     thumbnail: string;
-    category: {
+    category?: {
+      _id: string,
       categoryName: string;
     };
+    instructor?: {
+      _id: string,
+      userName: string
+    }
   };
 }

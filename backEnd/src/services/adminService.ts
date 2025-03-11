@@ -1,7 +1,7 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { CategoryEntity } from "../interfaces/courses/category";
-import { IUser } from "../interfaces/user/IUser";
+import { IUser } from "../interfaces/database/IUser";
 import { AdminRepository } from "../repository/adminRepository";
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client } from "../config/awsConfig";

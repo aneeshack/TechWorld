@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import UserRoutes from "./routes/UserRoutes";
-// import { toast, ToastContainer } from "react-toastify"
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import InstructorRoutes from "./routes/InstructorRoutes";
@@ -15,6 +14,7 @@ import { logoutAction } from "./redux/store/actions/auth/LogoutAction";
 import { RequestStatus, Role } from "./types/IForm";
 import AdminLogin from "./pages/admin/AdminLogin";
 import Registration from "./pages/instructor/Registration";
+
 
 const App = () => {
   const user = useSelector((state: RootState) => state.auth.data);

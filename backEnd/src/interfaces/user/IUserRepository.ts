@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { ICourse } from "../../interfaces/courses/ICourse";
-import { IEnrollment } from "./IEnrollment";
+import { IEnrollment } from "../database/IEnrollment";
 import { CategoryEntity } from "../courses/category";
 
 export interface IUserRepository {
@@ -17,6 +17,4 @@ export interface IUserRepository {
     limit?: number             
   ): Promise<{ courses: ICourse[]; total: number }>; 
   allCategories(): Promise<CategoryEntity[] |null>;
-  enrolledCourses(userId: string ):Promise<IEnrollment[]| null>;
-
 }

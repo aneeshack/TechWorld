@@ -5,8 +5,8 @@ import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../config/awsConfig";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { ILesson } from "../interfaces/courses/ILesson";
-import { IInstructorRepository } from "../interfaces/user/IInstructorRepository";
-import { IUser } from "../interfaces/user/IUser";
+import { IInstructorRepository } from "../interfaces/instructor/IInstructorRepository";
+import { IUser } from "../interfaces/database/IUser";
 import { InstructorRepository } from "../repository/instructorRepository";
 
 export class InstructorService {

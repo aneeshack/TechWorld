@@ -61,6 +61,7 @@ const StudentSidebar: React.FC = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col`}
       >
+        
         {/* Header Section */}
         <div className="flex h-[100px] items-center justify-center py-6">
           <img src={logo} alt="Logo" className="h-12 w-auto" />

@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import { tokenModel } from "../models/tokenModel"; // Adjust path as needed
-import { Role } from "../interfaces/user/IUser";
+import { Role } from "../interfaces/database/IUser";
 
 const JWT_SECRET = process.env.JWT_SECRET || 'default_secret';
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'default_refresh_secret';

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IUser, Role } from "../interfaces/user/IUser";
+import { IUser, Role } from "../interfaces/database/IUser";
 import { AuthService } from "../services/authService";
 import { AuthRepository } from "../repository/authRepository";
 import { clearTokenCookie, setTokenCookie } from "../util/auth/jwt";

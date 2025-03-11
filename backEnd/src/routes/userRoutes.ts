@@ -21,6 +21,5 @@ userRouter.get('/categories', userController.getAllCategories.bind(userControlle
 userRouter.post('/payment/process', authenticateStudent, userController.createPaymentSession.bind(userController));
 userRouter.get('/payment/status/:sessionId', authenticateStudent, userController.getPaymentSession.bind(userController));
 userRouter.post('/course/enrolled', authenticateStudent, userController.couresEnrollment.bind(userController));
-userRouter.get('/enrolled/:userId', authenticateStudent, userController.fetchEnrolledCourses.bind(userController));
 
 export default userRouter;

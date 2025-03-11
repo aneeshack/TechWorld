@@ -1,7 +1,8 @@
 import { IPayment } from "../interfaces/courses/IPayment";
 import { IStudentRepository } from "../interfaces/student/IStudentRepository";
-import { IUser } from "../interfaces/user/IUser";
+import { IUser } from "../interfaces/database/IUser";
 import { StudentRepository } from "../repository/studentRepository";
+import { IEnrollment } from "../interfaces/database/IEnrollment";
 
 export class StudentService{
     constructor(private studentRepository: IStudentRepository){}
@@ -45,5 +46,18 @@ export class StudentService{
         }
       }
 
-      
+       async getEnrolledCourses(userId: string): Promise<IEnrollment[] |null> {
+          try {
+            const enrolledCourses = await this.studentRepository.enrolledCourses(userId)
+        
+            if (!enrolledCourses) {
+              throw new Error("enrolledCourses not found");
+            }
+        
+            return enrolledCourses;
+          } catch (error:any) {
+            console.log('student service error:enrolled courses ',error)
+            throw new Error(`${(error as Error).message}`)
+          }
+        }
 }

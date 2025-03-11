@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {  NavLink, useNavigate } from "react-router-dom";
 import { 
   // HomeIcon,
@@ -13,13 +13,16 @@ import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
-import { User } from "lucide-react";
+import { MenuIcon, MessageCircle, User, XIcon } from "lucide-react";
 
 
 const InstructorSidebar: React.FC = () => {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [isOpen, setIsOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
 
   const handleLogout = async()=>{
      try {
@@ -39,9 +42,39 @@ const InstructorSidebar: React.FC = () => {
           }
   }
 
+   useEffect(() => {
+     const handleClickOutside = (event: MouseEvent) => {
+       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+         setIsOpen(false);
+       }
+     };
+     if (isOpen) {
+       document.addEventListener("mousedown", handleClickOutside);
+     } else {
+       document.removeEventListener("mousedown", handleClickOutside);
+     }
+     return () => {
+       document.removeEventListener("mousedown", handleClickOutside);
+     };
+   }, [isOpen]);
  
   return (
-    <div className="w-1/5 hidden	bg-[#A7D7C5] text-black h-screen md:flex md:flex-col">
+    <>
+    {/* <div className="w-1/5 hidden	bg-[#A7D7C5] text-black h-screen md:flex md:flex-col"> */}
+    <button
+        className="lg:hidden fixed top-4 left-4 z-50 bg-green-700 p-2 rounded-lg text-white"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+      </button>
+
+      <div
+        ref={sidebarRef}
+        className={`w-64 bg-[#A7D7C5] text-black h-screen fixed lg:static transform ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col`}
+      >
+     
       {/* Logo Section */}
       <div className="flex h-[100px] items-center  justify-center py-6 ">
         <img 
@@ -79,6 +112,15 @@ const InstructorSidebar: React.FC = () => {
               <span className="font-medium hover:text-white">Courses</span>
             </NavLink>
           </li>
+          <li>
+              <NavLink
+                to="/instructor/dashboard/chat"
+                className="flex items-center space-x-3 px-4 py-3 rounded-lg border border-green-600 hover:text-white hover:bg-green-800 bg-transparent transition-colors group"
+              >
+                <MessageCircle className="h-6 w-6 text-green-300 group-hover:text-white" />
+                <span className="font-medium hover:text-white">Messages</span>
+              </NavLink>
+            </li>
           <li>
             <NavLink
               to="/instructor/dashboard/profile"
@@ -126,6 +168,7 @@ const InstructorSidebar: React.FC = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 

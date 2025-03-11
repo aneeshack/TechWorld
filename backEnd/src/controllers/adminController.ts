@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IUser } from "../interfaces/user/IUser";
+import { IUser } from "../interfaces/database/IUser";
 import { AdminRepository } from "../repository/adminRepository";
 import { AdminService } from "../services/adminService";
 import { IAdminService } from "../interfaces/admin/IAdminService";

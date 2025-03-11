@@ -22,5 +22,6 @@ studentRouter.get('/lesson/getPresignedUrlForVideo/:lessonId',authenticateStuden
 studentRouter.get('/lesson/:lessonId',authenticateStudent, studentController.fetchSingleLesson.bind(studentController));
 studentRouter.post('/assessment/submit',authenticateStudent, studentController.submitAssessment.bind(studentController));
 studentRouter.post('/enrollment/updateProgress',authenticateStudent, studentController.updateLessonProgress.bind(studentController));
+studentRouter.get('/enrolled/:userId', authenticateStudent, studentController.fetchEnrolledCourses.bind(studentController));
 
 export default studentRouter;

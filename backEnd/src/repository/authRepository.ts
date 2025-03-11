@@ -1,4 +1,4 @@
-import { IUser, RequestStatus } from "../interfaces/user/IUser";
+import { IUser, RequestStatus } from "../interfaces/database/IUser";
 import { IAuthRepository } from "../interfaces/user/IAuthRepository";
 import OtpModel from "../models/otpModel";
 import UserModel from "../models/userModel";

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { IUser, Role } from "./IUser";
+import { IUser, Role } from "../database/IUser";
 
 export interface IAuthService{
     getUserById(userId: mongoose.Types.ObjectId): Promise<IUser |null>;

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { StudentService } from "../services/studentService";
 import { IStudentService } from "../interfaces/student/IStudentService";
-import { IInstructorService } from "../interfaces/user/IInstructorService";
+import { IInstructorService } from "../interfaces/instructor/IInstructorService";
 import { InstructorService } from "../services/instructorService";
 import { enrollmentModel } from "../models/enrollmentModel";
 import { AuthRequest } from "../middlewares/authMiddleware";
@@ -214,4 +214,22 @@ export class StudentController{
                 res.status(500).json({ message: "Internal server error." });
               }
             };
+
+            async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
+              try {
+                console.log('inside fetch enrolled course')
+                const { userId } = req.params; 
+            
+                if (!userId) {
+                  res.status(400).json({ success: false, message: "User ID is required" });
+                  return;
+                }
+            
+                const enrolledCourses = await this.studentService.getEnrolledCourses(userId);
+            
+                res.status(200).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
+              } catch (error: any) {
+                res.status(500).json({ success: false, message: error.message });
+              }
+            }
 }

@@ -3,7 +3,7 @@ import { courseModel } from "../models/courseModel";
 import { ICourse } from "../interfaces/courses/ICourse";
 import UserModel from "../models/userModel";
 import { enrollmentModel } from "../models/enrollmentModel";
-import { IEnrollment } from "../interfaces/user/IEnrollment";
+import { IEnrollment } from "../interfaces/database/IEnrollment";
 import mongoose from "mongoose";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { Category } from "../models/categoryModel";
@@ -119,46 +119,6 @@ export class UserRepository implements IUserRepository {
       return  enrolled;
     } catch (error) {
       console.log("user Repository error: enroll course", error);
-      throw new Error(`${(error as Error).message}`);
-    }
-  }
-
-
-  async enrolledCourses(userId: string ):Promise<IEnrollment[]>{
-    try {
-      // const enrolledCourses = await enrollmentModel.find({userId:userId})
-      const enrolledCourses = await enrollmentModel.aggregate([
-        { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-        {
-          $lookup:{
-            from:'courses',
-            localField: 'courseId',
-            foreignField:'_id',
-            as:'courseDetails'
-          }
-        },
-        {
-          $unwind:'$courseDetails'
-        },
-        {
-          $project: {
-            _id:1,
-            userId:1,
-            courseId:1,
-            'courseDetails.title':1,
-            "courseDetails.description": 1,
-            "courseDetails.thumbnail": 1,
-            "courseDetails.category": 1,
-            "courseDetails.lessonCount": 1,
-          }
-        }
-      ])
-
-      console.log('enrolled course',enrolledCourses)
-      return  enrolledCourses;
-
-    } catch (error) {
-      console.log("user Repository error: enrolled courses", error);
       throw new Error(`${(error as Error).message}`);
     }
   }

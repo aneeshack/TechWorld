@@ -11,7 +11,7 @@ const StudentCourses = () => {
     const [enrolledCourses, setEnrolledCourses] = useState<IEnrollment[]|null>([]);
 
   useEffect(()=>{
-     CLIENT_API.get(`/user/enrolled/${user?._id}`)
+     CLIENT_API.get(`/student/enrolled/${user?._id}`)
           .then((response) => {
             console.log('response',response.data.data)
             setEnrolledCourses(response.data.data);
@@ -42,9 +42,9 @@ const StudentCourses = () => {
                 {course?.courseDetails?.title}
               </h3>
               <p className="text-sm text-gray-600 mt-2">{course.courseDetails?.description}</p>
-              {/* <span className="inline-block mt-2 px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-700">
-                {course.category.categoryName}
-              </span> */}
+              <span className="inline-block mt-2 px-3 py-1 text-sm font-medium rounded-full bg-blue-100 text-blue-700">
+                {course.courseDetails?.category?.categoryName}
+              </span>
               <div className="mt-3">
                 {/* <p className="text-gray-700 font-medium">
                   Progress:{" "}

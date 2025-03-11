@@ -1,5 +1,5 @@
 import { IPayment } from "../courses/IPayment";
-import { IUser } from "../user/IUser";
+import { IUser } from "../database/IUser";
 
 export interface IStudentService{
     fetchStudentProfile(userId: string): Promise<IUser | null>;

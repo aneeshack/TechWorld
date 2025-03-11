@@ -1,20 +1,30 @@
-import { Schema, model } from "mongoose";
+import { model,Schema, Types } from "mongoose";
+import { IChat } from "../interfaces/database/IChat";
 
-const ChatSchema = new Schema(
-  {
-    participants: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "users", // References the UserModel
-        required: true,
-      },
-    ],
-    lastMessage: {
-      type: Schema.Types.ObjectId,
-      ref: "messages",
+const chatSchema = new Schema({
+   
+    isGroupChat : {
+        type: Boolean,
+        default: false
     },
-  },
-  { timestamps: true }
-);
+    users : [{
+        type: Types.ObjectId,
+        ref: "users",
+        required : true
+    }],
+    latestMessage : {
+        type: Types.ObjectId,
+        ref: "messages"
+    },
+    groupName : {
+        type: String
+    },
+    groupAdmin : {
+        type: Types.ObjectId,
+        ref: "users"
+    },
+},{
+    timestamps : true
+})
 
-export const ChatModel = model("chats", ChatSchema);
+export const chatModel = model<IChat> ("chats",chatSchema)
