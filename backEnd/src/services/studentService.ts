@@ -60,4 +60,19 @@ export class StudentService{
             throw new Error(`${(error as Error).message}`)
           }
         }
+
+        async getEnrollment(userId: string, courseId: string): Promise<IEnrollment |null> {
+          try {
+            const enrolledCourses = await this.studentRepository.studentCourseEnrollment(userId, courseId)
+        
+            if (!enrolledCourses) {
+              throw new Error("enrolledCourses not found");
+            }
+        
+            return enrolledCourses;
+          } catch (error:any) {
+            console.log('student service error:user course enrollment ',error)
+            throw new Error(`${(error as Error).message}`)
+          }
+        }
 }

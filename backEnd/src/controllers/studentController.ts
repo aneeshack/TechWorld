@@ -232,4 +232,30 @@ export class StudentController{
                 res.status(500).json({ success: false, message: error.message });
               }
             }
+
+            async getEnrollment(req: AuthRequest, res: Response): Promise<void> {
+              try {
+                console.log('inside fetch enrollment',req.params)
+                const { courseId } = req.params; 
+                const userId = req.user?.id
+                console.log('uesrid',userId)
+            
+                if (!userId) {
+                  res.status(400).json({ success: false, message: "User ID is required" });
+                  return;
+                }
+            
+                
+                if (!courseId) {
+                  res.status(400).json({ success: false, message: "course ID is required" });
+                  return;
+                }
+            
+                const enrollment = await this.studentService.getEnrollment(userId.toString(),courseId);
+            
+                res.status(200).json({ success: true, message: "Fetched enrollment of courses", data: enrollment });
+              } catch (error: any) {
+                res.status(500).json({ success: false, message: error.message });
+              }
+            }
 }

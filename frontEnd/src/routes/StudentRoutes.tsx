@@ -7,6 +7,7 @@ import PurchaseHistory from "../pages/student/PurchaseHistory"
 import CourseWatching from "../pages/student/CourseWatch"
 import ConductAssessment from "../pages/student/ConductAssessment"
 import ChatPage from "../pages/commonPages/ChatPage"
+import CourseCertificate from "../pages/student/CourseCertificate"
 
 
 const StudentRoutes = () => {
@@ -23,6 +24,7 @@ const StudentRoutes = () => {
               <Route path="purchase" element={<PurchaseHistory/>}/>
               <Route path="assessment/:lessonId" element={<ConductAssessment/>}/>
               <Route path="chat" element={<ChatPage/>}/>
+              <Route path="certificate/:courseId" element={<CourseCertificate/>}/>
 
 
             <Route />

@@ -107,4 +107,17 @@ export class StudentRepository implements IStudentRepository{
         }
       }
     
+      async studentCourseEnrollment(userId: string, courseId: string): Promise<IEnrollment| null> {
+        try {
+              const enrollment = await enrollmentModel
+                  .findOne({ userId, courseId })
+                  .populate("courseId") 
+                  .populate("progress.completedLessons"); 
+                  console.log('enrollment',enrollment)
+              return enrollment
+        } catch (error) {
+            console.error("Error fetch student course enrollment:", error);
+            throw new Error("Failed to fetch student course enrollment");
+        }
+    }
 }

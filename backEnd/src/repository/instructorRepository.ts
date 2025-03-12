@@ -92,8 +92,7 @@ export class InstructorRepository implements IInstructorRepository{
 
     async getSingleCourse(courseId: string): Promise<ICourse | null> {
         try {
-            console.log('third')
-            const course = await courseModel.findById(courseId)
+            const course = await courseModel.findById(courseId).populate('instructor', 'userName')
             if (!course) {
                 throw new Error('No course found');
             }

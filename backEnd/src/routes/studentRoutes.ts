@@ -23,5 +23,6 @@ studentRouter.get('/lesson/:lessonId',authenticateStudent, studentController.fet
 studentRouter.post('/assessment/submit',authenticateStudent, studentController.submitAssessment.bind(studentController));
 studentRouter.post('/enrollment/updateProgress',authenticateStudent, studentController.updateLessonProgress.bind(studentController));
 studentRouter.get('/enrolled/:userId', authenticateStudent, studentController.fetchEnrolledCourses.bind(studentController));
+studentRouter.get('/enrollment/:courseId', authenticateStudent, studentController.getEnrollment.bind(studentController));
 
 export default studentRouter;

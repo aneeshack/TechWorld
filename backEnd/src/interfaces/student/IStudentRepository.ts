@@ -6,5 +6,6 @@ export interface IStudentRepository {
     getStudentProfile(userId: string): Promise<IUser | null>;
     updateStudent(userId: string, updateData: Partial<IUser>): Promise<IUser | null>;
     fetchPayment(userId: string): Promise<IPayment[] | null>;
-    enrolledCourses(userId: string ):Promise<IEnrollment[] | null>
+    enrolledCourses(userId: string ):Promise<IEnrollment[] | null>;
+    studentCourseEnrollment(userId: string, courseId: string): Promise<IEnrollment| null>;
 }
