@@ -14,5 +14,5 @@ export interface IAdminService{
     getAllCategories():Promise<CategoryEntity[]>;
     getCategoryById(categoryId: string):Promise<CategoryEntity>;
     updateCategory(categoryId:string, categoryData: Partial<CategoryEntity>):Promise<CategoryEntity>;
-
+    getPresignedUrlForCategoryImage(categoryId: string): Promise<string> ;
 }

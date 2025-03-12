@@ -27,6 +27,10 @@ adminRouter.get('/category/add', authenticateAdmin, adminController.addCategory.
 adminRouter.get('/categories', authenticateAdmin, adminController.getAllCategories.bind(adminController));
 adminRouter.get('/category/:categoryId', authenticateAdmin, adminController.getSingleCategory.bind(adminController));
 adminRouter.put('/category/update/:categoryId', authenticateAdmin, adminController.editCategory.bind(adminController));
+adminRouter.get('/category/getPresignedUrl/:categoryId', authenticateAdmin, adminController.getPresignedUrlForImage.bind(adminController));
+
+
+adminRouter.get('/salesReport', authenticateAdmin, adminController.fetchPayments.bind(adminController));
 
 
 export default adminRouter;

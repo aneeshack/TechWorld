@@ -54,6 +54,7 @@ export const clearTokenCookie = async (res: Response): Promise<void> => {
         try {
             const decoded = jwt.verify(cookies.jwt, JWT_SECRET) as TokenPayload;
             await tokenModel.deleteOne({ userId: decoded.id });
+            console.log('refresh token cleared')
         } catch (error) {
             // Ignore verification errors during logout
             console.log('error in cookie decode and delete')

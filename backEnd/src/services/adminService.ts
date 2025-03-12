@@ -1,4 +1,4 @@
-import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { IUser } from "../interfaces/database/IUser";
@@ -178,4 +178,34 @@ export class AdminService{
             throw new Error(`${(error as Error).message}`)
         }
      }
+     async getPresignedUrlForCategoryImage(categoryId: string): Promise<string> {
+        try {
+            const category = await this.adminRepository.getCategoryById(categoryId);
+            if(!category){
+                throw new Error('No category found')
+            }
+            console.log('category',category.imageUrl)
+            const imageUrl = category.imageUrl ||''
+          // Extract the S3 object key from the URL
+          const imageKey = imageUrl.split(".amazonaws.com/")[1];
+      
+          if (!imageKey) {
+            throw new Error("Invalid S3 URL format");
+          }
+      
+          const params = {
+            Bucket: process.env.AWS_S3_BUCKET_NAME!,
+            Key: imageKey,
+            Expires: 300, // URL expires in 5 minutes
+          };
+      
+          const command = new GetObjectCommand(params);
+          const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
+      
+          return presignedUrl;
+        } catch (error) {
+          console.error("Error generating presigned URL for category image:", error);
+          throw new Error(`Failed to generate presigned URL: ${(error as Error).message}`);
+        }
+      }
 }

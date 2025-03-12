@@ -38,7 +38,7 @@ const AdminSidebar: React.FC = () => {
     }
   
   return (
-    <div className="w-1/5 hidden md:flex md:flex-col 	bg-[#A7D7C5] text-black h-screen ">
+    <div className="w-1/5 hidden md:flex md:flex-col 	bg-[#A7D7C5] text-black h-screen mr-10">
       {/* Logo Section */}
       <div className="flex h-[100px] items-center  justify-center py-6 ">
         <img 

@@ -62,23 +62,37 @@ const EditCategory = () => {
     enableReinitialize: true, 
   })
   
-  useEffect(()=>{
-    if (!categoryId) return; 
+  useEffect(() => {
+    if (!categoryId) return;
 
-    CLIENT_API.get(`/admin/category/${categoryId}`)
-      .then(({ data }) => {
-        console.log('data in formik',data)
-        if(data.success &&  data.data){
+    const fetchCategoryData = async () => {
+      try {
+        // Fetch category details
+        const { data } = await CLIENT_API.get(`/admin/category/${categoryId}`);
+        console.log("Category data:", data);
+        if (data.success && data.data) {
           formik.setValues({
-            categoryName: data.data.categoryName||'',
-            description: data.data.description||'',
-            imageUrl: data.data.imageUrl||''
+            categoryName: data.data.categoryName || "",
+            description: data.data.description || "",
+            imageUrl: data.data.imageUrl || "",
           });
+
+          // Fetch presigned URL for the existing image
+          if (data.data.imageUrl) {
+            const presignedResponse = await CLIENT_API.get(
+              `/admin/category/getPresignedUrl/${categoryId}`
+            );
+            setImagePreview(presignedResponse.data.presignedUrl);
+          }
         }
-        setImagePreview(data.data.imageUrl);
-      })
-      .catch(error => console.log("Error in fetching category details", error));
-  },[categoryId])
+      } catch (error) {
+        console.error("Error fetching category details:", error);
+        toast.error("Error loading category details");
+      }
+    };
+
+    fetchCategoryData();
+  }, [categoryId]);
 
   useEffect(()=>{
     return()=>{

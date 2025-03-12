@@ -14,6 +14,11 @@ const tokenSchema = new Schema(
 			type: String,
             unique: true
 		},
+        expiresAt: {
+            type: Date,
+            required: true,
+            expires: 0, // TTL Index: MongoDB will delete expired tokens automatically
+        },
     }
 )
 export const tokenModel = model<IToken>("tokens", tokenSchema);

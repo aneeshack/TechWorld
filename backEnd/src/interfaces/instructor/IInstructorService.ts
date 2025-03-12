@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { CategoryEntity } from "../courses/category";
 import { ICourse } from "../courses/ICourse";
 import { ILesson } from "../courses/ILesson";
-import { IUser } from "./IUser";
+import { IUser } from "../database/IUser";
 
 export interface IInstructorService{
     getCategories(): Promise<CategoryEntity[]>;

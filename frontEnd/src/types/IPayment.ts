@@ -1,6 +1,11 @@
 
 export interface IPayment {
-	userId?: string; 
+	_id:string,
+	userId?: {
+		_id:string,
+		userName: string,
+		email: string
+	}; 
 	courseId?: {
 		_id:string,
 		title: string

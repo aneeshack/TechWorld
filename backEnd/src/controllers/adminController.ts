@@ -3,6 +3,7 @@ import { IUser } from "../interfaces/database/IUser";
 import { AdminRepository } from "../repository/adminRepository";
 import { AdminService } from "../services/adminService";
 import { IAdminService } from "../interfaces/admin/IAdminService";
+import { paymentModel } from "../models/paymentModel";
 
 export class AdminController{
     constructor(private adminService: IAdminService){}
@@ -162,4 +163,37 @@ export class AdminController{
         }
     }
 
+
+    async fetchPayments(req:Request, res: Response):Promise<void>{
+        try {
+            const payments = await paymentModel
+              .find()
+              .populate("userId", " userName email") // Populating user details
+              .populate("courseId", "title price") // Populating course details
+              .sort({ createdAt: -1 }); // Sorting by most recent transactions
+        
+            res.json({ payments });
+          } catch (error) {
+            console.error("Error fetching payments:", error);
+            res.status(500).json({ message: "Failed to fetch payments" });
+          }
+    }
+
+    async getPresignedUrlForImage(req: Request, res: Response): Promise<void> {
+        try {
+            console.log('inside presigned url for image')
+          const { categoryId } = req.params;
+          if(!categoryId){
+            throw new Error('Category id not found')
+          }
+      
+          const presignedUrl = await this.adminService.getPresignedUrlForCategoryImage(categoryId)
+         
+          console.log('presinged url',presignedUrl)
+          res.json({ presignedUrl });
+        } catch (error) {
+          console.error("Error in InstructorController :get presigned url for video", error);
+          res.status(500).json({ success: false, message: "Server error" });
+        }
+      }
 }
