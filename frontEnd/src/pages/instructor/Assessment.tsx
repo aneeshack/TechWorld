@@ -72,7 +72,7 @@ export default function Assessment() {
     }
 
     const isValid = questions.every((q) =>{
-      //   q.question?.trim() !== "" && q.options?.some((opt) => opt.text.trim() !== "")
+        // q.question?.trim() !== "" && q.options?.some((opt) => opt.text.trim() !== "")
       const hasQuestionText = q.question?.trim() !== "";
         const hasValidOption = q.options?.some((opt) => opt.text.trim() !== "");
         const hasCorrectAnswer = q.options?.some((opt) => opt.isCorrect === true);

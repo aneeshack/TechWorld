@@ -4,7 +4,7 @@ import { CLIENT_API } from "../../utilities/axios/Axios";
 import { ICourse, ILesson } from "../../types/ICourse";
 import { toast } from "react-toastify";
 import { IEnrollment } from "../../types/IEnrollment";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 
 const CourseWatching = () => {
   const { courseId } = useParams<{ courseId: string }>();
@@ -21,7 +21,6 @@ const CourseWatching = () => {
 
   useEffect(() => {
     if (!courseId) return;
-    
     const fetchCourseData = async () => {
       try {
         const courseResponse = await CLIENT_API.get(`/student/course/${courseId}`);
@@ -60,7 +59,8 @@ const CourseWatching = () => {
 
   useEffect(() => {
     if (!selectedLesson?._id) return;
-    
+    console.log('selected lesson pdf',selectedLesson?.pdf)
+
     const fetchPresignedUrl = async () => {
       try {
         const presignedResponse = await CLIENT_API.get(
@@ -224,7 +224,7 @@ const CourseWatching = () => {
             {/* PDF Section */}
             {selectedLesson.pdf && (
               <div className="mt-4 flex flex-col items-start">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Lesson Notes</h3>
+                {/* <h3 className="text-lg font-semibold text-gray-800 mb-2">Lesson Notes</h3>
                 <p className="text-gray-600 mb-2">
                   Please download the PDF below to learn the content and review the notes:
                 </p>
@@ -234,7 +234,7 @@ const CourseWatching = () => {
                   className="inline-block px-4 py-2 bg-green-600 text-white rounded-md hover:bg-blue-700 transition"
                 >
                   Download PDF Notes
-                </a>
+                </a> */}
               </div>
             )}
           </>

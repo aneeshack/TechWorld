@@ -10,8 +10,8 @@ import { IUser } from "../interfaces/database/IUser";
 import { InstructorRepository } from "../repository/instructorRepository";
 
 export class InstructorService {
-  // constructor(private instructorRepository: IInstructorRepository) {}
-  constructor(private instructorRepository: InstructorRepository) {}
+  constructor(private instructorRepository: IInstructorRepository) {}
+  // constructor(private instructorRepository: InstructorRepository) {}
 
   async getCategories(): Promise<CategoryEntity[]> {
     try {

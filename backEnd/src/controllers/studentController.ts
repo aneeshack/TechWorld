@@ -8,14 +8,11 @@ import { AuthRequest } from "../middlewares/authMiddleware";
 import { lessonModel } from "../models/lessonModel";
 
 export class StudentController{
-    // constructor(
-    //     private studentService: IStudentService,
-    //     private instructorService:IInstructorService
-    // ){}
     constructor(
-      private studentService: StudentService,
-      private instructorService:InstructorService
-  ){}
+        private studentService: IStudentService,
+        private instructorService:IInstructorService
+    ){}
+
 
     async getProfile(req: Request, res: Response): Promise<void> {
         try {
@@ -148,23 +145,26 @@ export class StudentController{
 
             async submitAssessment(req: AuthRequest, res: Response):Promise<void> {
               try {
+                console.log('inside submit assessment')
                 const { lessonId, score } = req.body;
                 const userId = req.user?.id; // Get user ID from authentication middleware
             
-                const enrollment = await enrollmentModel.findOne({
-                  userId,
-                  "progress.completedAssessments": { $ne: lessonId },
-                });
+                console.log('userid',userId)
+                // const enrollment = await enrollmentModel.findOne({
+                //   userId,
+                //   "progress.completedAssessments": { $ne: lessonId },
+                // });
             
-                if (!enrollment) {
-                   res.status(404).json({ message: "Enrollment not found" });
-                   return
-                }
+                // if (!enrollment) {
+                //   console.log('inside enrollemt')
+                //    res.status(404).json({ message: "Enrollment not found" });
+                //    return
+                // }
             
-                enrollment.progress.completedAssessments.push(lessonId);
-                await enrollment.save();
+                // enrollment.progress.completedAssessments.push(lessonId);
+                // await enrollment.save();
             
-                res.json({ message: "Assessment submitted successfully", score });
+                res.status(200).json({ message: "Assessment submitted successfully", score });
               } catch (error) {
                 res.status(500).json({ message: "Error submitting assessment", error });
               }

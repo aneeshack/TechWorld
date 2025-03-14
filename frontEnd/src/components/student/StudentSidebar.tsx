@@ -7,12 +7,31 @@ import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
 import { CreditCard, MenuIcon, MessageCircle, User, XIcon } from "lucide-react";
+import { useSocket } from "../../context/Sockets";
 
 const StudentSidebar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef<HTMLDivElement>(null);
+  const socket = useSocket();
+  const [hasNewMessage, setHasNewMessage]=useState(false)
+
+  // checking for new messages or notifications
+  useEffect(() => {
+    if (!socket) return;
+
+    // Listen for incoming notifications
+    socket.on("receiveNotification", (notification) => {
+      console.log("New notification received:", notification);
+      setHasNewMessage(true);
+      toast.info("New message received!");
+    });
+
+    return () => {
+      socket.off("receiveNotification");
+    };
+  }, [socket]);
 
   const handleLogout = async () => {
     try {
@@ -93,7 +112,7 @@ const StudentSidebar: React.FC = () => {
                 <span className="font-medium hover:text-white">Profile</span>
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/student/dashboard/chat"
                 className="flex items-center space-x-3 px-4 py-3 rounded-lg border border-green-600 hover:text-white hover:bg-green-800 bg-transparent transition-colors group"
@@ -101,7 +120,22 @@ const StudentSidebar: React.FC = () => {
                 <MessageCircle className="h-6 w-6 text-green-300 group-hover:text-white" />
                 <span className="font-medium hover:text-white">Messages</span>
               </NavLink>
-            </li>
+            </li> */}
+            <li>
+            <NavLink
+              to="/student/dashboard/chat"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg border border-green-600 hover:text-white hover:bg-green-800 bg-transparent transition-colors group"
+              onClick={() => setHasNewMessage(false)}
+            >
+              <MessageCircle className="h-6 w-6 text-green-300 group-hover:text-white" />
+              <span className="font-medium hover:text-white">Messages</span>
+              {hasNewMessage && (
+                <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-full ml-2">
+                  New
+                </span>
+              )}
+            </NavLink>
+          </li>
             <li>
               <NavLink
                 to="/student/dashboard/courses"

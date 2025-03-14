@@ -14,6 +14,10 @@ chatRouter.get('/user/:userId', chatController.getUserChats.bind(chatController)
 chatRouter.post('/', chatController.sendMessage.bind(chatController));
 chatRouter.get('/:senderId/:receiverId', chatController.getMessages.bind(chatController));
 chatRouter.put('/seen', chatController.markMessagesSeen.bind(chatController));
+chatRouter.get('/new/notifications/:userId', chatController.getNotifications.bind(chatController));
+
+
+chatRouter.put('/notification/seen', chatController.markNotificationsAsSeen.bind(chatController));
 
 chatRouter.get('/instructor/meesagedStudent/:instructorId', chatController.getMessagedStudents.bind(chatController));
 

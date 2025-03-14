@@ -1,7 +1,7 @@
 import { Document } from "mongoose";
 
 export interface IChat extends Document{
-    id?: string;
+    id?: string ;
     isGroupChat?: boolean;
     users?: string[];
     latestMessage?: string;

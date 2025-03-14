@@ -1,4 +1,5 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
+import { notificationModel } from "../models/notificationModel";
 
 
 export const initializeSocket = (io: SocketIOServer) => {
@@ -32,13 +33,16 @@ export const initializeSocket = (io: SocketIOServer) => {
           io.to(reciever).emit("receiveMessage",newMessage);
           console.log(`Message sent from ${sender} to ${reciever}`);
 
+
+
         // Emit a notification to the receiver
         console.log('recieve notification ',sender)
         io.to(reciever).emit("receiveNotification", {
           type: "message",
           sender,
-          message: "You have a new message",
+          message: newMessage.content ||"You have a new message",
         });
+      
           // Notify sender that the message was sent
           // socket.emit("messageSent", { success: true });
         } catch (error) {
@@ -47,6 +51,7 @@ export const initializeSocket = (io: SocketIOServer) => {
         }
       }
     );
+
 
     socket.on("callUser", ({ callerId, receiverId, roomName, callerName }) => {
       console.log('calluser',callerId, receiverId, roomName, callerName)
