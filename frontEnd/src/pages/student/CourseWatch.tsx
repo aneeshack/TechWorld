@@ -57,9 +57,38 @@ const CourseWatching = () => {
     fetchCourseData();
   }, [courseId]);
 
+
+  // fetch presigned url
+  // useEffect(() => {
+  //   if (!selectedLesson?._id) return;
+  //   console.log('selected lesson pdf',selectedLesson?.pdf)
+
+  //   const fetchPresignedUrl = async () => {
+  //     try {
+  //       const presignedResponse = await CLIENT_API.get(
+  //         `/student/lesson/getPresignedUrlForVideo/${selectedLesson._id}`
+  //       );
+  //       const presignedUrl = presignedResponse.data.presignedUrl;
+  //       setVideoSrc(presignedUrl);
+      
+  //       console.log("Fetched new presigned URL");
+      
+  //       refreshTimeout.current = setTimeout(fetchPresignedUrl, 270000);
+  //     } catch (error) {
+  //       console.error("Error fetching presigned URL:", error);
+  //       toast.error("Unable to load video preview.");
+  //     }
+  //   };
+      
+  //   fetchPresignedUrl();
+  
+  //   return () => {
+  //     if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
+  //   };
+  // }, [selectedLesson?._id]);
+
   useEffect(() => {
     if (!selectedLesson?._id) return;
-    console.log('selected lesson pdf',selectedLesson?.pdf)
 
     const fetchPresignedUrl = async () => {
       try {
@@ -67,19 +96,30 @@ const CourseWatching = () => {
           `/student/lesson/getPresignedUrlForVideo/${selectedLesson._id}`
         );
         const presignedUrl = presignedResponse.data.presignedUrl;
-        setVideoSrc(presignedUrl);
-      
-        console.log("Fetched new presigned URL");
-      
-        refreshTimeout.current = setTimeout(fetchPresignedUrl, 270000);
+
+        if (videoRef.current) {
+          const currentTime = videoRef.current.currentTime; 
+          const isPlaying = !videoRef.current.paused; 
+          console.log('current time, isplaying',currentTime,isPlaying)
+          setVideoSrc(presignedUrl); 
+
+          // Restore state after update
+          videoRef.current.load();
+          videoRef.current.currentTime = currentTime;
+          if (isPlaying) videoRef.current.play().catch((e) => console.error("Play error:", e));
+        } else {
+          setVideoSrc(presignedUrl); 
+        }
+
+        refreshTimeout.current = setTimeout(fetchPresignedUrl, 270000); // 4:30
       } catch (error) {
         console.error("Error fetching presigned URL:", error);
         toast.error("Unable to load video preview.");
       }
     };
-      
+
     fetchPresignedUrl();
-  
+
     return () => {
       if (refreshTimeout.current) clearTimeout(refreshTimeout.current);
     };

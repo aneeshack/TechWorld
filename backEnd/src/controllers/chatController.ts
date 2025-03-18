@@ -8,6 +8,29 @@ import { notificationModel } from "../models/notificationModel";
 export class ChatController{
     constructor(private chatService: ChatService){}
 
+    async getUserMessages(req: Request, res: Response): Promise<void> {
+      console.log('inside get user message')
+      try {
+        const { userId } = req.params;
+        if(!userId){
+          throw new Error('no user found')
+        }
+        const messages = await this.chatService.getUserMessages(userId);
+  
+        res.status(200).json({
+          success: true,
+          data: messages,
+        });
+      } catch (error) {
+        console.error("Error fetching user messages:", error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error",
+          error,
+        });
+      }
+    }
+
 async accessChat(req: Request, res: Response):Promise<void> {
   try {
     console.log('req.body',req.body)

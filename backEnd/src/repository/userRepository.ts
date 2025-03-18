@@ -87,7 +87,7 @@ export class UserRepository implements IUserRepository {
         .populate("instructor", "userName")
         .populate({
           path:'lessons',
-          select: 'lessonNumber title thumbnail video description ',
+          select: 'lessonNumber title thumbnail description ',
           options: {sort: {lessonNumber:1}}
         })
         .exec();

@@ -108,6 +108,7 @@ const Login = () => {
     toast.error("Google login failed");
     console.error("Google login error");
   };
+  
   return (
     <div className="h-screen flex flex-col md:flex-row bg-white">
       <LeftSection />

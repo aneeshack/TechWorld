@@ -87,6 +87,9 @@ export class StudentRepository implements IStudentRepository{
                 _id:1,
                 userId:1,
                 courseId:1,
+                enrolledAt:1,
+                completionStatus:1,
+                progress:1,
                 'courseDetails.title':1,
                 "courseDetails.description": 1,
                 "courseDetails.thumbnail": 1,
@@ -94,6 +97,7 @@ export class StudentRepository implements IStudentRepository{
                 "courseDetails.lessonCount": 1,
                 "courseDetails.instructor._id" :1,
                 "courseDetails.instructor.userName":1,
+                "courseDetails.instructor.profile.avatar":1,
               }
             }
           ])

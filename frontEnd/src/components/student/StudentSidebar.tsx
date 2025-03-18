@@ -35,6 +35,11 @@ const StudentSidebar: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      if (socket) {
+        console.log('inside socket ')
+        socket.emit("logout");
+        socket.disconnect(); 
+      }
       const result = await dispatch(logoutAction());
       const response = result.payload as Response;
       if (!response?.success) {
