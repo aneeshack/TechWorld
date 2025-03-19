@@ -7,6 +7,7 @@ import InstructorView from '../pages/admin/InstructorView'
 import Categories from '../pages/admin/Categories'
 import AddCategory from '../pages/admin/AddCategory'
 import EditCategory from '../pages/admin/EditCategory'
+import ErrorPage from '../pages/commonPages/ErrorPage'
 
 
 const AdminRoutes = () => {
@@ -23,6 +24,8 @@ const AdminRoutes = () => {
         <Route path='categories' element={<Categories/>}/>
         <Route path='category/add' element={<AddCategory/>}/>
         <Route path='category/edit/:categoryId' element={<EditCategory/>}/>
+        
+        <Route path="*" element={<ErrorPage />} />
         </Route>
     </Routes>
   )

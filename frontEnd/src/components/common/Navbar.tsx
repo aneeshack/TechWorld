@@ -8,8 +8,8 @@ import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { RequestStatus, Response, SignupFormData } from '../../types/IForm';
 import { toast } from 'react-toastify';
-// import { Menu, X, ChevronDown, User, LogOut, Home, BookOpen, Users, Mail, Briefcase } from 'lucide-react';
 import { Menu, X, ChevronDown, User, LogOut, Home, BookOpen, Briefcase } from 'lucide-react';
+import { useSocket } from '../../context/Sockets';
 
 const Navbar = () => {
   const dispatch = useAppDispatch();
@@ -18,6 +18,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const user = useSelector((state: RootState) => state.auth.data);
   const [userData, setUserData] = useState<SignupFormData | null>(user);
+  const socket = useSocket()
   console.log('userdata',userData)
 
   useEffect(() => {
@@ -69,6 +70,11 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
+      if (socket) {
+        console.log('inside socket ')
+        socket.emit("logout");
+        socket.disconnect(); 
+      }
       const result = await dispatch(logoutAction())
       const response = result.payload as Response;
 

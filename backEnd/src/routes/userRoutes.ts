@@ -15,6 +15,7 @@ userRouter.get('/courses', userController.getFilteredCourses.bind(userController
 userRouter.get('/allCourses', userController.getAllCourses.bind(userController));
 userRouter.get('/course/:courseId', userController.fetchSingleCourse.bind(userController));
 userRouter.get('/categories', userController.getAllCategories.bind(userController));
+userRouter.get('/reviews/fetch/:courseId', userController.getCourseReviews.bind(userController));
 
 
 // payment

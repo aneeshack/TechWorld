@@ -9,6 +9,7 @@ import LessonsList from "../pages/instructor/LessonsList"
 import Assessment from "../pages/instructor/Assessment"
 import EditAssessment from "../pages/instructor/EditAssessment"
 import ChatPage from "../pages/commonPages/ChatPage"
+import ErrorPage from "../pages/commonPages/ErrorPage"
 
 
 const InstructorRoutes = () => {
@@ -24,7 +25,6 @@ const InstructorRoutes = () => {
         <Route path="profile" element={<InstructorProfile/>}/>
         <Route path="createCourse" element={<CreateCourse/>}/>
         <Route path="editCourse/:courseId" element={<CreateCourse/>}/>
-        {/* <Route path="addLesson" element={<AddLesson/>}/> */}
         <Route path="lesson/:courseId/add" element={<AddLesson/>}/>
         <Route path="editLesson/:courseId/:lessonId" element={<AddLesson/>}/>
         <Route path="lessons/:courseId" element={<LessonsList/>}/>
@@ -32,8 +32,8 @@ const InstructorRoutes = () => {
         <Route path="editAssessment/:lessonId" element={<EditAssessment/>}/>
         <Route path="chat" element={<ChatPage/>}/>
         
+        <Route path="*" element={<ErrorPage />} />
         </Route>
-
         </Routes>    
     </div>
   )

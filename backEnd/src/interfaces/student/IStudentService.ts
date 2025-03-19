@@ -1,5 +1,6 @@
 import { IPayment } from "../courses/IPayment";
 import { IEnrollment } from "../database/IEnrollment";
+import { IReview } from "../database/IReview";
 import { IUser } from "../database/IUser";
 
 export interface IStudentService{
@@ -8,4 +9,5 @@ export interface IStudentService{
     getPaymentsByUserId(userId: string): Promise<IPayment[] | null>;
     getEnrolledCourses(userId: string): Promise<IEnrollment[] |null>
     getEnrollment(userId: string, courseId: string): Promise<IEnrollment |null>;
+    addReview(userId: string, courseId: string,rating: string, reviewText:string): Promise<IReview |null>
 }

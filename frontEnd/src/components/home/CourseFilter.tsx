@@ -163,6 +163,16 @@ const CourseFilter = () => {
                           {course.category.categoryName}
                         </span>
                         <p className="text-green-600 font-semibold mt-2">Rs: {course.price}</p>
+                      {course.rating && course?.rating >0 ? (
+                        Array.from({ length: 5 }, (_, i) => (
+                          <span
+                            key={i}
+                            className={`text-yellow-500 ${i < (course.rating || 0) ? 'opacity-100' : 'opacity-30'}`}
+                          >
+                            ★
+                          </span>
+                        ))
+                      ):''}
                       </div>
                     </div>
                   </Link>

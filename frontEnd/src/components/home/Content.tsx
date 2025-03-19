@@ -28,6 +28,16 @@ const Content = () => {
             <div key={course._id} className="bg-gray-100 p-6 rounded-lg shadow-md">
               <img className="h-40 w-full object-cover rounded-md" src={course.thumbnail} alt="Graphic Design" />
               <h3 className="text-xl font-semibold mt-4 text-green-900">{course.title}</h3>
+              {course.rating && course?.rating >0 ? (
+              Array.from({ length: 5 }, (_, i) => (
+                <span
+                  key={i}
+                  className={`text-yellow-500 ${i < (course.rating || 0) ? 'opacity-100' : 'opacity-30'}`}
+                >
+                  ★
+                </span>
+              ))
+              ):''}
               <p className="text-gray-700 mt-2">{course.description}</p>
               <a href={`/courseDetail/${course._id}`} className="mt-4 inline-block text-green-900 hover:text-white hover:bg-green-600 hover:border-none px-4 py-2 rounded-md border border-green-900">Explore Course</a>
             </div>   

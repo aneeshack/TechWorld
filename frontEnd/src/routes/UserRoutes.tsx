@@ -15,6 +15,7 @@ import { Role } from "../types/IForm"
 import PaymentSuccess from "../pages/commonPages/PaymentSuccess"
 import { useSelector } from "react-redux"
 import { RootState } from "../redux/store"
+import ErrorPage from "../pages/commonPages/ErrorPage"
 
 const PublicRoute = () => {
   const user = useSelector((state: RootState) => state.auth.data);
@@ -50,6 +51,7 @@ const UserRoutes = () => {
               <Route path="/checkout/:courseId" element={<Checkout/>}/>
               <Route path="/payment-success" element={<PaymentSuccess/>}/>
             </Route>
+            <Route path="*" element={<ErrorPage />} />
 
         </Routes>
     </div>

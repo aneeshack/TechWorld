@@ -45,50 +45,136 @@ export class InstructorRepository implements IInstructorRepository{
         }
     }
 
+    // async getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]> {
+    //     try {
+
+    //         const courses = await courseModel.aggregate([
+    //             {$match: {instructor: instructorId}},
+    //             {
+    //                 $lookup:{
+    //                     from: 'categories',
+    //                     localField: 'category',
+    //                     foreignField: '_id',
+    //                     as:'category'
+    //                 }
+    //             },
+    //             {
+    //                 $unwind: '$category'
+    //             },
+    //            {
+    //             $lookup:{
+    //                 from:'lessons',
+    //                 localField:'lessons',
+    //                 foreignField: '_id',
+    //                 as:'lessons'
+    //             }
+    //            },
+    //            {
+    //             $addFields:{
+    //                 lessonCount: {
+    //                     $size:'$lessons'
+    //                 }
+    //             }
+    //            },{
+    //             $project:{
+    //                 lessons: 0,
+    //             }
+    //            }
+
+    //         ])
+    //         console.log('courses',courses)
+    //         return courses;
+    //     } catch (error) {
+    //         console.log("instructor repository error:get all course", error);
+    //         throw new Error(` ${(error as Error).message}`);
+    //     }
+    // }
+
     async getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]> {
         try {
-
-            const courses = await courseModel.aggregate([
-                {$match: {instructor: instructorId}},
-                {
-                    $lookup:{
-                        from: 'categories',
-                        localField: 'category',
-                        foreignField: '_id',
-                        as:'category'
-                    }
-                },
-                {
-                    $unwind: '$category'
-                },
-               {
-                $lookup:{
-                    from:'lessons',
-                    localField:'lessons',
-                    foreignField: '_id',
-                    as:'lessons'
-                }
-               },
-               {
-                $addFields:{
-                    lessonCount: {
-                        $size:'$lessons'
-                    }
-                }
-               },{
-                $project:{
-                    lessons: 0,
-                }
-               }
-
-            ])
-            console.log('courses',courses)
-            return courses;
+          const courses = await courseModel.aggregate([
+            // Match courses by instructor
+            { $match: { instructor: instructorId } },
+      
+            // Lookup category details
+            {
+              $lookup: {
+                from: "categories",
+                localField: "category",
+                foreignField: "_id",
+                as: "category",
+              },
+            },
+            { $unwind: "$category" },
+      
+            // Lookup lessons
+            {
+              $lookup: {
+                from: "lessons",
+                localField: "lessons",
+                foreignField: "_id",
+                as: "lessons",
+              },
+            },
+      
+            // Add lesson count
+            {
+              $addFields: {
+                lessonCount: { $size: "$lessons" },
+              },
+            },
+      
+            // Lookup enrollment count
+            {
+              $lookup: {
+                from: "enrollments",
+                let: { courseId: "$_id" },
+                pipeline: [
+                  { $match: { $expr: { $eq: ["$courseId", "$$courseId"] } } },
+                  { $count: "studentsCount" },
+                ],
+                as: "enrollmentData",
+              },
+            },
+      
+            // Unwind enrollmentData (preserve courses with no enrollments)
+            {
+              $unwind: {
+                path: "$enrollmentData",
+                preserveNullAndEmptyArrays: true,
+              },
+            },
+      
+            // First $project: Exclude unwanted fields
+            {
+              $project: {
+                lessons: 0, // Exclude lessons array
+              },
+            },
+      
+            // Second $project: Add computed studentsCount
+            {
+              $project: {
+                title: 1, // Explicitly include fields you want
+                category: 1,
+                price: 1,
+                thumbnail: 1,
+                lessonCount: 1,
+                instructor: 1,
+                studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] }, // Compute studentsCount
+                // Add any other fields you need
+              },
+            },
+          ]);
+      
+          console.log("courses with student count", courses);
+          return courses as ICourse[];
         } catch (error) {
-            console.log("instructor repository error:get all course", error);
-            throw new Error(` ${(error as Error).message}`);
+          console.log("instructor repository error: get all courses", error);
+          throw new Error(` ${(error as Error).message}`);
         }
-    }
+      }
+
 
     async getSingleCourse(courseId: string): Promise<ICourse | null> {
         try {

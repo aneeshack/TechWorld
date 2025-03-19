@@ -26,4 +26,7 @@ studentRouter.post('/enrollment/updateProgress',authenticateStudent, studentCont
 studentRouter.get('/enrolled/:userId', authenticateStudent, studentController.fetchEnrolledCourses.bind(studentController));
 studentRouter.get('/enrollment/:courseId', authenticateStudent, studentController.getEnrollment.bind(studentController));
 
+studentRouter.post('/review/add/:courseId', authenticateStudent, studentController.updateReview.bind(studentController));
+studentRouter.get('/review/get/:courseId', authenticateStudent, studentController.getStudentReview .bind(studentController));
+
 export default studentRouter;

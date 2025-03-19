@@ -8,6 +8,7 @@ import CourseWatching from "../pages/student/CourseWatch"
 import ConductAssessment from "../pages/student/ConductAssessment"
 import ChatPage from "../pages/commonPages/ChatPage"
 import CourseCertificate from "../pages/student/CourseCertificate"
+import ErrorPage from "../pages/commonPages/ErrorPage"
 
 
 const StudentRoutes = () => {
@@ -27,7 +28,7 @@ const StudentRoutes = () => {
               <Route path="certificate/:courseId" element={<CourseCertificate/>}/>
 
 
-            <Route />
+            <Route path="*" element={<ErrorPage />} />
             </Route>
         </Routes>
     </div>

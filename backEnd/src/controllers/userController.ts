@@ -3,6 +3,7 @@ import { UserService } from "../services/userService";
 import { UserRepository } from "../repository/userRepository";
 import { IUserService } from "../interfaces/user/IUserService";
 import mongoose from "mongoose";
+import { reviewModel } from "../models/reviewModel";
 
 export class UserController {
 
@@ -108,6 +109,18 @@ async getAllCourses(req: Request, res: Response): Promise<void> {
     }
 }
   
+async getCourseReviews(req:Request, res: Response):Promise<void>{
+  try {
+    const { courseId } = req.params;
+    const reviews = await reviewModel.find({ courseId })
+    .populate('studentId', 'userName')
+    .lean();
+    console.log('reviews',reviews)
+      res.status(201).json({ success: true, data:reviews });
+  } catch (error:any) {
+      res.status(400).json({success: false, message: error.message })
+  }
+}
   async createPaymentSession(req: Request, res: Response):Promise<void> {
     try {
       console.log('create payment session',req.body)

@@ -3,6 +3,7 @@ import { IStudentRepository } from "../interfaces/student/IStudentRepository";
 import { IUser } from "../interfaces/database/IUser";
 import { StudentRepository } from "../repository/studentRepository";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
+import { IReview } from "../interfaces/database/IReview";
 
 export class StudentService{
     constructor(private studentRepository: IStudentRepository){}
@@ -72,6 +73,33 @@ export class StudentService{
             return enrolledCourses;
           } catch (error:any) {
             console.log('student service error:user course enrollment ',error)
+            throw new Error(`${(error as Error).message}`)
+          }
+        }
+
+        async addReview(studentId: string, courseId: string, rating: string, reviewText:string): Promise<IReview |null> {
+          try {
+            const existingReview = await this.studentRepository.getReview(studentId, courseId);
+
+            if (existingReview) {
+              // Update existing review
+              return await this.studentRepository.updateReview(
+                studentId,
+                courseId,
+                rating,
+                reviewText
+              );
+            } else {
+              // Create new review
+              return await this.studentRepository.createReview(
+                studentId,
+                courseId,
+                rating,
+                reviewText
+              );
+            }
+          } catch (error:any) {
+            console.log('student service error:user course rating ',error)
             throw new Error(`${(error as Error).message}`)
           }
         }

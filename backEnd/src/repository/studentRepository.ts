@@ -6,6 +6,9 @@ import { IPayment } from "../interfaces/courses/IPayment";
 import { paymentModel } from "../models/paymentModel";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { enrollmentModel } from "../models/enrollmentModel";
+import { IReview } from "../interfaces/database/IReview";
+import { reviewModel } from "../models/reviewModel";
+import { courseModel } from "../models/courseModel";
 
 export class StudentRepository implements IStudentRepository{
 
@@ -124,4 +127,79 @@ export class StudentRepository implements IStudentRepository{
             throw new Error("Failed to fetch student course enrollment");
         }
     }
+
+    async getReview(studentId: string, courseId: string): Promise<IReview| null> {
+      try {
+        if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(courseId)) {
+          throw new Error("Invalid studentId or courseId");
+        }
+        return await reviewModel.findOne({ studentId, courseId }).exec();
+      } catch (error) {
+          console.error("Error in getting the review:", error);
+          throw new Error("rror in getting the review:");
+      }
+  }
+
+  // Helper function to update course rating
+  private async updateCourseRating(courseId: string): Promise<void> {
+    const ratingStats = await reviewModel.aggregate([
+      { $match: { courseId: new mongoose.Types.ObjectId(courseId) } }, // Filter by courseId
+      {
+        $group: {
+          _id: "$courseId",
+          averageRating: { $avg: "$rating" }, // Calculate average
+        },
+      },
+    ]);
+
+    const averageRating = ratingStats.length > 0 ? ratingStats[0].averageRating : 0;
+
+    await courseModel.updateOne(
+      { _id: courseId },
+      { $set: { rating: Number(averageRating.toFixed(1)) } } // Store as a number with 1 decimal
+    );
+  }
+
+    async createReview(studentId: string, courseId: string, rating: string, reviewText:string): Promise<IReview| null> {
+      try {
+        if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(courseId)) {
+          throw new Error("Invalid studentId or courseId");
+        }
+        const newReview = await reviewModel.create({
+          studentId,
+          courseId,
+          rating,
+          reviewText,
+        });
+
+        await this.updateCourseRating(courseId);
+        return newReview;
+      } catch (error) {
+          console.error("Error create the review:", error);
+          throw new Error("Failed create course review");
+      }
+  }
+
+  async updateReview(studentId: string, courseId: string, rating: string, reviewText:string): Promise<IReview| null> {
+    try {
+      if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(courseId)) {
+        throw new Error("Invalid studentId or courseId");
+      }
+      const updatedReview = await reviewModel.findOneAndUpdate(
+        { studentId, courseId },
+        { rating, reviewText },
+        { new: true, runValidators: true } // Returns updated document, applies schema validation
+      );
+      if (!updatedReview) {
+        throw new Error("Review not found for update");
+      }
+
+      await this.updateCourseRating(courseId);
+      
+      return updatedReview;
+    } catch (error) {
+        console.error("Error update the review:", error);
+        throw new Error("Failed student course review");
+    }
+}
 }
