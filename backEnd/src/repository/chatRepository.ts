@@ -10,10 +10,17 @@ import { INotification } from "../interfaces/database/INotification";
 
 export class ChatRepository implements IChatRepository{
 
-  async getUserMessages(userId: string): Promise<IMessage | null> {
+  async getUserMessages(userId: string): Promise<IMessage[] | null> {
     try {
       return await messageModel
-      .findOne({
+      // .findOne({
+      //   $or: [{ sender: userId }, { reciever: userId }],
+      // })
+      // .sort({ createdAt: -1 }) 
+      // .populate("sender", "userName")
+      // .populate("reciever", "userName")
+      // .exec();
+      .find({
         $or: [{ sender: userId }, { reciever: userId }],
       })
       .sort({ createdAt: -1 }) 

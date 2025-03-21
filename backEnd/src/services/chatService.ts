@@ -6,7 +6,7 @@ import { ChatRepository } from "../repository/chatRepository";
 export class ChatService {
   constructor(private chatRepository: ChatRepository) {}
 
-  async getUserMessages(userId: string): Promise<IMessage |null> {
+  async getUserMessages(userId: string): Promise<IMessage[] |null> {
     try {
       return await this.chatRepository.getUserMessages(userId);
     } catch (error) {

@@ -32,6 +32,7 @@ const UserRoutes = () => {
         <Routes>
           {/* Home page accessible to all */}
             <Route path="/" element={<Home/>}/>
+            
           {/* authentication paths */}
           <Route element={<PublicRoute/>}>
             <Route path="/signup" element={<Signup/>}/>
@@ -41,6 +42,8 @@ const UserRoutes = () => {
             <Route path="/forgotPass" element={<ForgotPassword/>}/>
             <Route path="/resetPass" element={<ResetPassword/>}/>
           </Route>
+
+
             {/* common pages */}
             <Route path="/teachUs" element={<TeachUs/>}/>
             <Route path="/courseList" element={<CourseList/>}/>

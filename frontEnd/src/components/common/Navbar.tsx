@@ -71,8 +71,8 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       if (socket) {
-        console.log('inside socket ')
-        socket.emit("logout");
+        console.log('inside socket')
+        socket.emit("leave_room", user?._id);
         socket.disconnect(); 
       }
       const result = await dispatch(logoutAction())

@@ -8,6 +8,8 @@ import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
 import { CreditCard, MenuIcon, MessageCircle, User, XIcon } from "lucide-react";
 import { useSocket } from "../../context/Sockets";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const StudentSidebar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,12 +18,12 @@ const StudentSidebar: React.FC = () => {
   const sidebarRef = useRef<HTMLDivElement>(null);
   const socket = useSocket();
   const [hasNewMessage, setHasNewMessage]=useState(false)
+  const user = useSelector((state:RootState)=>state.auth.data)
 
   // checking for new messages or notifications
   useEffect(() => {
     if (!socket) return;
 
-    // Listen for incoming notifications
     socket.on("receiveNotification", (notification) => {
       console.log("New notification received:", notification);
       setHasNewMessage(true);
@@ -37,7 +39,8 @@ const StudentSidebar: React.FC = () => {
     try {
       if (socket) {
         console.log('inside socket ')
-        socket.emit("logout");
+        // socket.emit("logout")
+        socket.emit("leave_room", user?._id);
         socket.disconnect(); 
       }
       const result = await dispatch(logoutAction());
@@ -54,6 +57,7 @@ const StudentSidebar: React.FC = () => {
     }
   };
 
+  // sidebar open and close
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {

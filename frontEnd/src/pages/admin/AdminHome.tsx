@@ -6,12 +6,34 @@ import {
 } from "recharts";
 import { IPayment } from "../../types/IPayment";
 import { CLIENT_API } from "../../utilities/axios/Axios";
-
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"; 
 
 const AdminHome: React.FC = () => {
   const [payments, setPayments] = useState<IPayment[]>([]);
   const [totalSales, setTotalSales] = useState<number>(0);
 
+    const exportToPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Sales Report", 14, 10);
+  
+    const tableData = payments.map((p) => [
+      format(new Date(p.createdAt || ""), "yyyy-MM-dd"),
+      p?.userId?.userName || 'N/A',
+      p?.userId?.email || 'N/A',
+      p?.courseId?.title || 'N/A',
+      `${p.amount}`,
+      p.status || 'N/A',
+    ]);
+  
+    autoTable(doc,{
+      head: [["Date", "User", "Email", "Course", "Amount", "Status"]],
+      body: tableData,
+      startY: 20,
+    });
+  
+    doc.save("sales_report.pdf");
+  };
   useEffect(() => {
     fetchPayments();
   }, []);
@@ -28,10 +50,20 @@ const AdminHome: React.FC = () => {
     }
   };
 
-  // Data for Recharts
-  const chartData = payments.map((payment) => ({
-    name: payment?.courseId?.title,
-    Sales: payment.amount,
+
+  const aggregatedData = payments.reduce((acc, payment) => {
+    const courseTitle = payment?.courseId?.title || "Unknown"; // Fallback for missing titles
+    if (!acc[courseTitle]) {
+      acc[courseTitle] = 0;
+    }
+    acc[courseTitle] += payment.amount ?? 0; // Add amount, default to 0 if undefined
+    return acc;
+  }, {} as { [key: string]: number });
+
+  // Convert aggregated data into Recharts format
+  const chartData = Object.keys(aggregatedData).map((courseTitle) => ({
+    name: courseTitle,
+    Sales: aggregatedData[courseTitle],
   }));
 
   return (
@@ -39,6 +71,7 @@ const AdminHome: React.FC = () => {
       <h2 className="text-2xl font-semibold mb-4">Sales Report</h2>
       <div className="flex justify-between items-center mb-4">
         <span className="text-lg font-bold">Total Sales: ₹{totalSales.toFixed(2)}</span>
+        <div >
         <CSVLink
           data={payments.map((p) => ({
             Date: format(new Date(p.createdAt? p.createdAt:''), "yyyy-MM-dd"),
@@ -53,6 +86,14 @@ const AdminHome: React.FC = () => {
         >
           Export CSV
         </CSVLink>
+        <button
+          onClick={exportToPDF}
+          className="inline-flex items-center justify-center px-4 py-2 ml-3 bg-red-600 text-white rounded-md shadow-sm hover:bg-red-700 transition-colors"
+        >
+          Export to PDF
+        </button>
+        </div>
+
       </div>
 
       <div className="overflow-x-auto">
@@ -110,6 +151,9 @@ export default AdminHome;
 // } from "recharts";
 // import { IPayment } from "../../types/IPayment";
 // import { CLIENT_API } from "../../utilities/axios/Axios";
+// import jsPDF from "jspdf";
+// import autoTable from "jspdf-autotable"; 
+
 
 // const AdminHome: React.FC = () => {
 //   const [payments, setPayments] = useState<IPayment[]>([]);
@@ -123,6 +167,27 @@ export default AdminHome;
 //     completionRate: 0
 //   });
 
+//   const exportToPDF = () => {
+//     const doc = new jsPDF();
+//     doc.text("Sales Report", 14, 10);
+  
+//     const tableData = payments.map((p) => [
+//       format(new Date(p.createdAt || ""), "yyyy-MM-dd"),
+//       p?.userId?.userName || 'N/A',
+//       p?.userId?.email || 'N/A',
+//       p?.courseId?.title || 'N/A',
+//       `${p.amount}`,
+//       p.status || 'N/A',
+//     ]);
+  
+//     autoTable(doc,{
+//       head: [["Date", "User", "Email", "Course", "Amount", "Status"]],
+//       body: tableData,
+//       startY: 20,
+//     });
+  
+//     doc.save("sales_report.pdf");
+//   };
 //   // Colors for charts
 //   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884d8", "#4BC0C0"];
 
@@ -135,9 +200,10 @@ export default AdminHome;
 //     try {
 //       // Fetch sales data
 //       const response = await CLIENT_API.get(`/admin/salesReport?period=${periodFilter}`);
-//       setPayments(response.data.payments);
+//       setPayments(response.data.data.payments);
 
-//       const total = response.data.payments.reduce(
+
+//       const total = response.data.data.payments.reduce(
 //         (sum: number, payment: IPayment) => sum + (payment.amount ?? 0),
 //         0
 //       );
@@ -260,9 +326,10 @@ export default AdminHome;
 //                 All
 //               </button>
 //             </div>
+            
 //             <CSVLink
 //               data={payments.map((p) => ({
-//                 Date: format(new Date(p.createdAt ? p.createdAt : ""), "yyyy-MM-dd"),
+//                 Date:` ${format(new Date(p.createdAt ? p.createdAt : ""), "yyyy-MM-dd")}   `,
 //                 User: p?.userId?.userName,
 //                 Email: p?.userId?.email,
 //                 Course: p?.courseId?.title,
@@ -288,6 +355,13 @@ export default AdminHome;
 //               </svg>
 //               Export Report
 //             </CSVLink>
+//             <button
+//               onClick={exportToPDF}
+//               className="inline-flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-md shadow-sm hover:bg-red-700 transition-colors"
+//             >
+//               Export to PDF
+//             </button>
+
 //           </div>
 //         </div>
 

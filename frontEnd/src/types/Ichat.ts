@@ -13,7 +13,7 @@ export interface IChat {
 export interface IMessage {
     _id?: string;
     sender?: string| { _id: string; userName?: string};
-    reciever?: string;
+    reciever?: string | { _id: string; userName?: string };
     content?: string;
     chatId?: string;
     contentType?: 'text' | 'image' | 'audio' | 'video' | 'file';

@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { 
-  // HomeIcon,
   BookOpenIcon,
   UserGroupIcon,
-  // Cog6ToothIcon,
   ArrowLeftOnRectangleIcon,
   ChartBarIcon,
 } from "@heroicons/react/24/outline";
@@ -13,11 +11,14 @@ import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { toast } from "react-toastify";
 import { Response } from "../../types/IForm";
+import { MenuIcon, XIcon } from "lucide-react";
 
 const AdminSidebar: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
     const handleLogout = async()=> {
       try {
@@ -37,8 +38,38 @@ const AdminSidebar: React.FC = () => {
       }
     }
   
+    // sidebar open and close
+      useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+          if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+            setIsOpen(false);
+          }
+        };
+        if (isOpen) {
+          document.addEventListener("mousedown", handleClickOutside);
+        } else {
+          document.removeEventListener("mousedown", handleClickOutside);
+        }
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, [isOpen]);
+
   return (
-    <div className="w-1/5 hidden md:flex md:flex-col 	bg-[#A7D7C5] text-black h-screen mr-10">
+    <>
+    <button
+      className="lg:hidden fixed top-4 left-4 z-50 bg-green-700 p-2 rounded-lg text-white"
+      onClick={() => setIsOpen(!isOpen)}
+    >
+      {isOpen ? <XIcon className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
+    </button>
+
+    <div
+      ref={sidebarRef}
+      className={`w-64 bg-[#A7D7C5] text-black h-screen fixed lg:static transform ${
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      } lg:translate-x-0 transition-transform duration-300 ease-in-out z-40 flex flex-col`}
+    >
       {/* Logo Section */}
       <div className="flex h-[100px] items-center  justify-center py-6 ">
         <img 
@@ -123,6 +154,7 @@ const AdminSidebar: React.FC = () => {
         </button>
       </div>
     </div>
+    </>
   );
 };
 

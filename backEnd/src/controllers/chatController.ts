@@ -53,7 +53,7 @@ async accessChat(req: Request, res: Response):Promise<void> {
           new Types.ObjectId(receiverId)
         ] 
       }
-    }).populate('users', 'userName email avatar');
+    }).populate('users', 'userName email profile.avatar');
 
     if (existingChat) {
         res.status(200).json({
@@ -195,10 +195,26 @@ async getMessages(req: Request, res: Response):Promise<void> {
       });
       return
     }
+    await messageModel.updateMany(
+      { 
+        chatId:chat._id,
+        sender:senderId,
+        reciever: receiverId,
+        recieverSeen: false
+      },
+      { $set: { recieverSeen: true } }
+    );
+    const notifications = await notificationModel.updateMany({
+      chat:chat._id,
+      sender:senderId,
+      recipient:receiverId,
+      isSeen:false
+    },{$set: { isSeen: true }})
 
+    console.log('status changed notification')
     const messages = await messageModel.find({ chatId: chat._id })
-      .populate('sender', 'userName avatar')
-      .populate('reciever', 'userName avatar')
+      .populate('sender', 'userName profile.avatar')
+      .populate('reciever', 'userName profile.avatar')
       .sort({ createdAt: 1 });
 
       res.status(200).json({
