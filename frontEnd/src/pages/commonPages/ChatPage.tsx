@@ -912,6 +912,7 @@ const ChatPage = () => {
           [contactId]: newMessage,
         }));
       });
+      
       // listen to the new notifications
       socket.on("receiveNotification", (notification: Notification) => {
         console.log("New notification received:", notification);
@@ -1412,6 +1413,7 @@ const ChatPage = () => {
       }, 2000);
     }
   };
+
   return (
     <div className="flex  h-[70vh]">
       {/* <ContactList 

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Award,
   Book,
-  ChevronRight,
+  // ChevronRight,
   Clock,
   Menu,
   PieChart,
@@ -237,7 +237,7 @@ const StudentHome = () => {
                   </p>
                 )}
               </div>
-              <div className="px-6 py-3 border-t text-right">
+              {/* <div className="px-6 py-3 border-t text-right">
                 <a
                   href="#"
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center justify-end"
@@ -245,7 +245,7 @@ const StudentHome = () => {
                   View all courses
                   <ChevronRight size={16} className="ml-1" />
                 </a>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

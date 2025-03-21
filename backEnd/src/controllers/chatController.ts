@@ -379,7 +379,7 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
     try {
         await notificationModel.updateOne(
             { _id: notificationId },
-            { isSeen: true }
+            { $set: { isSeen: true }}
         );
         await notificationModel.deleteOne({ _id: notificationId });
         res.status(200).json({ message: "Notification marked as seen" });

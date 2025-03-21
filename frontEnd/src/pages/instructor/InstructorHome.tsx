@@ -13,6 +13,7 @@ const InstructorHome = () => {
     const fetchInstructorData = async () => {
       try {
         const response = await CLIENT_API.get("/instructor/allCourses");
+        console.log('courses of instructor',response.data.data)
         setCourses(response.data.data);  
         setLoading(false)
       } catch (error) {
@@ -49,7 +50,7 @@ const InstructorHome = () => {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-6 mb-8">
               <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="p-5">
                   <div className="flex items-center">
@@ -82,7 +83,7 @@ const InstructorHome = () => {
                 </div>
               </div>
 
-              {/* <div className="bg-white rounded-lg shadow overflow-hidden">
+              <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
@@ -92,11 +93,11 @@ const InstructorHome = () => {
                     </div>
                     <div className="ml-5">
                       <p className="text-sm font-medium text-gray-500">Revenue</p>
-                      <p className="text-3xl font-bold text-gray-900">₹{courses.reduce((acc, course) => acc + course.price, 0).toFixed(2)}</p>
+                      <p className="text-3xl font-bold text-gray-900">₹{courses.reduce((acc, course) => acc + (course.price * (course.studentsCount || 0)), 0).toFixed(2)}</p>
                     </div>
                   </div>
                 </div>
-              </div> */}
+              </div>
 
               {/* <div className="bg-white rounded-lg shadow overflow-hidden">
                 <div className="p-5">
