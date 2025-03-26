@@ -1,10 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {  NavLink, useNavigate } from "react-router-dom";
 import { 
-  // HomeIcon,
-  // BookOpenIcon,
   UserGroupIcon,
-  // Cog6ToothIcon,
   ArrowLeftOnRectangleIcon,
   ChartBarIcon
 } from "@heroicons/react/24/outline";
@@ -56,7 +53,7 @@ const InstructorSidebar: React.FC = () => {
             }
             
           } catch (error) {
-            console.log(error)
+            console.error(error)
           }
   }
 

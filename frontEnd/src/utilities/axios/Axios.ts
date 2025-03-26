@@ -20,11 +20,9 @@ CLIENT_API.interceptors.request.use(
 
   CLIENT_API.interceptors.response.use(
     (response) => {
-      console.log('api response in interceptor',response.data)
       if(response.data.isBlocked){
         console.log('user blocked')
       }
-      console.log('api response ',response)
       return response;
     },
     (error) => {

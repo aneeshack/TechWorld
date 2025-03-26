@@ -6,16 +6,15 @@ import { Types } from "mongoose";
 import { notificationModel } from "../models/notificationModel";
 
 export class ChatController{
-    constructor(private chatService: ChatService){}
+    constructor(private _chatService: ChatService){}
 
     async getUserMessages(req: Request, res: Response): Promise<void> {
-      console.log('inside get user message')
       try {
         const { userId } = req.params;
         if(!userId){
           throw new Error('no user found')
         }
-        const messages = await this.chatService.getUserMessages(userId);
+        const messages = await this._chatService.getUserMessages(userId);
   
         res.status(200).json({
           success: true,
@@ -33,7 +32,6 @@ export class ChatController{
 
 async accessChat(req: Request, res: Response):Promise<void> {
   try {
-    console.log('req.body',req.body)
     const { userId, receiverId } = req.body;
     
     if (!userId || !receiverId) {
@@ -348,30 +346,6 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
     }
   }
   
-  // async markNotificationsAsSeen(req: Request, res: Response):Promise<void> {
-  //   try {
-  //     const {userId,notificationId } = req.body;
-  //     console.log('inside mark notifications',userId,notificationId)
-
-  //     if(notificationId && userId){
-  //       console.log('notification not found')
-  //       res.status(500).json({ success: false, message:'not authorized'})
-  //       return
-  //     }
-
-  //     const updatedNotification = await notificationModel.findOneAndUpdate(
-  //       {_id: notificationId, recipient: userId},
-  //       {$set:{isSeen:true}},
-  //       {new:true}
-  //     )
-  
-  //       console.log('mark notifications',updatedNotification)
-  //      res.status(200).json({ success: true, data: updatedNotification});
-  //   } catch (error) {
-  //     console.error("Error update notifications:", error);
-  //      res.status(500).json({ message: "Server error" });
-  //   }
-  // }
 
   async markNotificationsAsSeen(req: Request, res: Response):Promise<void> {
     const { notificationId } = req.body;
@@ -389,106 +363,3 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
   }
 }
 
-
-// import { Request, Response } from "express";
-// import { ChatService } from "../services/chatService";
-
-// export class ChatController {
-//   constructor(private chatService: ChatService) {}
-
-//   async accessChat(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { userId, receiverId } = req.body;
-//       if (!userId || !receiverId) {
-//         res.status(400).json({ success: false, message: 'UserId and receiverId are required' });
-//         return;
-//       }
-//       const chat = await this.chatService.accessChat(userId, receiverId);
-//       res.status(chat.latestMessage ? 200 : 201).json({ success: true, data: chat });
-//     } catch (error) {
-//       console.error('Error in accessChat:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async sendMessage(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { sender, reciever, content, contentType = 'text' } = req.body;
-//       if (!sender || !reciever || !content) {
-//         res.status(400).json({ success: false, message: 'Sender, receiver and content are required' });
-//         return;
-//       }
-//       const message = await this.chatService.sendMessage(sender, reciever, content, contentType);
-//       res.status(201).json({ success: true, data: message });
-//     } catch (error) {
-//       console.error('Error in sendMessage:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async getMessages(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { senderId, receiverId } = req.params;
-//       const messages = await this.chatService.getMessages(senderId, receiverId);
-//       res.status(200).json({ success: true, data: messages });
-//     } catch (error) {
-//       console.error('Error in getMessages:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async markMessagesSeen(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { chatId, userId } = req.body;
-//       await this.chatService.markMessagesSeen(chatId, userId);
-//       res.status(200).json({ success: true, message: 'Messages marked as seen' });
-//     } catch (error) {
-//       console.error('Error in markMessagesSeen:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async getUserChats(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { userId } = req.params;
-//       const chats = await this.chatService.getUserChats(userId);
-//       res.status(200).json({ success: true, data: chats });
-//     } catch (error) {
-//       console.error('Error in getUserChats:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async getMessagedStudents(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { instructorId } = req.params;
-//       const students = await this.chatService.getMessagedStudents(instructorId);
-//       res.status(200).json({ success: true, data: students });
-//     } catch (error) {
-//       console.error('Error in getMessagedStudents:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async getNotifications(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { userId } = req.params;
-//       const notifications = await this.chatService.getNotifications(userId);
-//       res.status(200).json({ success: true, data: notifications });
-//     } catch (error) {
-//       console.error('Error in getNotifications:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-
-//   async markNotificationsAsSeen(req: Request, res: Response): Promise<void> {
-//     try {
-//       const { notificationId } = req.body;
-//       await this.chatService.markNotificationsAsSeen(notificationId);
-//       res.status(200).json({ success: true, message: 'Notification marked as seen' });
-//     } catch (error) {
-//       console.error('Error in markNotificationsAsSeen:', error);
-//       res.status(500).json({ success: false, message: 'Internal server error', error });
-//     }
-//   }
-// }

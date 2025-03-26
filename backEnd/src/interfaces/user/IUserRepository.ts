@@ -1,4 +1,3 @@
-import Stripe from "stripe";
 import { ICourse } from "../../interfaces/courses/ICourse";
 import { IEnrollment } from "../database/IEnrollment";
 import { CategoryEntity } from "../courses/category";

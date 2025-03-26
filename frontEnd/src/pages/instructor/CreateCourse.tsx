@@ -49,13 +49,11 @@ const CreateCourse = () => {
     },
     validationSchema: courseValidationSchema,
     onSubmit: async (values) => {
-      console.log("values", values);
       if (isEditing) {
         // Update existing course
         CLIENT_API.put(`/instructor/course/edit/${courseId}`, values)
           .then((response) => {
             if (response.data.success) {
-              console.log('id',response.data.data._id)
               navigate('/instructor/dashboard/courses')
               toast.success("Course updated successfully.");
             }
@@ -64,7 +62,6 @@ const CreateCourse = () => {
       } else {
     CLIENT_API.post(`/instructor/course/add`,values)
       .then((response) => {
-        console.log("response", response.data.data._id);
         if (response.data.success) {
           const courseId = response.data.data._id
           navigate(`/instructor/dashboard/lesson/${courseId}/add`)
@@ -72,22 +69,18 @@ const CreateCourse = () => {
         }
       })
       .catch((error) => {
-        console.log("Error in creating course", error);
+        console.error("Error in creating course", error);
       });
     }
     },
   });
 
-  const onDrop = async (acceptedFiles:File[]) => {
-    console.log("File dropped:", acceptedFiles); // Check when files are added
-  
+  const onDrop = async (acceptedFiles:File[]) => {  
     const file = acceptedFiles[0];
     if (!file) return;
   
     try {
-      console.log("Uploading file to Cloudinary...");
       const cloudinaryUrl = await uploadToCloudinary(file);
-      console.log("Uploaded image URL:", cloudinaryUrl);
       
       if (cloudinaryUrl) {
         setImagePreview(cloudinaryUrl)
@@ -112,11 +105,10 @@ const CreateCourse = () => {
   useEffect(() => {
     CLIENT_API.get("/instructor/fetchCategories")
       .then((response) => {
-        console.log("reponse", response.data.data);
         setCategories(response.data.data);
       })
       .catch((error) => {
-        console.log("api error", error);
+        console.error("api error", error);
       });
   }, []);
 

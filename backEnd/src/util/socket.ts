@@ -21,10 +21,7 @@ export const initializeSocket = (io: SocketIOServer) => {
         },
         {}
       );
-      console.log(
-        `Sending initial_online_users to ${userId}:`,
-        onlineUsersList
-      );
+
       socket.emit("initial_online_users", onlineUsersList);
     });
 
@@ -53,7 +50,7 @@ export const initializeSocket = (io: SocketIOServer) => {
 
       try {
         const latestMessages = await chatService.getUserMessages(userId);
-        console.log("latest messaes", latestMessages);
+    
         socket.emit("user_data", latestMessages);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -63,7 +60,6 @@ export const initializeSocket = (io: SocketIOServer) => {
 
     // handle send message
     socket.on("sendMessage", async (data) => {
-      console.log("inside send message", socket.id, data);
       const { sender, reciever, content, contentType } = data;
       try {
         const newMessage:IMessage = await chatService.saveMessage(
@@ -72,23 +68,20 @@ export const initializeSocket = (io: SocketIOServer) => {
           content,
           contentType
         );
-        console.log("new message after update database", newMessage);
+
 
         // Emit the message to the reciever's room
         io.to(sender).emit("receiveMessage", newMessage);
         io.to(reciever).emit("receiveMessage", newMessage);
-        console.log(`Message sent from ${sender} to ${reciever}`);
 
-        // Emit a notification to the receiver
-        console.log("recieve notification ", sender);
+
+
         io.to(reciever).emit("receiveNotification", {
           type: "message",
           sender,
           message: newMessage?.content ||"You have a new message",
         });
 
-        // Notify sender that the message was sent
-        // socket.emit("messageSent", { success: true });
       } catch (error) {
         console.error("Error sending message:", error);
         socket.emit("messageSent", { success: false, error });
@@ -97,7 +90,7 @@ export const initializeSocket = (io: SocketIOServer) => {
 
     // video call management
     socket.on("callUser", ({ callerId, receiverId, roomName, callerName }) => {
-      console.log("calluser", callerId, receiverId, roomName, callerName);
+
       io.to(receiverId).emit("incomingCall", {
         callerId,
         roomName,

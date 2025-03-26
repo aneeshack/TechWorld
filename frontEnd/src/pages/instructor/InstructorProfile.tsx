@@ -60,7 +60,6 @@ const InstructorProfile = () => {
       try {
         setLoading(true);
         const response = await CLIENT_API.get(`/instructor/profile/${user?._id}`);
-        console.log('Fetched Instructor Data:', response.data.data);
         setAvatarPreview(response.data.data.profile?.avatar)
         setInstructor(response.data.data);
         setFormData(response.data.data); // Initialize formData with fetched data
@@ -96,9 +95,7 @@ const InstructorProfile = () => {
   const handleUpdateProfile = async () => {
     try {
       if (!validateForm()) return;
-      console.log('formdata',formData)
       const response = await CLIENT_API.put(`/instructor/profile/${user?._id}`, formData);
-      console.log('Update Response:', response.data);
       setAvatarPreview(response.data.data.profile?.avatar)
       setInstructor(response.data.data);
       setIsEditing(false); 
@@ -148,7 +145,6 @@ const InstructorProfile = () => {
       {/* Header with instructor basic info */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6 pb-6 border-b">
         <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center">
-          {/* <img src={} alt="profile picture" className="w-full h-full object-cover rounded-full" /> */}
           {isEditing ? (
     <label className="w-full h-full rounded-full cursor-pointer">
       <img
@@ -411,11 +407,6 @@ const InstructorProfile = () => {
             Cancel
           </button>
         )}
-        {/* {!isEditing && (
-          <button className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
-            Change Password
-          </button>
-        )} */}
       </div>
     </div>
   );

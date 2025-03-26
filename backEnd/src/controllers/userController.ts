@@ -1,14 +1,11 @@
 import { Request, Response } from "express";
-import { UserService } from "../services/userService";
-import { UserRepository } from "../repository/userRepository";
 import { IUserService } from "../interfaces/user/IUserService";
 import mongoose from "mongoose";
 import { reviewModel } from "../models/reviewModel";
 
 export class UserController {
 
-  constructor(private userService: IUserService){};
-  // constructor(private userService: UserService){};
+  constructor(private _userService: IUserService){};
 
 async getFilteredCourses(req: Request, res: Response): Promise<void> {
   try {
@@ -46,7 +43,7 @@ async getFilteredCourses(req: Request, res: Response): Promise<void> {
       limit: parsedLimit,
     };
 
-    const result = await this.userService.getFilteredCourses(
+    const result = await this._userService.getFilteredCourses(
       filters.searchTerm,
       filters.categoryIds,
       filters.priceMin,
@@ -74,7 +71,7 @@ async getFilteredCourses(req: Request, res: Response): Promise<void> {
 async getAllCourses(req: Request, res: Response): Promise<void> {
   try {
 
-    const courses = await this.userService.getAllCourses();
+    const courses = await this._userService.getAllCourses();
     if (!courses) {
       res.status(404).json({ success: false, message: "Courses not found" });
       return;
@@ -88,7 +85,7 @@ async getAllCourses(req: Request, res: Response): Promise<void> {
   async fetchSingleCourse(req: Request, res: Response): Promise<void> {
     try {
       const { courseId } = req.params;
-      const course = await this.userService.getSingleCourse(courseId);
+      const course = await this._userService.getSingleCourse(courseId);
       if (!course) {
         res.status(404).json({ success: false, message: "Course not found" });
         return;
@@ -101,8 +98,7 @@ async getAllCourses(req: Request, res: Response): Promise<void> {
 
   async getAllCategories(req:Request, res: Response):Promise<void>{
     try {
-        const allCategories = await this.userService.getAllCategories()
-        console.log('all categories',allCategories)
+        const allCategories = await this._userService.getAllCategories()
         res.status(201).json({ success: true, data:allCategories });
     } catch (error:any) {
         res.status(400).json({success: false, message: error.message })
@@ -115,7 +111,6 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
     const reviews = await reviewModel.find({ courseId })
     .populate('studentId', 'userName')
     .lean();
-    console.log('reviews',reviews)
       res.status(201).json({ success: true, data:reviews });
   } catch (error:any) {
       res.status(400).json({success: false, message: error.message })
@@ -123,7 +118,6 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
 }
   async createPaymentSession(req: Request, res: Response):Promise<void> {
     try {
-      console.log('create payment session',req.body)
       const { userId, courseId, amount, courseName, courseThumbnail } = req.body;
       
       if (!userId || !courseId || !amount || !courseName || !courseThumbnail) {
@@ -131,14 +125,13 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
         return
       }
       
-      const session = await this.userService.initiatePayment(
+      const session = await this._userService.initiatePayment(
         userId,
         courseId,
         amount,
         courseName,
         courseThumbnail
       );
-      console.log('session id in controller', session)
       res.json({ success: true,message:'session created', data: session });
     } catch (error:any) {
       res.status(500).json({ success: false, message: error.message });
@@ -154,7 +147,7 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
          return
       }
   
-      const session = await this.userService.getPaymentStatus(sessionId);
+      const session = await this._userService.getPaymentStatus(sessionId);
   
       res.json({ success: true, data: session });
     } catch (error:any) {
@@ -162,7 +155,7 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
     }
 }
 
-async couresEnrollment(req: Request, res: Response):Promise<void> {
+async courseEnrollment(req: Request, res: Response):Promise<void> {
   try {
     const { userId, courseId, sessionId,completionStatus,amount, enrolledAt } = req.body;
 
@@ -171,7 +164,7 @@ async couresEnrollment(req: Request, res: Response):Promise<void> {
        return
     }
 
-    const enrollment = await this.userService.courseEnroll(userId, courseId, completionStatus, amount, enrolledAt);
+    const enrollment = await this._userService.courseEnroll(userId, courseId, completionStatus, amount, enrolledAt);
 
     if (!enrollment) {
       res.status(500).json({ success: false, message: "Enrollment failed." });

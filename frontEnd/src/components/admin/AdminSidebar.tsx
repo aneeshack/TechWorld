@@ -34,7 +34,7 @@ const AdminSidebar: React.FC = () => {
         }
         
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
   

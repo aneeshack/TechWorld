@@ -1,16 +1,12 @@
 import { Request, Response } from "express";
 import { IUser, Role } from "../interfaces/database/IUser";
-import { AuthService } from "../services/authService";
-import { AuthRepository } from "../repository/authRepository";
 import { clearTokenCookie, setTokenCookie } from "../util/auth/jwt";
 import { AuthRequest } from "../middlewares/authMiddleware";
-import { error } from "console";
 import { IAuthService } from "../interfaces/user/IAuthService";
 
 export class AuthController {
 
-  // constructor(private authService: IAuthService) {}
-  constructor(private authService: IAuthService) {}
+  constructor(private _authService: IAuthService) {}
 
   async fetchUser(req: AuthRequest, res: Response): Promise<void> {
     try {
@@ -19,8 +15,8 @@ export class AuthController {
         return;
       }
 
-      const user = await this.authService.getUserById(req.user.id);
-      console.log('fetch user data',user)
+      const user = await this._authService.getUserById(req.user.id);
+
       res.status(200).json({ success: true, user });
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -44,7 +40,7 @@ export class AuthController {
         }
 
         roleInput = role as Role;
-        console.log('role',roleInput)
+
       const userData: Partial<IUser> = {
         userName,
         email,
@@ -54,7 +50,7 @@ export class AuthController {
         isOtpVerified: false,
       };
 
-      const result = await this.authService.signup(userData);
+      const result = await this._authService.signup(userData);
       res.status(201).json({ success: true, message: result.message });
     } catch (error:any) {
         res.status(400).json({ success: false, message: error.message })
@@ -63,14 +59,13 @@ export class AuthController {
 
   async resendOtp (req:Request, res: Response):Promise<void>{
     try {
-      console.log('resend otp')
       const { email }= req.body;
       if(!email){
         res.status(400).json({success: false, message: "Email is required."})
         return 
       }
 
-      const result = await this.authService.resendOtp(email)
+      const result = await this._authService.resendOtp(email)
       res.status(200).json({success: true, message: result})
 
     } catch (error:any) {
@@ -87,7 +82,7 @@ export class AuthController {
         return
       }
 
-      const { message, token, user} = await this.authService.verifyOtp(email,otp)
+      const { message, token, user} = await this._authService.verifyOtp(email,otp)
       if(!token){
         throw new Error('token not generated')
       }
@@ -96,7 +91,7 @@ export class AuthController {
       res.status(200).json({success:true, message, data:user})
 
     } catch (error:any) {
-      console.log('controller error',error)
+      console.error('controller error',error)
       res.status(400).json({success: false, message: error.message})
     }
   }
@@ -108,7 +103,7 @@ export class AuthController {
       clearTokenCookie(res)
       res.status(200).json({ success: true, message: 'Logged out successfully' })
     } catch (error:any) {
-      console.log('controller error',error)
+      console.error('controller error',error)
       res.status(400).json({success: false, message: error.message})
     }
   }
@@ -129,14 +124,13 @@ export class AuthController {
       }
 
       roleInput = role as Role;
-      console.log('role',roleInput)
       const userData: Partial<IUser> = {
         email,
         password,
         role: roleInput,
       };
 
-      const { message, user, token} = await this.authService.loginAction(userData);
+      const { message, user, token} = await this._authService.loginAction(userData);
       if(user?.isBlocked){
         throw new Error('admin blocked you. Please contact admin.')
       }
@@ -149,14 +143,13 @@ export class AuthController {
       console.log('successful login')
       res.status(201).json({ success: true, message: message, data:user });
     } catch (error:any) {
+      console.error('error',error.message)
         res.status(400).json({ success:false, message: error.message })
     }
   }
 
   async googleAuthentication(req: Request, res: Response):Promise<void>{
     try {
-      console.log('inside google authentication',req.body)
-
       let roleInput;
       const { credentials, userRole } = req.body;
 
@@ -166,9 +159,7 @@ export class AuthController {
       }
 
       roleInput = userRole as Role;
-      console.log('role',userRole)
-      // const user = await this.authService.googleAuth(credentials,roleInput)
-      const { message, user, token} = await this.authService.googleAuth(credentials,roleInput)
+      const { message, user, token} = await this._authService.googleAuth(credentials,roleInput)
 
       if(!token){
         throw new Error('token not generated')
@@ -184,8 +175,7 @@ export class AuthController {
 
   async registerInstructor(req: Request, res: Response):Promise<void>{
     try {
-      console.log('inside register instructor',req.body)
-      const user = await this.authService.register(req.body)
+      const user = await this._authService.register(req.body)
       res.status(200).json({success:true, data: user})
 
     } catch (error: any) {
@@ -195,14 +185,12 @@ export class AuthController {
 
   async forgotPassword(req:Request, res:Response):Promise<void>{
     try {
-      console.log('forgot password')
       const {email,role}= req.body
-        console.log(email,role)
       if (!role && !Object.values(Role).includes(role as Role)) {
         res.status(400).json({ success: false, message: "Invalid or missing role." });
         return;       
       }
-      const user = await this.authService.forgotPassword(email, role)
+      const user = await this._authService.forgotPassword(email, role)
       res.status(200).json({success:true, message:'Otp send to your, email plase verify it.'})
     } catch (error:any) {
       res.status(400).json({ success:false, message: error.message })
@@ -212,13 +200,12 @@ export class AuthController {
   async resetPassword(req:Request, res: Response):Promise<void>{
     try {
       const{email, role, password} = req.body
-      console.log('req.body',req.body)
 
       if (!email || !role || !password) {
         res.status(400).json({ success: false, message: "All fields are required" });
         return;
       }
-      const result =await this.authService.resetPassword(email, password,role)
+      const result =await this._authService.resetPassword(email, password,role)
       res.status(200).json({success:true, message: result.message})
     } catch (error:any) {
       res.status(400).json({ success:false, message: error.message })
@@ -234,10 +221,10 @@ export class AuthController {
         return;
       }
 
-      const { message } = await this.authService.verifyForgotPasswordOtp(email, otp);
+      const { message } = await this._authService.verifyForgotPasswordOtp(email, otp);
       res.status(200).json({ success: true, message });
     } catch (error: any) {
-      console.log('controller error: verifyForgotPasswordOtp', error);
+      console.error('controller error: verifyForgotPasswordOtp', error);
       res.status(400).json({ success: false, message: error.message });
     }
   }

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import banner from '../../assets/commonPages/banner.webp';
 
 const Banner = () => {
@@ -18,9 +19,11 @@ const Banner = () => {
           <p className="text-gray-200 text-lg md:text-xl mb-8">
             TechWorld is your go-to platform for online learning. Explore courses in web development, machine learning, and more, tailored to help you succeed in the tech industry.
           </p>
+          <Link to={'/courseList'}>
           <button className="bg-green-600 hover:bg-green-600 text-white px-8 py-3 rounded-md font-semibold shadow-md transition duration-300">
             Get Started
           </button>
+          </Link>
         </div>
       </div>
   

@@ -1,22 +1,17 @@
 import { Request, Response } from "express";
-import { InstructorService } from "../services/instructorService";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { Role } from "../interfaces/database/IUser";
-import { lessonModel } from "../models/lessonModel";
 import { IInstructorService } from "../interfaces/instructor/IInstructorService";
-import { s3Client } from "../config/awsConfig";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
 
 export class InstructorController {
   constructor(
-    private instructorService: IInstructorService,
+    private _instructorService: IInstructorService,
   ) {}
 
   async fetchCategories(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside fetch category");
-      const categories = await this.instructorService.getCategories();
+      const categories = await this._instructorService.getCategories();
       res
         .status(200)
         .json({
@@ -31,8 +26,6 @@ export class InstructorController {
 
   async createCourse(req: AuthRequest, res: Response): Promise<void> {
     try {
-      console.log("inside create course");
-
       if (!req.user || req.user.role !== Role.Instructor || !req.user.id) {
         res
           .status(403)
@@ -58,8 +51,7 @@ export class InstructorController {
         category,
         price,
       };
-      console.log("coursedtae", courseData);
-      const course = await this.instructorService.createCourse(courseData);
+      const course = await this._instructorService.createCourse(courseData);
       res
         .status(200)
         .json({ success: true, message: "created the course", data: course });
@@ -70,10 +62,9 @@ export class InstructorController {
 
   async updateCourse(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside update course");
       const courseId = req.params.courseId;
 
-      const updatedCourse = await this.instructorService.updateCourse(
+      const updatedCourse = await this._instructorService.updateCourse(
         courseId,
         req.body
       );
@@ -91,7 +82,6 @@ export class InstructorController {
 
   async fetchAllCourses(req: AuthRequest, res: Response): Promise<void> {
     try {
-      console.log("inside fetch all courses");
       if (!req.user) {
         res
           .status(401)
@@ -106,7 +96,7 @@ export class InstructorController {
       }
       const instructorId = req.user.id;
 
-      const courses = await this.instructorService.fetchAllCourses(
+      const courses = await this._instructorService.fetchAllCourses(
         instructorId
       );
       res
@@ -119,11 +109,9 @@ export class InstructorController {
 
   async fetchSingleCourse(req: AuthRequest, res: Response): Promise<void> {
     try {
-      console.log("inside fetch course");
-
       const courseId = req.params.courseId;
 
-      const course = await this.instructorService.fetchCourse(courseId);
+      const course = await this._instructorService.fetchCourse(courseId);
       if (!course) {
         res.status(404).json({ success: false, message: "Course not found" });
         return;
@@ -138,10 +126,7 @@ export class InstructorController {
 
   async getPresignedUrl(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside presigned url");
-
       const { fileName, fileType } = req.body;
-      console.log("req.body", fileName, fileType);
       if (!fileName || !fileType) {
         res
           .status(400)
@@ -149,7 +134,7 @@ export class InstructorController {
         return;
       }
       const { presignedUrl, videoUrl } =
-        await this.instructorService.getPresignedUrl(fileName, fileType);
+        await this._instructorService.getPresignedUrl(fileName, fileType);
 
       res.json({ presignedUrl, videoUrl });
     } catch (error: any) {
@@ -159,8 +144,6 @@ export class InstructorController {
 
   async addLesson(req: AuthRequest, res: Response): Promise<void> {
     try {
-      console.log("inside add lesson");
-
       if (!req.user || req.user.role !== Role.Instructor || !req.user.id) {
         res
           .status(403)
@@ -187,8 +170,7 @@ export class InstructorController {
         video,
         course,
       };
-      console.log("lesson", lessonData);
-      const lesson = await this.instructorService.addLesson(lessonData);
+      const lesson = await this._instructorService.addLesson(lessonData);
       res
         .status(200)
         .json({
@@ -203,8 +185,6 @@ export class InstructorController {
 
   async fetchAllLessons(req: AuthRequest, res: Response): Promise<void> {
     try {
-      console.log("inside fetch all lessons");
-
       const courseId = req.params.courseId;
       if (!courseId) {
         res
@@ -213,7 +193,7 @@ export class InstructorController {
         return;
       }
 
-      const lessons = await this.instructorService.allLessons(courseId);
+      const lessons = await this._instructorService.allLessons(courseId);
       if (!lessons || lessons.length === 0) {
         res.status(404).json({ success: false, message: "No lessons found" });
         return;
@@ -228,10 +208,9 @@ export class InstructorController {
 
   async fetchSingleLesson(req: AuthRequest, res: Response): Promise<void> {
     try {
-      console.log("inside fetch lesson");
       const lessonId = req.params.lessonId;
 
-      const lesson = await this.instructorService.fetchLesson(lessonId);
+      const lesson = await this._instructorService.fetchLesson(lessonId);
       if (!lesson) {
         res.status(404).json({ success: false, message: "lesson not found" });
         return;
@@ -246,10 +225,9 @@ export class InstructorController {
 
   async updateLesson(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside update lesson");
       const lessonId = req.params.lessonId;
 
-      const updatedLesson = await this.instructorService.updateLesson(
+      const updatedLesson = await this._instructorService.updateLesson(
         lessonId,
         req.body
       );
@@ -267,10 +245,9 @@ export class InstructorController {
 
   async publishCourse(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside publish course");
       const courseId = req.params.courseId;
 
-      const publishedCourse = await this.instructorService.publishCourse(
+      const publishedCourse = await this._instructorService.publishCourse(
         courseId
       );
       res
@@ -290,11 +267,7 @@ export class InstructorController {
       const { lessonId } = req.params;
       const { questions } = req.body;
 
-      console.log("lessonid", lessonId);
-      console.log("ass,ques", questions, lessonId);
-
-
-      const lesson = await this.instructorService.addAssessment(lessonId, questions);
+      const lesson = await this._instructorService.addAssessment(lessonId, questions);
       res
         .status(200)
         .json({ message: "Assessment saved successfully", lesson });
@@ -307,7 +280,7 @@ export class InstructorController {
     try {
       const userId = req.params.userId;
       const instructorProfile =
-        await this.instructorService.fetchInstructorProfile(userId);
+        await this._instructorService.fetchInstructorProfile(userId);
 
       res
         .status(200)
@@ -327,7 +300,7 @@ export class InstructorController {
       const updateData = req.body;
 
       const updatedInstructor =
-        await this.instructorService.updateInstructorProfile(
+        await this._instructorService.updateInstructorProfile(
           userId,
           updateData
         );
@@ -350,9 +323,8 @@ export class InstructorController {
     try {
       const { lessonId } = req.params;
   
-      const presignedUrl = await this.instructorService.getPresignedUrlForVideo(lessonId)
+      const presignedUrl = await this._instructorService.getPresignedUrlForVideo(lessonId)
      
-      console.log('presinged url',presignedUrl)
       res.json({ presignedUrl });
     } catch (error) {
       console.error("Error in InstructorController :get presigned url for video", error);

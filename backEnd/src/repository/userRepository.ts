@@ -18,14 +18,13 @@ export class UserRepository implements IUserRepository {
         .populate('instructor', 'userName')
         .exec();
 
-        console.log('courses',courses)
         if(!courses){
           throw new Error('Courses not found')
         }
 
         return courses
     } catch (error) {
-      console.log("user Repository error:get all courses", error);
+      console.error("user Repository error:get all courses", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -92,10 +91,9 @@ export class UserRepository implements IUserRepository {
         })
         .exec();
 
-        console.log('course details',course)
         return course
     } catch (error) {
-      console.log("user Repository error:get single course", error);
+      console.error("user Repository error:get single course", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -107,7 +105,7 @@ export class UserRepository implements IUserRepository {
 
           return categories
       } catch (error) {
-          console.log("user Repository error:getAll categories", error);
+          console.error("user Repository error:getAll categories", error);
           throw new Error(` ${(error as Error).message}`);
       }
   }
@@ -118,7 +116,7 @@ export class UserRepository implements IUserRepository {
       await enrolled.save()
       return  enrolled;
     } catch (error) {
-      console.log("user Repository error: enroll course", error);
+      console.error("user Repository error: enroll course", error);
       throw new Error(`${(error as Error).message}`);
     }
   }

@@ -17,8 +17,7 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [email]=useState(location.state?.email || localStorage.getItem('forgotPasswordEmail') || "")
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  console.log(email,'email')
-  console.log('user role',userRole)
+
 
 
   const formik = useFormik({
@@ -39,11 +38,11 @@ const ResetPassword = () => {
           navigate('/login',{state:{role:userRole}})
         })
         .catch((error)=>{
-          console.log('error in reset password',error)
+          console.error('error in reset password',error)
         })
         
       } catch (error) {
-        console.log('reset password error',error)
+        console.error('reset password error',error)
       }
     }
   })

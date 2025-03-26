@@ -12,7 +12,6 @@ const Categories = () => {
   useEffect(() => {
     CLIENT_API.get("/admin/categories")
       .then((response) => {
-        console.log("response", response);
         setCategory(response.data.data);
         response.data.data.forEach((category: CategoryEntity) => {
           if (category._id && category.imageUrl) {
@@ -21,7 +20,7 @@ const Categories = () => {
         });
       })
       .catch((error) => {
-        console.log("api error", error);
+        console.error("api error", error);
       });
      
   }, []);

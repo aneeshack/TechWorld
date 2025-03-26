@@ -8,11 +8,10 @@ const Content = () => {
   useEffect(() => {
       CLIENT_API.get("/user/allCourses")
         .then((response) => {
-          console.log('response',response.data.data)
           setCourses(response.data.data);
         })
         .catch((error) => {
-          console.log("API error", error);
+          console.error("API error", error);
         });
     }, []);
     

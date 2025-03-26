@@ -22,7 +22,7 @@ const AdminInstructorRequest = () => {
             setRequests(response.data.data)
           })
           .catch((error) => {
-          console.log('api error',error)
+          console.error('api error',error)
           });
 
 
@@ -31,7 +31,7 @@ const AdminInstructorRequest = () => {
             setRejectedRequests(response.data.data);
           })
           .catch((error) => {
-            console.log('API error:', error);
+            console.error('API error:', error);
           });
       }, []);
 
@@ -50,7 +50,6 @@ const AdminInstructorRequest = () => {
 
             CLIENT_API.patch(`/admin/request/approve/${userId}`)
             .then((response) => {
-              console.log('response',response.data)
 
               if(response.data.success){
                 setRequests((prevRequests)=>prevRequests.filter((user)=>user._id !==userId))
@@ -62,7 +61,7 @@ const AdminInstructorRequest = () => {
               
             })
             .catch((error) => {
-            console.log('api error',error)
+            console.error('api error',error)
             });
 
           }
@@ -86,7 +85,6 @@ const AdminInstructorRequest = () => {
             CLIENT_API.patch(`/admin/request/reject/${userId}`)
             .then((response) => {
               
-              console.log('response',response.data)
               if(response.data.success){
                 setRequests((prevRequests)=>prevRequests.filter((user)=>user._id !==userId))
                 toast.error('instructor request rejected')
@@ -95,7 +93,7 @@ const AdminInstructorRequest = () => {
               
             })
             .catch((error) => {
-            console.log('api error',error)
+            console.error('api error',error)
             });
            }
         })

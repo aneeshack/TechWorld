@@ -39,7 +39,6 @@ export class StudentRepository implements IStudentRepository{
           const payments = await paymentModel
                         .find({userId})
                         .populate('courseId','title')
-            console.log('payment',payments)
             return payments
         } catch (error) {
             console.error("Error updating student profile:", error);
@@ -49,7 +48,6 @@ export class StudentRepository implements IStudentRepository{
 
      async enrolledCourses(userId: string ):Promise<IEnrollment[] | null>{
         try {
-          // const enrolledCourses = await enrollmentModel.find({userId:userId})
           const enrolledCourses = await enrollmentModel.aggregate([
             { $match: { userId: new mongoose.Types.ObjectId(userId) } },
             {
@@ -105,11 +103,10 @@ export class StudentRepository implements IStudentRepository{
             }
           ])
     
-          console.log('enrolled course',enrolledCourses)
           return  enrolledCourses;
     
         } catch (error) {
-          console.log("user Repository error: enrolled courses", error);
+          console.error("user Repository error: enrolled courses", error);
           throw new Error(`${(error as Error).message}`);
         }
       }
@@ -120,7 +117,6 @@ export class StudentRepository implements IStudentRepository{
                   .findOne({ userId, courseId })
                   .populate("courseId") 
                   .populate("progress.completedLessons"); 
-                  console.log('enrollment',enrollment)
               return enrollment
         } catch (error) {
             console.error("Error fetch student course enrollment:", error);
@@ -143,7 +139,7 @@ export class StudentRepository implements IStudentRepository{
   // Helper function to update course rating
   private async updateCourseRating(courseId: string): Promise<void> {
     const ratingStats = await reviewModel.aggregate([
-      { $match: { courseId: new mongoose.Types.ObjectId(courseId) } }, // Filter by courseId
+      { $match: { courseId: new mongoose.Types.ObjectId(courseId) } },
       {
         $group: {
           _id: "$courseId",

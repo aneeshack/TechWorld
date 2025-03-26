@@ -11,6 +11,8 @@ import { loginAction } from "../../redux/store/actions/auth/LoginAction";
 import { toast } from "react-toastify";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import { googleAuthAction } from "../../redux/store/actions/auth/GoogleAuthAction";
+import { useSocket } from "../../context/Sockets";
+// import { connect } from "http2";
 
 
 const Login = () => {
@@ -20,6 +22,7 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [userRole, setUserRole] = useState(location.state?.role);
+  const socket = useSocket();
 
   useEffect(() => {
     if (userRole) {
@@ -39,7 +42,6 @@ const Login = () => {
   }, [userRole, navigate]);
 
   useEffect(() => {
-    console.log('role',userRole)
     if (userRole === Role.Instructor) {
       setHeading("Instructor Login");
     } else if(userRole === Role.Student) {
@@ -66,13 +68,38 @@ const Login = () => {
         const data = { ...values}
         const loginResult = await dispatch(loginAction({...data, role: userRole }))
         const payload = loginResult.payload as Response;
-        console.log('payload',payload)
         if(!payload?.success){
           if(payload.message){
             toast.error(payload.message || 'login faild. Please try again.')
             
           }
           return
+        }
+          // Socket logic after successful login
+        if (socket) {
+          const userId = payload.data?._id; 
+          if (!userId) {
+            console.error('User ID not found in login payload');
+            return;
+          }
+
+          if (socket.connected) {
+            socket.emit('join_room', userId);
+            console.log(`App: Joined room for user ${userId} after login`);
+          } else {
+            // If socket isn’t connected, force connection and join room
+            console.log('App: Socket not connected, forcing connection after login');
+            socket.connect();
+
+            socket.on('connect', () => {
+              socket.emit('join_room', userId);
+              console.log(`App: Joined room for user ${userId} after socket connected`);
+            });
+
+            socket.on('connect_error', (error) => {
+              console.error('App: Socket connection error after login:', error.message);
+            });
+          }
         }
           toast.success('Login successful')
           navigate('/')

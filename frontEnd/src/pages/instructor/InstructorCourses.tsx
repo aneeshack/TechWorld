@@ -11,6 +11,7 @@ const InstructorCourses = () => {
   useEffect(() => {
     CLIENT_API.get("/instructor/allCourses")
       .then((response) => {
+        console.log('response courses',response.data.data)
         setCourses(response.data.data);
       })
       .catch((error) => {
@@ -99,7 +100,7 @@ const InstructorCourses = () => {
                       Publish Course
                     </button>
                   ) : (
-                    <span className="my-3 mx-2 rounded-md p-3  text-green-800 font-bold  bg-green-100">
+                    <span className="my-3 mx-2 rounded-md p-3   font-bold  bg-green-100">
                       Published
                     </span>
                   )

@@ -21,7 +21,6 @@ const EditCategory = () => {
     },
     validationSchema: categoryValidationSchema,
     onSubmit:async(values)=>{
-      console.log(values)
       if(!selectedFile && !values.imageUrl){
         toast.warn('Please select an image');
         return
@@ -69,7 +68,6 @@ const EditCategory = () => {
       try {
         // Fetch category details
         const { data } = await CLIENT_API.get(`/admin/category/${categoryId}`);
-        console.log("Category data:", data);
         if (data.success && data.data) {
           formik.setValues({
             categoryName: data.data.categoryName || "",

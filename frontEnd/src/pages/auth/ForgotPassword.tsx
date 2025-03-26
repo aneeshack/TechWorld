@@ -21,7 +21,6 @@ const ForgotPassword = () => {
       toast.error("Please login through home page.");
     }
     setUserRole(userRole)
-    console.log('user role',userRole)
   },[userRole, navigate])
 
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) =>{
@@ -31,10 +30,8 @@ const ForgotPassword = () => {
       setMessage("Please enter a valid email")
       return
     }
-    console.log('userrole',userRole)
     try {
       const response =await CLIENT_API.post('/forgotPass',{email,role:userRole})
-      console.log('response',response.data.message);
       if(response && response.data){
         toast.success(response.data.message)
         localStorage.setItem("forgotPasswordEmail", email);
@@ -42,12 +39,11 @@ const ForgotPassword = () => {
         // Set OTP expiry time for first OTP
         const newExpiryTime = Math.floor(Date.now() / 1000) + 30;
         localStorage.setItem('otpExpiryTime', String(newExpiryTime));
-        console.log('success redirect to resetPassotp')
         navigate('/resetPassOtp',{state:{role: userRole, email: email}})
         
       }
     } catch (error:unknown) {
-      console.log('Error',error)
+      console.error('Error',error)
       if (error instanceof AxiosError) { 
         const errorMessage = error.response?.data?.message || 'Something went wrong';
         toast.error(errorMessage);

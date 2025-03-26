@@ -10,32 +10,31 @@ import { IUser } from "../interfaces/database/IUser";
 import { InstructorRepository } from "../repository/instructorRepository";
 
 export class InstructorService {
-  constructor(private instructorRepository: IInstructorRepository) {}
-  // constructor(private instructorRepository: InstructorRepository) {}
+  constructor(private _instructorRepository: IInstructorRepository) {}
 
   async getCategories(): Promise<CategoryEntity[]> {
     try {
-      const categories = await this.instructorRepository.fetchCategories();
+      const categories = await this._instructorRepository.fetchCategories();
       if (!categories) {
         throw new Error("No categories found");
       }
       return categories;
     } catch (error) {
-      console.log("instructorService error:get all categories", error);
+      console.error("instructorService error:get all categories", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
 
   async createCourse(courseData: Partial<ICourse>): Promise<ICourse | null> {
     try {
-      const course = await this.instructorRepository.addCourse(courseData);
+      const course = await this._instructorRepository.addCourse(courseData);
 
       if (!course) {
         throw new Error("No course found");
       }
       return course;
     } catch (error) {
-      console.log("instructorService error: create course", error);
+      console.error("instructorService error: create course", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -45,7 +44,7 @@ export class InstructorService {
     courseData: Partial<ICourse>
   ): Promise<ICourse | null> {
     try {
-      const course = await this.instructorRepository.editCourse(
+      const course = await this._instructorRepository.editCourse(
         courseId,
         courseData
       );
@@ -55,7 +54,7 @@ export class InstructorService {
       }
       return course;
     } catch (error) {
-      console.log("instructorService error: update course", error);
+      console.error("instructorService error: update course", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -64,7 +63,7 @@ export class InstructorService {
     instructorId: mongoose.Types.ObjectId
   ): Promise<ICourse[] | null> {
     try {
-      const courses = await this.instructorRepository.getAllCoursesByInstructor(
+      const courses = await this._instructorRepository.getAllCoursesByInstructor(
         instructorId
       );
 
@@ -73,16 +72,16 @@ export class InstructorService {
       }
       return courses;
     } catch (error) {
-      console.log("instructorService error: update courses", error);
+      console.error("instructorService error: update courses", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
 
   async fetchCourse(courseId: string): Promise<ICourse | null> {
     try {
-      return await this.instructorRepository.getSingleCourse(courseId);
+      return await this._instructorRepository.getSingleCourse(courseId);
     } catch (error) {
-      console.log("instructorService error: fetch course", error);
+      console.error("instructorService error: fetch course", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -119,14 +118,14 @@ export class InstructorService {
 
   async addLesson(lessonData: Partial<ILesson>): Promise<ILesson | null> {
     try {
-      const lesson = await this.instructorRepository.addLesson(lessonData);
+      const lesson = await this._instructorRepository.addLesson(lessonData);
 
       if (!lesson) {
         throw new Error("No lesson found");
       }
       return lesson;
     } catch (error) {
-      console.log("instructorService error: create lesson", error);
+      console.error("instructorService error: create lesson", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -135,7 +134,7 @@ export class InstructorService {
     courseId: string
   ): Promise<ILesson[] | null> {
     try {
-      const lessons = await this.instructorRepository.courseLessons(
+      const lessons = await this._instructorRepository.courseLessons(
         courseId
       );
 
@@ -144,16 +143,16 @@ export class InstructorService {
       }
       return lessons;
     } catch (error) {
-      console.log("instructorService error: fetching lessons", error);
+      console.error("instructorService error: fetching lessons", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
 
   async fetchLesson(lessonId: string): Promise<ILesson | null> {
     try {
-      return await this.instructorRepository.getSingleLesson(lessonId);
+      return await this._instructorRepository.getSingleLesson(lessonId);
     } catch (error) {
-      console.log("instructorService error: fetch lesson", error);
+      console.error("instructorService error: fetch lesson", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -163,7 +162,7 @@ export class InstructorService {
     updateData: Partial<ILesson>
   ): Promise<ILesson | null> {
     try {
-      const lesson = await this.instructorRepository.editLesson(
+      const lesson = await this._instructorRepository.editLesson(
         lessonId,
         updateData
       );
@@ -173,7 +172,7 @@ export class InstructorService {
       }
       return lesson;
     } catch (error) {
-      console.log("instructorService error: update lesson", error);
+      console.error("instructorService error: update lesson", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -182,7 +181,7 @@ export class InstructorService {
     courseId: string
   ): Promise<ICourse | null> {
     try {
-      const course = await this.instructorRepository.publishCourse(
+      const course = await this._instructorRepository.publishCourse(
         courseId,
       );
 
@@ -191,7 +190,7 @@ export class InstructorService {
       }
       return course;
     } catch (error) {
-      console.log("instructorService error: publish course", error);
+      console.error("instructorService error: publish course", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -207,14 +206,14 @@ export class InstructorService {
       }
 
       let lesson: ILesson | null;
-      lesson = await this.instructorRepository.getLessonById(lessonId);
+      lesson = await this._instructorRepository.getLessonById(lessonId);
       if (!lesson) {
         throw new Error("Lesson not found");
       }
 
       // Update assessment
       let updatedLesson: ILesson;
-      updatedLesson = await this.instructorRepository.updateLessonAssessment(lessonId, questions);
+      updatedLesson = await this._instructorRepository.updateLessonAssessment(lessonId, questions);
 
       return updatedLesson;
     } catch (error) {
@@ -225,33 +224,33 @@ export class InstructorService {
 
   async fetchInstructorProfile(userId: string): Promise<IUser | null> {
     try {
-      const instructor = await this.instructorRepository.getInstructorProfile(userId);
+      const instructor = await this._instructorRepository.getInstructorProfile(userId);
       if (!instructor) {
           throw new Error("Instructor not found");
       }
       return instructor;
     } catch (error) {
-      console.log("instructorService error: instructor profile", error);
+      console.error("instructorService error: instructor profile", error);
       throw new Error(`${(error as Error).message}`);
     }
 }
 
   async updateInstructorProfile(userId: string, updateData: Partial<IUser>): Promise<IUser | null> {
     try {
-      const instructor = await this.instructorRepository.updateInstructor(userId, updateData);
+      const instructor = await this._instructorRepository.updateInstructor(userId, updateData);
       if (!instructor) {
         throw new Error('Instructor not found');
       }
       return instructor;
     } catch (error) {
-      console.log("instructorService error: instructor profile updating", error);
+      console.error("instructorService error: instructor profile updating", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
 
   async getPresignedUrlForVideo(lessonId: string): Promise<string> {
     try {
-      const lesson = await this.instructorRepository.findLessonById(lessonId);
+      const lesson = await this._instructorRepository.findLessonById(lessonId);
       
       if (!lesson || !lesson.video) {
         throw new Error('Lesson or video not found');
@@ -270,7 +269,7 @@ export class InstructorService {
       
       return presignedUrl;
     } catch (error) {
-      console.log("instructorService error: instructor profile updating", error);
+      console.error("instructorService error: instructor profile updating", error);
       throw new Error(`${(error as Error).message}`);
     }
   }

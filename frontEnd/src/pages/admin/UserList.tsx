@@ -10,11 +10,10 @@ const UserList = () => {
   useEffect(() => {
     CLIENT_API.get("/admin/users")
       .then((response) => {
-        console.log("response", response.data.data);
         setUsers(response.data.data);
       })
       .catch((error) => {
-        console.log("get users error", error);
+        console.error("get users error", error);
       });
   }, []);
 
@@ -32,7 +31,6 @@ const UserList = () => {
       if (result.isConfirmed) {
         CLIENT_API.patch(`/admin/user/${status}/${userId}`)
           .then((response) => {
-            console.log("response", response.data);
             if (response.data.success) {
               setUsers((prevUsers) =>
                 prevUsers.map((user) =>
@@ -43,7 +41,7 @@ const UserList = () => {
             }
           })
           .catch((error) => {
-            console.log("User block/unblock error", error);
+            console.error("User block/unblock error", error);
           });
       }
     });

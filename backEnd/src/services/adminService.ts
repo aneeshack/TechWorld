@@ -7,17 +7,17 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { s3Client } from "../config/awsConfig";
 
 export class AdminService{
-    constructor(private adminRepository: IAdminRepository){}
+    constructor(private _adminRepository: IAdminRepository){}
 
      async getAllRequsts():Promise<IUser[]>{
         try {
-            const requests = await this.adminRepository.getAllRequests();
+            const requests = await this._adminRepository.getAllRequests();
             if(!requests){
                 throw new Error('No requests find')
             }
             return requests
         } catch (error) {
-            console.log('adminService error:get all requests',error)
+            console.error('adminService error:get all requests',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
@@ -25,78 +25,78 @@ export class AdminService{
 
      async getAllRejectedRequests():Promise<IUser[]>{
         try {
-            const requests = await this.adminRepository.getAllRejectedRequests();
+            const requests = await this._adminRepository.getAllRejectedRequests();
             if(!requests){
                 throw new Error('No requests find')
             }
             return requests
         } catch (error) {
-            console.log('adminService error:get all requests',error)
+            console.error('adminService error:get all requests',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async approveRequest(userId: string):Promise<IUser |null>{
         try {
-            const updatedUser = await this.adminRepository.approveRequest(userId);
+            const updatedUser = await this._adminRepository.approveRequest(userId);
             if(!updatedUser){
                 throw new Error('User not found or already processed')
             }
             return updatedUser
         } catch (error) {
-            console.log('adminService error: approve instructor',error)
+            console.error('adminService error: approve instructor',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async rejecteRequest(userId: string):Promise<IUser |null>{
         try {
-            const updatedUser = await this.adminRepository.rejectRequest(userId);
+            const updatedUser = await this._adminRepository.rejectRequest(userId);
             if(!updatedUser){
                 throw new Error('User not found or already processed')
             }
             return updatedUser
         } catch (error) {
-            console.log('adminService error: reject instructor',error)
+            console.error('adminService error: reject instructor',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async getAllUsers():Promise<IUser[]>{
         try {
-            const users = await this.adminRepository.getAllUsers()
+            const users = await this._adminRepository.getAllUsers()
             if(!users){
                 throw new Error('No user find')
             }
             return users
         } catch (error) {
-            console.log('adminService error:get all users',error)
+            console.error('adminService error:get all users',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async blockUser(userId: string):Promise<IUser |null>{
         try {
-            const blockedUser = await this.adminRepository.blockUser(userId);
+            const blockedUser = await this._adminRepository.blockUser(userId);
             if(!blockedUser){
                 throw new Error('User is blocked')
             }
             return blockedUser
         } catch (error) {
-            console.log('adminService error: block user',error)
+            console.error('adminService error: block user',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async unBlockUser(userId: string):Promise<IUser |null>{
         try {
-            const unBlockUser = await this.adminRepository.unblockUser(userId);
+            const unBlockUser = await this._adminRepository.unblockUser(userId);
             if(!unBlockUser){
                 throw new Error('User is unblocked')
             }
             return unBlockUser
         } catch (error) {
-            console.log('adminService error: unblocked user',error)
+            console.error('adminService error: unblocked user',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
@@ -118,7 +118,7 @@ export class AdminService{
           // Construct the final image URL
           const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
     
-          console.log('Generated Image URL:', imageUrl);
+          console.error('Generated Image URL:', imageUrl);
           return { presignedUrl, imageUrl };
         } catch (error) {
           console.error('S3Service Error: Presigned URL generation failed', error);
@@ -129,62 +129,61 @@ export class AdminService{
      async createCategory(categoryName: string, description: string, imageUrl: string):Promise<CategoryEntity |null>{
         try {
 
-            const newCategory = await this.adminRepository.createCategory(categoryName, description, imageUrl);
+            const newCategory = await this._adminRepository.createCategory(categoryName, description, imageUrl);
             if(!newCategory){
                 throw new Error('User not found or already processed')
             }
             return newCategory
         } catch (error) {
-            console.log('adminService error: approve instructor',error)
+            console.error('adminService error: approve instructor',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async getAllCategories():Promise<CategoryEntity[]>{
         try {
-            const categories = await this.adminRepository.allCategories();
+            const categories = await this._adminRepository.allCategories();
             if(!categories){
                 throw new Error('No categories found')
             }
             return categories
         } catch (error) {
-            console.log('adminService error:get all categories',error)
+            console.error('adminService error:get all categories',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async getCategoryById(categoryId: string):Promise<CategoryEntity>{
         try {
-            const category = await this.adminRepository.getCategoryById(categoryId);
+            const category = await this._adminRepository.getCategoryById(categoryId);
             if(!category){
                 throw new Error('No category found')
             }
             return category
         } catch (error) {
-            console.log('adminService error:get all category',error)
+            console.error('adminService error:get all category',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
      async updateCategory(categoryId:string, categoryData: Partial<CategoryEntity>):Promise<CategoryEntity>{
         try {
-            const updateCategory = await this.adminRepository.updateCategory(categoryId,categoryData);
+            const updateCategory = await this._adminRepository.updateCategory(categoryId,categoryData);
             if(!updateCategory){
                 throw new Error('No category found, update failed')
             }
             return updateCategory
         } catch (error) {
-            console.log('adminService error:get all category',error)
+            console.error('adminService error:get all category',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
      async getPresignedUrlForCategoryImage(categoryId: string): Promise<string> {
         try {
-            const category = await this.adminRepository.getCategoryById(categoryId);
+            const category = await this._adminRepository.getCategoryById(categoryId);
             if(!category){
                 throw new Error('No category found')
             }
-            console.log('category',category.imageUrl)
             const imageUrl = category.imageUrl ||''
           // Extract the S3 object key from the URL
           const imageKey = imageUrl.split(".amazonaws.com/")[1];

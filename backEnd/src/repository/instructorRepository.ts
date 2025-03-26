@@ -16,7 +16,7 @@ export class InstructorRepository implements IInstructorRepository{
         try {
             return await Category.find()
         } catch (error) {
-            console.log("instructor repository error:fetch all categories", error);
+            console.error("instructor repository error:fetch all categories", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -27,7 +27,7 @@ export class InstructorRepository implements IInstructorRepository{
 
             return await newCourse.save()
         } catch (error) {
-            console.log("instructor repository error:add course", error);
+            console.error("instructor repository error:add course", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -40,55 +40,11 @@ export class InstructorRepository implements IInstructorRepository{
             }
             return course
         } catch (error) {
-            console.log("instructor repository error:edit course", error);
+            console.error("instructor repository error:edit course", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
 
-    // async getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]> {
-    //     try {
-
-    //         const courses = await courseModel.aggregate([
-    //             {$match: {instructor: instructorId}},
-    //             {
-    //                 $lookup:{
-    //                     from: 'categories',
-    //                     localField: 'category',
-    //                     foreignField: '_id',
-    //                     as:'category'
-    //                 }
-    //             },
-    //             {
-    //                 $unwind: '$category'
-    //             },
-    //            {
-    //             $lookup:{
-    //                 from:'lessons',
-    //                 localField:'lessons',
-    //                 foreignField: '_id',
-    //                 as:'lessons'
-    //             }
-    //            },
-    //            {
-    //             $addFields:{
-    //                 lessonCount: {
-    //                     $size:'$lessons'
-    //                 }
-    //             }
-    //            },{
-    //             $project:{
-    //                 lessons: 0,
-    //             }
-    //            }
-
-    //         ])
-    //         console.log('courses',courses)
-    //         return courses;
-    //     } catch (error) {
-    //         console.log("instructor repository error:get all course", error);
-    //         throw new Error(` ${(error as Error).message}`);
-    //     }
-    // }
 
     async getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]> {
         try {
@@ -155,22 +111,20 @@ export class InstructorRepository implements IInstructorRepository{
             // Second $project: Add computed studentsCount
             {
               $project: {
-                title: 1, // Explicitly include fields you want
+                title: 1, 
                 category: 1,
                 price: 1,
                 thumbnail: 1,
                 lessonCount: 1,
                 instructor: 1,
-                studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] }, // Compute studentsCount
-                // Add any other fields you need
+                studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] }, 
               },
             },
           ]);
       
-          console.log("courses with student count", courses);
           return courses as ICourse[];
         } catch (error) {
-          console.log("instructor repository error: get all courses", error);
+          console.error("instructor repository error: get all courses", error);
           throw new Error(` ${(error as Error).message}`);
         }
       }
@@ -182,10 +136,9 @@ export class InstructorRepository implements IInstructorRepository{
             if (!course) {
                 throw new Error('No course found');
             }
-            console.log('course instu repo',course)
             return course;
         } catch (error) {
-            console.log("instructor repository error:get single course", error);
+            console.error("instructor repository error:get single course", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -196,7 +149,7 @@ export class InstructorRepository implements IInstructorRepository{
             return await lessonModel.find({course: courseId}).exec()
           
         } catch (error) {
-            console.log("instructor repository error:get all lessons", error);
+            console.error("instructor repository error:get all lessons", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -214,7 +167,7 @@ export class InstructorRepository implements IInstructorRepository{
             )
             return savedLesson
         } catch (error) {
-            console.log("instructor repository error:add lesson", error);
+            console.error("instructor repository error:add lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -227,7 +180,7 @@ export class InstructorRepository implements IInstructorRepository{
             }
             return lesson;
         } catch (error) {
-            console.log("instructor repository error:get single lesson", error);
+            console.error("instructor repository error:get single lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -236,7 +189,7 @@ export class InstructorRepository implements IInstructorRepository{
         try {
             return await lessonModel.findByIdAndUpdate(lessonId, updatedData, {new: true})
         } catch (error) {
-            console.log("instructor repository error:edit lesson", error);
+            console.error("instructor repository error:edit lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -249,7 +202,7 @@ export class InstructorRepository implements IInstructorRepository{
                 {new: true}
             )
         } catch (error) {
-            console.log("instructor repository error:add assessment", error);
+            console.error("instructor repository error:add assessment", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -262,7 +215,7 @@ export class InstructorRepository implements IInstructorRepository{
                 {new: true}
             )
         } catch (error) {
-            console.log("instructor repository error:edit assessment", error);
+            console.error("instructor repository error:edit assessment", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -271,7 +224,7 @@ export class InstructorRepository implements IInstructorRepository{
         try {
             return await courseModel.findByIdAndUpdate(courseId,{isPublished:true}, {new: true})
         } catch (error) {
-            console.log("instructor repository error:edit lesson", error);
+            console.error("instructor repository error:edit lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -334,3 +287,4 @@ export class InstructorRepository implements IInstructorRepository{
         }
       }
 }
+

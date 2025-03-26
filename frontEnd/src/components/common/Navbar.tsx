@@ -19,7 +19,6 @@ const Navbar = () => {
   const user = useSelector((state: RootState) => state.auth.data);
   const [userData, setUserData] = useState<SignupFormData | null>(user);
   const socket = useSocket()
-  console.log('userdata',userData)
 
   useEffect(() => {
     setUserData(user)
@@ -38,7 +37,6 @@ const Navbar = () => {
       if (user?.role === 'student') {
         navigate('/student/dashboard')
       } else if (user?.role === 'instructor') {
-        console.log("Request Status:", user?.requestStatus);
         switch (user?.requestStatus) {
           case RequestStatus.Pending:
             toast.warning("Your application is being processed.", {
@@ -64,14 +62,13 @@ const Navbar = () => {
         }
       }
     } catch (error) {
-      console.log('error', error)
+      console.error('error', error)
     }
   }
 
   const handleLogout = async () => {
     try {
       if (socket) {
-        console.log('inside socket')
         socket.emit("leave_room", user?._id);
         socket.disconnect(); 
       }
@@ -88,7 +85,7 @@ const Navbar = () => {
       // Close dropdown after logout
       setIsOpen(false);
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   }
 

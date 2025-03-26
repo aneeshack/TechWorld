@@ -1,25 +1,18 @@
-// import { useSelector } from 'react-redux';
 import logo from '../../assets/commonPages/logo.png';
 import otpPicture from '../../assets/auth/otp.avif'
-// import { otpAction } from '../../redux/store/actions/auth/OtpAction';
 import { useEffect, useState } from 'react';
-// import { RootState } from '../../redux/store';
-// import { useAppDispatch } from '../../hooks/Hooks';
+
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-// import { Response } from '../../types/IForm';
 import { CLIENT_API } from '../../utilities/axios/Axios';
 
 const OtpResetPassword = () => {
-  // const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
   const [otp, setOtp] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [userRole] = useState(location.state.role)
-//   const { error, data} = useSelector((state:RootState)=>state.auth)
   const [email]=useState(location.state?.email || localStorage.getItem('forgotPasswordEmail') || "")
-  // console.log('email',email)
   const RESEND_TIME =30;
   const [timeLeft, setTimeLeft] =useState(0);
   const [canResend, setCanResend] =useState(false)
@@ -105,25 +98,10 @@ const OtpResetPassword = () => {
 
     if(otp && email){
          try {
-          // const result = await dispatch(otpAction({ otp, email }));
-          // const payload =  result.payload as Response;
-          // console.log('payload',payload)
-          // if (!payload?.success) {
-          //   setIsLoading(false);
-
-          //   if (payload?.message) {
-          //     toast.error(payload.message);
-          //   }
-
-          // } 
-          //   setIsLoading(false);
-          //   navigate("/resetPass",{state:{role:userRole,email:email}});
           
           const response = await CLIENT_API.post('/verifyForgotPasswordOtp', { otp, email });
-          console.log('OTP Verification Response:', response.data);
   
           if (response.data.success) {
-            console.log('Navigating to /resetPass');
             navigate('/resetPass', { state: { role: userRole, email: email, isForgotPassword: true } });
           } else {
             toast.error(response.data.message || 'Invalid OTP');
@@ -139,7 +117,6 @@ const OtpResetPassword = () => {
 
   useEffect(() => {
     return () => {
-      // localStorage.removeItem("forgotPasswordEmail");
       localStorage.removeItem("otpExpiryTime");
     };
   }, []);

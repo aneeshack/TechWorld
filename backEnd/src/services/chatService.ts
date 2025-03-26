@@ -5,13 +5,13 @@ import { ChatRepository } from "../repository/chatRepository";
 import { IChatRepository } from "../interfaces/chat/IChatRepository";
 
 export class ChatService {
-  constructor(private chatRepository: IChatRepository) {}
+  constructor(private _chatRepository: IChatRepository) {}
 
   async getUserMessages(userId: string): Promise<IMessage[] |null> {
     try {
-      return await this.chatRepository.getUserMessages(userId);
+      return await this._chatRepository.getUserMessages(userId);
     } catch (error) {
-      console.log("chat service error:get user messages", error);
+      console.error("chat service error:get user messages", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -22,17 +22,15 @@ export class ChatService {
         throw new Error("UserId and receiverId are required");
       }
 
-      // Check if chat already exists
-      const existingChat = await this.chatRepository.findChatByUsers(
+      const existingChat = await this._chatRepository.findChatByUsers(
         userId,
         receiverId
       );
       if (existingChat) return existingChat;
 
-      // Create new chat if not found
-      return await this.chatRepository.createChat(userId, receiverId);
+      return await this._chatRepository.createChat(userId, receiverId);
     } catch (error) {
-      console.log("chat service error:access chat", error);
+      console.error("chat service error:access chat", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
@@ -45,15 +43,15 @@ export class ChatService {
   ): Promise<IChat> {
     try {
       console.log('inside save message')
-      let chat = await this.chatRepository.findChatByUsers(sender, reciever);
+      let chat = await this._chatRepository.findChatByUsers(sender, reciever);
       if (!chat) {
-        chat = await this.chatRepository.createChat(sender, reciever);
+        chat = await this._chatRepository.createChat(sender, reciever);
       }
 
       if(!chat?._id){
         throw new Error('no chat id')
       }
-      const newMessage = await this.chatRepository.createMessage({
+      const newMessage = await this._chatRepository.createMessage({
         sender,
         reciever,
         content,
@@ -65,16 +63,16 @@ export class ChatService {
         throw new Error('no message id')
       }
 
-      await this.chatRepository.updateChatLatestMessage(
+      await this._chatRepository.updateChatLatestMessage(
         chat._id as string,
         newMessage._id as string
       );
 
 
-      const existingNotification = await this.chatRepository.findNotification(sender, reciever);
+      const existingNotification = await this._chatRepository.findNotification(sender, reciever);
 
 if (!existingNotification) {
-  await this.chatRepository.createNotification(
+  await this._chatRepository.createNotification(
      reciever,
     sender,
     newMessage._id.toString(),
@@ -82,12 +80,12 @@ if (!existingNotification) {
      false );
 } else {
 
-  await this.chatRepository.updateNotification(existingNotification._id.toString(), { isSeen: false, message:new Types.ObjectId(newMessage._id.toString())});
+  await this._chatRepository.updateNotification(existingNotification._id.toString(), { isSeen: false, message:new Types.ObjectId(newMessage._id.toString())});
 }
 
 
 
-      const populatedMessage = await this.chatRepository.getPopulatedMessage(
+      const populatedMessage = await this._chatRepository.getPopulatedMessage(
         new Types.ObjectId(newMessage._id.toString())
       );
 

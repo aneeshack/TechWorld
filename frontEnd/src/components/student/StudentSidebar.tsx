@@ -38,8 +38,6 @@ const StudentSidebar: React.FC = () => {
   const handleLogout = async () => {
     try {
       if (socket) {
-        console.log('inside socket ')
-        // socket.emit("logout")
         socket.emit("leave_room", user?._id);
         socket.disconnect(); 
       }
@@ -53,7 +51,7 @@ const StudentSidebar: React.FC = () => {
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

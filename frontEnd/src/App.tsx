@@ -23,6 +23,7 @@ const App = () => {
   const socket = useSocket();
   console.log("user", user);
 
+  
   useEffect(() => {
     const fetchUser = async () => {
       if (!user) {
@@ -96,6 +97,7 @@ const App = () => {
       socket.off("online_status");
     };
   }, [socket, user?._id]);
+  
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} />

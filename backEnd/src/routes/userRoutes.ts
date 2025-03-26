@@ -1,8 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController";
-import { authenticateUser } from "../middlewares/authMiddleware";
 import { UserRepository } from "../repository/userRepository";
-import { AuthService } from "../services/authService";
 import { UserService } from "../services/userService";
 import { authenticateStudent } from "../middlewares/studentAuth";
 
@@ -21,6 +19,6 @@ userRouter.get('/reviews/fetch/:courseId', userController.getCourseReviews.bind(
 // payment
 userRouter.post('/payment/process', authenticateStudent, userController.createPaymentSession.bind(userController));
 userRouter.get('/payment/status/:sessionId', authenticateStudent, userController.getPaymentSession.bind(userController));
-userRouter.post('/course/enrolled', authenticateStudent, userController.couresEnrollment.bind(userController));
+userRouter.post('/course/enrolled', authenticateStudent, userController.courseEnrollment.bind(userController));
 
 export default userRouter;

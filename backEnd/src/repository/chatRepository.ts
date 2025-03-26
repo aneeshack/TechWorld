@@ -13,13 +13,6 @@ export class ChatRepository implements IChatRepository{
   async getUserMessages(userId: string): Promise<IMessage[] | null> {
     try {
       return await messageModel
-      // .findOne({
-      //   $or: [{ sender: userId }, { reciever: userId }],
-      // })
-      // .sort({ createdAt: -1 }) 
-      // .populate("sender", "userName")
-      // .populate("reciever", "userName")
-      // .exec();
       .find({
         $or: [{ sender: userId }, { reciever: userId }],
       })
@@ -29,7 +22,7 @@ export class ChatRepository implements IChatRepository{
       .exec();
   
     } catch (error) {
-        console.log("chat Repository error: get user messages", error);
+        console.error("chat Repository error: get user messages", error);
         throw new Error(` ${(error as Error).message}`);
     }
 }
@@ -52,7 +45,7 @@ export class ChatRepository implements IChatRepository{
           }
           return chat
          } catch (error) {
-             console.log("chat Repository error: find chat", error);
+             console.error("chat Repository error: find chat", error);
              throw new Error(` ${(error as Error).message}`);
          }
      }
@@ -72,7 +65,7 @@ export class ChatRepository implements IChatRepository{
           }
           return chat
       } catch (error) {
-          console.log("chat Repository error: create chat", error);
+          console.error("chat Repository error: create chat", error);
           throw new Error(` ${(error as Error).message}`);
       }
   }
@@ -86,7 +79,7 @@ export class ChatRepository implements IChatRepository{
         }
         return message
     } catch (error) {
-        console.log("message Repository error: create message", error);
+        console.error("message Repository error: create message", error);
         throw new Error(` ${(error as Error).message}`);
     }
 }
@@ -100,7 +93,7 @@ async updateChatLatestMessage(chatId: string, messageId: string): Promise<IChat 
       }
       return updateChat
   } catch (error) {
-      console.log("message Repository error: update latest message", error);
+      console.error("message Repository error: update latest message", error);
       throw new Error(` ${(error as Error).message}`);
   }
 }
@@ -112,7 +105,7 @@ async findNotification(sender: string, recipient: string): Promise<INotification
         .sort({ createdAt: -1 });
     
   } catch (error) {
-      console.log("message Repository error: find notification", error);
+      console.error("message Repository error: find notification", error);
       throw new Error(` ${(error as Error).message}`);
   }
 }
@@ -126,7 +119,7 @@ async createNotification(recipient: string, sender: string, message: string, cha
     }
     return notification
   } catch (error) {
-      console.log("message Repository error: create notification", error);
+      console.error("message Repository error: create notification", error);
       throw new Error(` ${(error as Error).message}`);
   }
 }
@@ -135,7 +128,7 @@ async updateNotification(notificationId: string, updateData: Partial<INotificati
   try {
     const updatedNotification = await notificationModel.findByIdAndUpdate(
       notificationId,
-      { $set: updateData }, // Only update the fields provided
+      { $set: updateData }, 
       { new: true } // Return the updated document
     );
 

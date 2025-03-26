@@ -1,25 +1,22 @@
 import { Request, Response } from "express";
-import { StudentService } from "../services/studentService";
 import { IStudentService } from "../interfaces/student/IStudentService";
 import { IInstructorService } from "../interfaces/instructor/IInstructorService";
-import { InstructorService } from "../services/instructorService";
 import { enrollmentModel } from "../models/enrollmentModel";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { lessonModel } from "../models/lessonModel";
-import { IReview } from "../interfaces/database/IReview";
 import { reviewModel } from "../models/reviewModel";
 
 export class StudentController{
     constructor(
-        private studentService: IStudentService,
-        private instructorService:IInstructorService
+        private _studentService: IStudentService,
+        private _instructorService:IInstructorService
     ){}
 
 
     async getProfile(req: Request, res: Response): Promise<void> {
         try {
           const { userId } = req.params;
-          const student = await this.studentService.fetchStudentProfile(userId);
+          const student = await this._studentService.fetchStudentProfile(userId);
           if (!student) {
             res.status(404).json({ success: false, message: 'Student not found' });
             return;
@@ -35,7 +32,7 @@ export class StudentController{
       try {
         const { userId } = req.params;
         const updateData = req.body;
-        const student = await this.studentService.updateStudentProfile(userId,  updateData);
+        const student = await this._studentService.updateStudentProfile(userId,  updateData);
         if (!student) {
           res.status(404).json({ success: false, message: 'Student not found' });
           return;
@@ -50,9 +47,8 @@ export class StudentController{
     async getStudentPayments(req: Request, res: Response):Promise<void> {
         try {
           const userId = req.params.userId; 
-          console.log('student payment',userId)
       
-          const payments = await this.studentService.getPaymentsByUserId(userId);
+          const payments = await this._studentService.getPaymentsByUserId(userId);
       
           res.status(200).json({
             success: true,
@@ -69,17 +65,13 @@ export class StudentController{
 
       async fetchSingleCourse(req: Request, res: Response): Promise<void> {
           try {
-            console.log("inside fetch student");
       
             const courseId = req.params.courseId;
-              console.log('courseid',courseId)
-            const course = await this.instructorService.fetchCourse(courseId);
+            const course = await this._instructorService.fetchCourse(courseId);
             if (!course) {
-              console.log('first')
               res.status(404).json({ success: false, message: "Course not found" });
               return;
             }
-            console.log('course',course)
             res
               .status(200)
               .json({ success: true, message: "fetch single course", data: course });
@@ -90,8 +82,6 @@ export class StudentController{
 
   async fetchAllLessons(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside fetch all lessons");
-
       const courseId = req.params.courseId;
       if (!courseId) {
         res
@@ -100,7 +90,7 @@ export class StudentController{
         return;
       }
 
-      const lessons = await this.instructorService.allLessons(courseId);
+      const lessons = await this._instructorService.allLessons(courseId);
       if (!lessons || lessons.length === 0) {
         res.status(404).json({ success: false, message: "No lessons found" });
         return;
@@ -117,10 +107,8 @@ export class StudentController{
     try {
       const { lessonId } = req.params;
   
-      const presignedUrl = await this.instructorService.getPresignedUrlForVideo(lessonId)
-      
-      console.log('presinged url',presignedUrl)
-      res.json({ presignedUrl });
+      const presignedUrl = await this._instructorService.getPresignedUrlForVideo(lessonId)
+            res.json({ presignedUrl });
     } catch (error) {
       console.error("Error in InstructorController :get presigned url for video", error);
       res.status(500).json({ success: false, message: "Server error" });
@@ -129,10 +117,9 @@ export class StudentController{
 
     async fetchSingleLesson(req: Request, res: Response): Promise<void> {
       try {
-        console.log("inside fetch lesson");
         const lessonId = req.params.lessonId;
   
-        const lesson = await this.instructorService.fetchLesson(lessonId);
+        const lesson = await this._instructorService.fetchLesson(lessonId);
         if (!lesson) {
           res.status(404).json({ success: false, message: "lesson not found" });
           return;
@@ -147,12 +134,9 @@ export class StudentController{
 
     async submitAssessment(req: AuthRequest, res: Response):Promise<void> {
       try {
-        console.log('inside submit assessment')
         const { lessonId, score } = req.body;
-        const userId = req.user?.id; // Get user ID from authentication middleware
-    
-        console.log('userid',userId)
-    
+        const userId = req.user?.id; 
+        
         res.status(200).json({ message: "Assessment submitted successfully", score });
       } catch (error) {
         res.status(500).json({ message: "Error submitting assessment", error });
@@ -162,7 +146,7 @@ export class StudentController{
       async updateLessonProgress(req:AuthRequest, res:Response):Promise<void> {
       try {
         const { courseId, lessonId } = req.body;
-        const userId = req.user?.id; // Get user ID from authentication middleware
+        const userId = req.user?.id; 
     
         if (!courseId || !lessonId) {
             res.status(400).json({ message: "Invalid request data." });
@@ -182,7 +166,6 @@ export class StudentController{
           
           // Calculate completion percentage
           const totalLessons = await lessonModel.countDocuments({ course:courseId });
-          console.log('total lessons',totalLessons)
           enrollment.progress.overallCompletionPercentage = Math.round(
             (enrollment.progress.completedLessons.length / totalLessons) * 100
           );
@@ -206,7 +189,6 @@ export class StudentController{
 
     async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
       try {
-        console.log('inside fetch enrolled course')
         const { userId } = req.params; 
     
         if (!userId) {
@@ -214,7 +196,7 @@ export class StudentController{
           return;
         }
     
-        const enrolledCourses = await this.studentService.getEnrolledCourses(userId);
+        const enrolledCourses = await this._studentService.getEnrolledCourses(userId);
     
         res.status(200).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
       } catch (error: any) {
@@ -224,10 +206,8 @@ export class StudentController{
 
     async getEnrollment(req: AuthRequest, res: Response): Promise<void> {
       try {
-        console.log('inside fetch enrollment',req.params)
         const { courseId } = req.params; 
         const userId = req.user?.id
-        console.log('uesrid',userId)
     
         if (!userId) {
           res.status(400).json({ success: false, message: "User ID is required" });
@@ -240,7 +220,7 @@ export class StudentController{
           return;
         }
     
-        const enrollment = await this.studentService.getEnrollment(userId.toString(),courseId);
+        const enrollment = await this._studentService.getEnrollment(userId.toString(),courseId);
     
         res.status(200).json({ success: true, message: "Fetched enrollment of courses", data: enrollment });
       } catch (error: any) {
@@ -250,26 +230,21 @@ export class StudentController{
 
     async updateReview(req: AuthRequest, res: Response): Promise<void> {
       try {
-        console.log('inside update review',req.params)
         const { courseId } = req.params; 
         const userId = req.user?.id
         const {rating, review } = req.body
-
-        console.log('uesrid',userId,req.body)
-
     
         if (!userId) {
           res.status(400).json({ success: false, message: "User ID is required" });
           return;
         }
-    
-        
+          
         if (!courseId) {
           res.status(400).json({ success: false, message: "course ID is required" });
           return;
         }
     
-        const courseReview = await this.studentService.addReview(userId.toString(),courseId, rating, review);
+        const courseReview = await this._studentService.addReview(userId.toString(),courseId, rating, review);
     
         res.status(200).json({ success: true, message: "add review to a courses", data: courseReview });
       } catch (error: any) {

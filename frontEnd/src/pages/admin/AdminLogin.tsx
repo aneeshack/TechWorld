@@ -25,7 +25,6 @@ const AdminLogin = () => {
         onSubmit:async(values)=>{
             try {
                 const loginResult = await dispatch(loginAction({...values, role:Role.Admin}))
-                console.log('login result',loginResult)
                 const payload = loginResult.payload as Response;
 
                 if(!payload?.success){

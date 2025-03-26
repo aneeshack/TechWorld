@@ -27,7 +27,6 @@ const AddCategory = () => {
     },
     validationSchema: categoryValidationSchema,
     onSubmit:async(values)=>{
-      console.log(values)
       if(!selectedFile){
         toast.warn('Please select an image');
         return

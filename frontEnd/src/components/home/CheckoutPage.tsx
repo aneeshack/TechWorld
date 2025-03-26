@@ -21,7 +21,6 @@ const CheckoutPage = () => {
     if (courseId) {
       CLIENT_API.get(`/user/course/${courseId}`)
         .then((response) => {
-          console.log('response', response.data.data);
           setCourse(response.data.data);
         })
         .catch((error) => console.error("Error fetching course", error));
@@ -34,7 +33,6 @@ const CheckoutPage = () => {
         CLIENT_API.get(`/user/enrolled/${user._id}`)
           .then((response) => {
             if (response.data.success) {
-              console.log('response', response.data.data);
               if (response.data?.data && Array.isArray(response.data.data)) {
                 const isUserEnrolled = response.data.data.some(
                   (item: { courseId: string }) => item.courseId.toString() === courseId
@@ -86,7 +84,6 @@ const CheckoutPage = () => {
       if (!response.data || !response.data.success) {
         throw new Error('Something went wrong, try again!');
       }
-      console.log('data from back', response.data.data);
 
       storeObject('payment_session', {
         ...response.data.data,
@@ -103,7 +100,7 @@ const CheckoutPage = () => {
         throw new Error(result.error.message);
       }
     } catch (error) {
-      console.log('error', error);
+      console.error('error', error);
       toast.error('Payment failed. Please try again.');
     } finally {
       setLoading(false); // End loading

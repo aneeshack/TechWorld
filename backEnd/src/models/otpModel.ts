@@ -1,7 +1,7 @@
-import mongoose, { Schema, Model, model, Document } from "mongoose";
+import { Schema, Model, model, Document } from "mongoose";
 
 
-interface IOtp extends Document{
+export interface IOtp extends Document{
     email: string,
     otp: string,
     createdAt: Date
@@ -20,7 +20,7 @@ const OtpSchema = new Schema<IOtp>(
     createdAt:{
         type : Date,
         default: Date.now,
-        expires: '5m'  //otp expired after 5 minutes
+        expires: '5m'  
     }
   },
 );

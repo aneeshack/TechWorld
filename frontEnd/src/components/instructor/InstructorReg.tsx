@@ -91,22 +91,15 @@ const InstructorReg = () => {
     validationSchema: registerValidationSchema,
     onSubmit: async(values)=>{
       try {
-        console.log("Submitting form", values);
         const result = await dispatch(RegisterAction({...values,_id:user?._id || ''}))
         const response = result.payload as Response;
-        console.log('response in instructo',response)
         if(!response.success){
-          console.log('response in error',response)
           if(response?.message){
             toast.error(response.message)
           }
         }
-        console.log('response in success',response)
-          // setTimeout(() => navigate('/'), 500); 
           navigate('/')
         
-        
-
       } catch (error) {
           console.error('registration error:', error)
       }

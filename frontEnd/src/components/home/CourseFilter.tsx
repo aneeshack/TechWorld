@@ -33,7 +33,7 @@ const CourseFilter = () => {
         setCourses(response.data.data);
         setTotalPages(response.data.totalPages);
       } catch (error) {
-        console.log("API error", error);
+        console.error("API error", error);
       }
     };
 
@@ -46,7 +46,7 @@ const CourseFilter = () => {
         setCategories(response.data.data);
       })
       .catch((error) => {
-        console.log("API error", error);
+        console.error("API error", error);
       });
   }, []);
 

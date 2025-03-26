@@ -18,7 +18,6 @@ const CourseDetailsPage = () => {
     if (courseId) {
       CLIENT_API.get(`/user/course/${courseId}`)
         .then((response) => {
-          console.log('response', response.data.data);
           setCourseDetail(response.data.data);
         })
         .catch((error) => console.error("Error fetching course", error));
@@ -31,7 +30,6 @@ const CourseDetailsPage = () => {
         CLIENT_API.get(`/user/enrolled/${user._id}`)
           .then((response) => {
             if (response.data.success) {
-              console.log('response', response.data.data);
               if (response.data?.data && Array.isArray(response.data.data)) {
                 const isUserEnrolled = response.data.data.some(
                   (item: { courseId: string }) => item.courseId.toString() === courseId
