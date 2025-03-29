@@ -1,16 +1,23 @@
 import mongoose from "mongoose";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { ICourse } from "../interfaces/courses/ICourse";
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { s3Client } from "../config/awsConfig";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { ILesson } from "../interfaces/courses/ILesson";
+import { IAssessment, ILesson } from "../interfaces/courses/ILesson";
 import { IInstructorRepository } from "../interfaces/instructor/IInstructorRepository";
 import { IUser } from "../interfaces/database/IUser";
-import { InstructorRepository } from "../repository/instructorRepository";
+import S3Service from "./s3Service";
 
 export class InstructorService {
-  constructor(private _instructorRepository: IInstructorRepository) {}
+
+  private _instructorRepository: IInstructorRepository;
+  private _s3Service: S3Service; // Add S3Service as a private property
+
+  constructor(
+    instructorRepository: IInstructorRepository,
+    s3Service: S3Service 
+  ) {
+    this._instructorRepository = instructorRepository;
+    this._s3Service = s3Service;
+  }
 
   async getCategories(): Promise<CategoryEntity[]> {
     try {
@@ -66,7 +73,7 @@ export class InstructorService {
       const courses = await this._instructorRepository.getAllCoursesByInstructor(
         instructorId
       );
-
+      console.log('all courses in service',courses)
       if (!courses) {
         throw new Error("No courses found");
       }
@@ -92,27 +99,12 @@ export class InstructorService {
   ): Promise<{ presignedUrl: string; videoUrl: string }> {
     try {
       const key = `course/${Date.now()}-${encodeURIComponent(fileName)}`;
-      const command = new PutObjectCommand({
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: key,
-        ContentType: fileType,
-      });
-
-      // Generate a signed URL for uploading
-      const presignedUrl = await getSignedUrl(s3Client, command, {
-        expiresIn: 60,
-      });
-
-      // Construct the final image URL
-      const videoUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-
-      console.log("Generated Image URL:", videoUrl);
-      return { presignedUrl, videoUrl };
+      const result = await this._s3Service.generatePresignedUrlForUpload(key, fileType, 60);
+      console.log("Generated Video URL:", result.videoUrl);
+      return result;
     } catch (error) {
-      console.error("S3Service Error: Presigned URL generation failed", error);
-      throw new Error(
-        `Error generating presigned URL: ${(error as Error).message}`
-      );
+      console.error("InstructorService Error: Presigned URL generation failed", error);
+      throw new Error(`Error generating presigned URL: ${(error as Error).message}`);
     }
   }
 
@@ -195,7 +187,7 @@ export class InstructorService {
     }
   }
 
-  async addAssessment(lessonId: string, questions: any): Promise<ILesson> {
+  async addAssessment(lessonId: string, questions: IAssessment[]): Promise<ILesson> {
     try {
 
       if (!lessonId) {
@@ -205,15 +197,13 @@ export class InstructorService {
         throw new Error("Questions must be provided as an array");
       }
 
-      let lesson: ILesson | null;
-      lesson = await this._instructorRepository.getLessonById(lessonId);
+      const lesson = await this._instructorRepository.getLessonById(lessonId);
       if (!lesson) {
         throw new Error("Lesson not found");
       }
 
       // Update assessment
-      let updatedLesson: ILesson;
-      updatedLesson = await this._instructorRepository.updateLessonAssessment(lessonId, questions);
+      const updatedLesson = await this._instructorRepository.updateLessonAssessment(lessonId, questions);
 
       return updatedLesson;
     } catch (error) {
@@ -242,32 +232,6 @@ export class InstructorService {
         throw new Error('Instructor not found');
       }
       return instructor;
-    } catch (error) {
-      console.error("instructorService error: instructor profile updating", error);
-      throw new Error(`${(error as Error).message}`);
-    }
-  }
-
-  async getPresignedUrlForVideo(lessonId: string): Promise<string> {
-    try {
-      const lesson = await this._instructorRepository.findLessonById(lessonId);
-      
-      if (!lesson || !lesson.video) {
-        throw new Error('Lesson or video not found');
-      }
-
-      const videoKey = lesson.video.split(".amazonaws.com/")[1];
-      
-      const params = {
-        Bucket: process.env.AWS_S3_BUCKET_NAME,
-        Key: videoKey,
-        Expires: 300, // URL expires in 5 minutes
-      };
-
-      const command = new GetObjectCommand(params);
-      const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
-      
-      return presignedUrl;
     } catch (error) {
       console.error("instructorService error: instructor profile updating", error);
       throw new Error(`${(error as Error).message}`);

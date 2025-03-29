@@ -1,10 +1,8 @@
 import { IUserRepository } from "../interfaces/user/IUserRepository";
 import { courseModel } from "../models/courseModel";
 import { ICourse } from "../interfaces/courses/ICourse";
-import UserModel from "../models/userModel";
 import { enrollmentModel } from "../models/enrollmentModel";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
-import mongoose from "mongoose";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { Category } from "../models/categoryModel";
 

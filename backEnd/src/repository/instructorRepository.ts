@@ -16,7 +16,7 @@ export class InstructorRepository implements IInstructorRepository{
         try {
             return await Category.find()
         } catch (error) {
-            console.error("instructor repository error:fetch all categories", error);
+            console.log("instructor repository error:fetch all categories", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -27,7 +27,7 @@ export class InstructorRepository implements IInstructorRepository{
 
             return await newCourse.save()
         } catch (error) {
-            console.error("instructor repository error:add course", error);
+            console.log("instructor repository error:add course", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -40,7 +40,7 @@ export class InstructorRepository implements IInstructorRepository{
             }
             return course
         } catch (error) {
-            console.error("instructor repository error:edit course", error);
+            console.log("instructor repository error:edit course", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -117,14 +117,16 @@ export class InstructorRepository implements IInstructorRepository{
                 thumbnail: 1,
                 lessonCount: 1,
                 instructor: 1,
+                isPublished:1,
                 studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] }, 
               },
             },
           ]);
       
+          console.log("courses with student count", courses);
           return courses as ICourse[];
         } catch (error) {
-          console.error("instructor repository error: get all courses", error);
+          console.log("instructor repository error: get all courses", error);
           throw new Error(` ${(error as Error).message}`);
         }
       }
@@ -136,9 +138,10 @@ export class InstructorRepository implements IInstructorRepository{
             if (!course) {
                 throw new Error('No course found');
             }
+            console.log('course instu repo',course)
             return course;
         } catch (error) {
-            console.error("instructor repository error:get single course", error);
+            console.log("instructor repository error:get single course", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -149,7 +152,7 @@ export class InstructorRepository implements IInstructorRepository{
             return await lessonModel.find({course: courseId}).exec()
           
         } catch (error) {
-            console.error("instructor repository error:get all lessons", error);
+            console.log("instructor repository error:get all lessons", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -167,7 +170,7 @@ export class InstructorRepository implements IInstructorRepository{
             )
             return savedLesson
         } catch (error) {
-            console.error("instructor repository error:add lesson", error);
+            console.log("instructor repository error:add lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -180,7 +183,7 @@ export class InstructorRepository implements IInstructorRepository{
             }
             return lesson;
         } catch (error) {
-            console.error("instructor repository error:get single lesson", error);
+            console.log("instructor repository error:get single lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -189,7 +192,7 @@ export class InstructorRepository implements IInstructorRepository{
         try {
             return await lessonModel.findByIdAndUpdate(lessonId, updatedData, {new: true})
         } catch (error) {
-            console.error("instructor repository error:edit lesson", error);
+            console.log("instructor repository error:edit lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -202,7 +205,7 @@ export class InstructorRepository implements IInstructorRepository{
                 {new: true}
             )
         } catch (error) {
-            console.error("instructor repository error:add assessment", error);
+            console.log("instructor repository error:add assessment", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -215,16 +218,24 @@ export class InstructorRepository implements IInstructorRepository{
                 {new: true}
             )
         } catch (error) {
-            console.error("instructor repository error:edit assessment", error);
+            console.log("instructor repository error:edit assessment", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
 
     async publishCourse(courseId: string): Promise<ICourse | null> {
         try {
+          const course =await courseModel.findById(courseId)
+          if(!course){
+            throw new Error('course not found')
+          }
+
+          if(course.isPublished){
+            throw new Error('course already published')
+          }
             return await courseModel.findByIdAndUpdate(courseId,{isPublished:true}, {new: true})
         } catch (error) {
-            console.error("instructor repository error:edit lesson", error);
+            console.log("instructor repository error:edit lesson", error);
             throw new Error(` ${(error as Error).message}`);
         }
     }
@@ -239,7 +250,7 @@ export class InstructorRepository implements IInstructorRepository{
         }
       }
 
-      async updateLessonAssessment(lessonId: string, questions: any): Promise<ILesson> {
+      async updateLessonAssessment(lessonId: string, questions: IAssessment[]): Promise<ILesson> {
         try {
           const lesson = await lessonModel.findByIdAndUpdate(
             lessonId,
@@ -282,8 +293,9 @@ export class InstructorRepository implements IInstructorRepository{
         try {
           const lesson = await lessonModel.findById(lessonId);
           return lesson;
-        } catch (error:any) {
-          throw new Error(`Error fetching lesson: ${error.message}`);
+        } catch (error) {
+          console.log('find lesson by id error:',error)
+          throw new Error(`Error fetching lesson`);
         }
       }
 }

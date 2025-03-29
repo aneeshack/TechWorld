@@ -1,7 +1,6 @@
 import { IPayment } from "../interfaces/courses/IPayment";
 import { IStudentRepository } from "../interfaces/student/IStudentRepository";
 import { IUser } from "../interfaces/database/IUser";
-import { StudentRepository } from "../repository/studentRepository";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { IReview } from "../interfaces/database/IReview";
 
@@ -56,7 +55,7 @@ export class StudentService{
             }
         
             return enrolledCourses;
-          } catch (error:any) {
+          } catch (error:unknown) {
             console.error('student service error:enrolled courses ',error)
             throw new Error(`${(error as Error).message}`)
           }
@@ -71,7 +70,7 @@ export class StudentService{
             }
         
             return enrolledCourses;
-          } catch (error:any) {
+          } catch (error:unknown) {
             console.error('student service error:user course enrollment ',error)
             throw new Error(`${(error as Error).message}`)
           }
@@ -98,7 +97,7 @@ export class StudentService{
                 reviewText
               );
             }
-          } catch (error:any) {
+          } catch (error:unknown) {
             console.error('student service error:user course rating ',error)
             throw new Error(`${(error as Error).message}`)
           }

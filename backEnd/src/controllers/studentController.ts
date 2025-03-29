@@ -5,17 +5,24 @@ import { enrollmentModel } from "../models/enrollmentModel";
 import { AuthRequest } from "../middlewares/authMiddleware";
 import { lessonModel } from "../models/lessonModel";
 import { reviewModel } from "../models/reviewModel";
+import S3Service from "../services/s3Service";
+import s3Service from "../services/s3ServiceInstance";
+import { throwError } from "../middlewares/errorMiddleware";
 
 export class StudentController{
     constructor(
         private _studentService: IStudentService,
-        private _instructorService:IInstructorService
+        private _instructorService:IInstructorService,
+        private _s3Service: S3Service = s3Service
     ){}
 
 
     async getProfile(req: Request, res: Response): Promise<void> {
         try {
           const { userId } = req.params;
+          if(!userId){
+            throwError(400, 'Student id is required')
+          }
           const student = await this._studentService.fetchStudentProfile(userId);
           if (!student) {
             res.status(404).json({ success: false, message: 'Student not found' });
@@ -55,11 +62,9 @@ export class StudentController{
             data: payments, 
             message: "Payments retrieved successfully",
           });
-        } catch (error:any) {
-          res.status(500).json({
-            success: false,
-            message: `Error fetching payments: ${error.message}`,
-          });
+        } catch (error: unknown) {
+          const message = error instanceof Error ? error.message : "An unexpected error occurred";
+            res.status(400).json({ success:false, message: message })
         }
       };
 
@@ -75,8 +80,9 @@ export class StudentController{
             res
               .status(200)
               .json({ success: true, message: "fetch single course", data: course });
-          } catch (error: any) {
-            res.status(400).json({ success: false, message: error.message });
+          }catch (error: unknown) {
+            const message = error instanceof Error ? error.message : "An unexpected error occurred";
+              res.status(400).json({ success:false, message: message })
           }
         }
 
@@ -98,21 +104,33 @@ export class StudentController{
       res
         .status(200)
         .json({ success: true, message: "fetch all lessons", data: lessons });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        res.status(400).json({ success:false, message: message })
     }
   }
+
 
   async presSignedUrlForVideo(req: Request, res: Response): Promise<void> {
     try {
       const { lessonId } = req.params;
-  
-      const presignedUrl = await this._instructorService.getPresignedUrlForVideo(lessonId)
-            res.json({ presignedUrl });
-    } catch (error) {
-      console.error("Error in InstructorController :get presigned url for video", error);
-      res.status(500).json({ success: false, message: "Server error" });
-    }
+
+      const lesson = await this._instructorService.fetchLesson(lessonId); 
+      if (!lesson || !lesson.video) {
+        res.status(404).json({ success: false, message: "Lesson or video not found" });
+        return;
+      }
+
+      const videoKey = lesson.video.split(".amazonaws.com/")[1]; // Extract S3 key from URL
+      const presignedUrl = await this._s3Service.generatePresignedUrl(videoKey, 300); 
+      console.log('presigned url',presignedUrl)
+      
+      res.status(200).json({ success: true, presignedUrl });
+    }catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      console.error("Error in StudentController: get presigned URL for video", error);
+        res.status(400).json({ success:false, message: message })
+    } 
   }
 
     async fetchSingleLesson(req: Request, res: Response): Promise<void> {
@@ -127,21 +145,22 @@ export class StudentController{
         res
           .status(200)
           .json({ success: true, message: "fetch single lesson", data: lesson });
-      } catch (error: any) {
-        res.status(400).json({ success: false, message: error.message });
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+          res.status(400).json({ success:false, message: message })
       }
     }
 
-    async submitAssessment(req: AuthRequest, res: Response):Promise<void> {
-      try {
-        const { lessonId, score } = req.body;
-        const userId = req.user?.id; 
+    // async submitAssessment(req: AuthRequest, res: Response):Promise<void> {
+    //   try {
+    //     const { lessonId, score } = req.body;
+    //     const userId = req.user?.id; 
         
-        res.status(200).json({ message: "Assessment submitted successfully", score });
-      } catch (error) {
-        res.status(500).json({ message: "Error submitting assessment", error });
-      }
-    };
+    //     res.status(200).json({ message: "Assessment submitted successfully", score });
+    //   } catch (error) {
+    //     res.status(500).json({ message: "Error submitting assessment", error });
+    //   }
+    // };
 
       async updateLessonProgress(req:AuthRequest, res:Response):Promise<void> {
       try {
@@ -199,8 +218,9 @@ export class StudentController{
         const enrolledCourses = await this._studentService.getEnrolledCourses(userId);
     
         res.status(200).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
-      } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+          res.status(400).json({ success:false, message: message })
       }
     }
 
@@ -223,8 +243,9 @@ export class StudentController{
         const enrollment = await this._studentService.getEnrollment(userId.toString(),courseId);
     
         res.status(200).json({ success: true, message: "Fetched enrollment of courses", data: enrollment });
-      } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+          res.status(400).json({ success:false, message: message })
       }
     }
 
@@ -247,8 +268,9 @@ export class StudentController{
         const courseReview = await this._studentService.addReview(userId.toString(),courseId, rating, review);
     
         res.status(200).json({ success: true, message: "add review to a courses", data: courseReview });
-      } catch (error: any) {
-        res.status(500).json({ success: false, message: error.message });
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : "An unexpected error occurred";
+          res.status(400).json({ success:false, message: message })
       }
     }
 

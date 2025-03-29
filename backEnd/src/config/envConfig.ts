@@ -10,5 +10,8 @@ export const envConfig ={
     },
     mongo: {
         MONGODB_URI : process.env.MONGODB_URI
+    },
+    stripe: {
+        STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY
     }
 }

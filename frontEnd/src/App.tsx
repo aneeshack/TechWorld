@@ -144,7 +144,13 @@ const App = () => {
         />
 
         {/* Admin login is seperated from normal user login */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/login" element={
+          user?.role ===Role.Admin ?(
+            <Navigate to='/admin/dashboard' replace />
+          ):(
+            <AdminLogin/>
+          )
+        } />
 
         <Route
           path="/admin/*"

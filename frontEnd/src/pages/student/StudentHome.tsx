@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Award,
   Book,
-  // ChevronRight,
   Clock,
   Menu,
   PieChart,
@@ -54,7 +53,7 @@ const StudentHome = () => {
   }, initialStats);
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex  bg-gray-50">
       <div className="lg:hidden fixed top-0 left-0 z-20 m-4">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -147,7 +146,7 @@ const StudentHome = () => {
         <div className="flex justify-center ">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8  lg:w-[5000] max-w-6xl w-full">
           {/* Current Courses */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow mb-8">
               <div className="px-6 py-4 border-b">
                 <h3 className="text-lg font-semibold text-gray-800">

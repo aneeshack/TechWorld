@@ -30,7 +30,7 @@ const CheckoutPage = () => {
   const handleFetchEnrollment = useCallback(async () => {
     try {
       if (user && user._id) {
-        CLIENT_API.get(`/user/enrolled/${user._id}`)
+        CLIENT_API.get(`/student/enrolled/${user._id}`)
           .then((response) => {
             if (response.data.success) {
               if (response.data?.data && Array.isArray(response.data.data)) {
@@ -58,7 +58,7 @@ const CheckoutPage = () => {
 
   const handlePayment = async () => {
     try {
-      setLoading(true); // Start loading
+      setLoading(true);
       if (!course || !course._id) {
         toast.error('No course found');
         return;
@@ -82,7 +82,8 @@ const CheckoutPage = () => {
 
       const response = await CLIENT_API.post('/user/payment/process', sessionData);
       if (!response.data || !response.data.success) {
-        throw new Error('Something went wrong, try again!');
+        // throw new Error('Something went wrong, try again!');
+        toast.error(response.data.message ||'Something went wrong, try again!')
       }
 
       storeObject('payment_session', {

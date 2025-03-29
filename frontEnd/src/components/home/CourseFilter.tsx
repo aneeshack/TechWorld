@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import courseBanner from '../../assets/commonPages/course.jpg';
 import { CLIENT_API } from "../../utilities/axios/Axios";
 import { ICourse } from "../../types/ICourse";
 import { Link } from "react-router-dom";
 import { CategoryEntity } from "../../types/ICategories";
+import { debounce } from "lodash";
 
 const CourseFilter = () => {
   const [courses, setCourses] = useState<ICourse[]>([]);
@@ -14,13 +15,31 @@ const CourseFilter = () => {
   const [sortOrder, setSortOrder] = useState<"" | "asc" | "desc">("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const limit = 10; // Items per page
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
+  const limit = 4; // Items per page
+
+
+  // Create a debounced function to update the search term
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setDebouncedSearchTerm(value);
+      setCurrentPage(1); 
+    }, 500), 
+    [] 
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    debouncedSearch(e.target.value);
+  };
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         const params = new URLSearchParams({
-          ...(searchTerm && { searchTerm }),
+          // ...(searchTerm && { searchTerm }),
+          ...(debouncedSearchTerm && { searchTerm: debouncedSearchTerm }),
           ...(selectedCategories.length > 0 && { categories: selectedCategories.join(",") }),
           ...(selectedPrice?.min && { priceMin: selectedPrice.min.toString() }),
           ...(selectedPrice?.max && selectedPrice.max !== Infinity && { priceMax: selectedPrice.max.toString() }),
@@ -38,7 +57,7 @@ const CourseFilter = () => {
     };
 
     fetchCourses();
-  }, [searchTerm, selectedCategories, selectedPrice, sortOrder, currentPage]); // Refetch when filters or page change
+  }, [debouncedSearchTerm, selectedCategories, selectedPrice, sortOrder, currentPage]); // Refetch when filters or page change
 
   useEffect(() => {
     CLIENT_API.get("/user/categories")
@@ -91,7 +110,8 @@ const CourseFilter = () => {
           placeholder="Search for courses..."
           className="p-3 border border-gray-300 rounded-lg w-2/3"
           value={searchTerm}
-          onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} // Reset to page 1
+          // onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} // Reset to page 1
+          onChange={handleSearchChange}
         />
       </div>
 

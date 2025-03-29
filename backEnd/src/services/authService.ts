@@ -1,15 +1,18 @@
+import { inject, injectable } from "inversify";
 import { IUser, Role } from "../interfaces/database/IUser";
 import { IAuthRepository } from "../interfaces/user/IAuthRepository";
-import { AuthRepository } from "../repository/authRepository";
 import { OtpGenerator } from "../util/auth/generateOtp";
 import { generateToken } from "../util/auth/jwt";
 import EmailService from "../util/auth/nodeMailer";
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import mongoose from "mongoose";
+import { AUTH_TYPES } from "../interfaces/types";
 
+@injectable()
 export class AuthService {
-    constructor(private _authRepository: IAuthRepository){}
+    // constructor(private _authRepository: IAuthRepository){}
+    constructor(@inject(AUTH_TYPES.AuthRepository) private _authRepository: IAuthRepository) {}
     
   
     async signup(userData: Partial<IUser>): Promise<{ message: string }>{
@@ -116,7 +119,7 @@ export class AuthService {
 
 
             return {message: "Login successful.", user: user,token}
-        } catch (error) {
+        } catch (error:unknown) {
             console.error('authService error:login',error)
             throw new Error(`${(error as Error).message}`)
         }

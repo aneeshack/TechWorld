@@ -13,7 +13,7 @@ const InstructorView = () => {
   }
 
   return (
-    <div className="my-10 bg-white shadow-xl rounded-lg overflow-hidden max-w-xl w-full">
+    <div className=" mx-10 bg-white shadow-xl rounded-lg overflow-hidden max-w-xl w-full">
       {/* Profile Header */}
       <div className="bg-green-800 p-6 text-center">
         <img

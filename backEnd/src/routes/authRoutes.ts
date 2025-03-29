@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/authController";
 import { authenticateUser } from "../middlewares/authMiddleware";
-import { AuthRepository } from "../repository/authRepository";
-import { AuthService } from "../services/authService";
+import { AUTH_TYPES } from "../interfaces/types";
+import { authContainer } from "../containers/authContainer";
 
 const authRouter = Router();
-const authRepository = new AuthRepository();
-const authService = new AuthService(authRepository)
-const authController = new AuthController(authService);
+
+
+const authController = authContainer.get<AuthController>(AUTH_TYPES.AuthController);
 
 authRouter.get('/fetchUser',authenticateUser, authController.fetchUser.bind(authController));
 authRouter.post('/signup', authController.signup.bind(authController));

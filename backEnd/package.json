@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts"
+    "dev": "nodemon src/index.ts",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -18,18 +19,23 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^7.5.0",
     "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
     "inversify": "^6.2.2",
     "inversify-express-utils": "^6.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.12.1",
+    "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.10.0",
+    "redis": "^4.7.0",
     "reflect-metadata": "^0.2.2",
     "socket.io": "^4.8.1",
     "stripe": "^17.6.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.23.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
@@ -37,13 +43,17 @@
     "@types/inversify": "^2.0.33",
     "@types/jsonwebtoken": "^9.0.8",
     "@types/mongoose": "^5.11.97",
+    "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
     "@types/node": "^22.13.5",
     "@types/nodemailer": "^6.4.17",
     "@types/socket.io": "^3.0.2",
+    "eslint": "^9.23.0",
+    "globals": "^16.0.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.28.0"
   }
 }

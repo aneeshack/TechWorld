@@ -4,6 +4,7 @@ import { chatModel } from "../models/chatModel";
 import { messageModel } from "../models/messageModel";
 import { Types } from "mongoose";
 import { notificationModel } from "../models/notificationModel";
+import { throwError } from "../middlewares/errorMiddleware";
 
 export class ChatController{
     constructor(private _chatService: ChatService){}
@@ -93,11 +94,7 @@ async sendMessage(req: Request, res: Response):Promise<void> {
     const { sender, reciever, content, contentType = 'text' } = req.body;
 
     if (!sender || !reciever || !content) {
-        res.status(400).json({
-        success: false,
-        message: 'Sender, receiver and content are required'
-      });
-      return
+       throwError(400, "Sender, receiver and content are required.");
     }
 
     // Find or create chat between sender and receiver
@@ -202,7 +199,7 @@ async getMessages(req: Request, res: Response):Promise<void> {
       },
       { $set: { recieverSeen: true } }
     );
-    const notifications = await notificationModel.updateMany({
+    await notificationModel.updateMany({
       chat:chat._id,
       sender:senderId,
       recipient:receiverId,
@@ -357,8 +354,9 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
         );
         await notificationModel.deleteOne({ _id: notificationId });
         res.status(200).json({ message: "Notification marked as seen" });
-    } catch (error) {
-        res.status(500).json({ error: "Failed to update notification" });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Failed to update the notification";
+        res.status(400).json({ success:false, message: message })
     }
   }
 }

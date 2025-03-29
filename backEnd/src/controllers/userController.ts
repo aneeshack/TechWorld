@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { IUserService } from "../interfaces/user/IUserService";
 import mongoose from "mongoose";
 import { reviewModel } from "../models/reviewModel";
+import { paymentModel } from "../models/paymentModel";
+import { throwError } from "../middlewares/errorMiddleware";
 
 export class UserController {
 
@@ -73,12 +75,12 @@ async getAllCourses(req: Request, res: Response): Promise<void> {
 
     const courses = await this._userService.getAllCourses();
     if (!courses) {
-      res.status(404).json({ success: false, message: "Courses not found" });
-      return;
+     throwError(400,'no course found')
     }
     res.status(200).json({ success: true, message: "Fetched courses", data: courses });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
+  }catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      res.status(400).json({ success:false, message: message })
   }
 }
 
@@ -87,12 +89,12 @@ async getAllCourses(req: Request, res: Response): Promise<void> {
       const { courseId } = req.params;
       const course = await this._userService.getSingleCourse(courseId);
       if (!course) {
-        res.status(404).json({ success: false, message: "Course not found" });
-        return;
+        throwError(400,'no course found')
       }
       res.status(200).json({ success: true, message: "Fetched course", data: course });
-    } catch (error: any) {
-      res.status(400).json({ success: false, message: error.message });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        res.status(400).json({ success:false, message: message })
     }
   }
 
@@ -100,8 +102,9 @@ async getAllCourses(req: Request, res: Response): Promise<void> {
     try {
         const allCategories = await this._userService.getAllCategories()
         res.status(201).json({ success: true, data:allCategories });
-    } catch (error:any) {
-        res.status(400).json({success: false, message: error.message })
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        res.status(400).json({ success:false, message: message })
     }
 }
   
@@ -112,10 +115,12 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
     .populate('studentId', 'userName')
     .lean();
       res.status(201).json({ success: true, data:reviews });
-  } catch (error:any) {
-      res.status(400).json({success: false, message: error.message })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      res.status(400).json({ success:false, message: message })
   }
 }
+
   async createPaymentSession(req: Request, res: Response):Promise<void> {
     try {
       const { userId, courseId, amount, courseName, courseThumbnail } = req.body;
@@ -125,6 +130,15 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
         return
       }
       
+      // Quick check before proceeding
+    const existingPayment = await paymentModel.findOne({ userId, courseId });
+    if (existingPayment) {
+       res.status(400).json({ 
+        success: false, 
+        message: "You have already purchased this course" 
+      });
+      return
+    }
       const session = await this._userService.initiatePayment(
         userId,
         courseId,
@@ -133,8 +147,9 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
         courseThumbnail
       );
       res.json({ success: true,message:'session created', data: session });
-    } catch (error:any) {
-      res.status(500).json({ success: false, message: error.message });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        res.status(400).json({ success:false, message: message })
     }
   };
   
@@ -150,8 +165,9 @@ async getCourseReviews(req:Request, res: Response):Promise<void>{
       const session = await this._userService.getPaymentStatus(sessionId);
   
       res.json({ success: true, data: session });
-    } catch (error:any) {
-      res.status(500).json({ success: false, message: error.message });
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "An unexpected error occurred";
+        res.status(400).json({ success:false, message: message })
     }
 }
 
@@ -173,10 +189,11 @@ async courseEnrollment(req: Request, res: Response):Promise<void> {
     } 
 
     res.status(201).json({ success: true, message: "Enrollment successful.", enrollment });
-  } catch (error:any) {
+  }catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "An unexpected error occurred";
     console.error("Enrollment error:", error);
-    res.status(500).json({ success: false, message: error.message });
-  }
+      res.status(400).json({ success:false, message: message })
+  } 
 }
 
 }

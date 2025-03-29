@@ -1,10 +1,16 @@
 import { IUserRepository } from "../interfaces/user/IUserRepository";
-import { UserRepository } from "../repository/userRepository";
 import { ICourse } from "../interfaces/courses/ICourse";
 import { PaymentRepository } from "../repository/paymentRepository";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { CategoryEntity } from "../interfaces/courses/category";
+import Stripe from "stripe";
 
+export interface payment{
+  userId:string, 
+  courseId :string,
+  status:'completed',
+  amount :number
+}
 export class UserService {
   constructor(
     private _userRepository: IUserRepository,
@@ -66,24 +72,29 @@ export class UserService {
     courseName: string,
     courseThumbnail: string
   ):Promise<{sessionId: string}> {
-    const session = await this._paymentRepo.createCheckoutSession(
-      userId,
-      courseId,
-      amount,
-      courseName,
-      courseThumbnail
-    );
-    console.log('sessionid',session.id)
-    return { sessionId: session.id };
+    try {
+      const session = await this._paymentRepo.createCheckoutSession(
+        userId,
+        courseId,
+        amount,
+        courseName,
+        courseThumbnail
+      );
+      console.log('sessionid',session.id)
+      return { sessionId: session.id };
+    } catch (error) {
+      console.error('user service error:create payment ',error)
+      throw new Error(`${(error as Error).message}`)
+    }
   }
 
-  async getPaymentStatus(sessionId: string):Promise<any> {
+  async getPaymentStatus(sessionId: string): Promise<Stripe.Checkout.Session> {
     return await this._paymentRepo.getSession(sessionId);
   }
 
   async courseEnroll (userId: string, courseId: string, completionStatus:string, amount:number, enrolledAt:Date):Promise<IEnrollment>{
     try {
-      const paymentData ={
+      const paymentData: payment ={
         userId, 
         courseId,
         status:'completed',

@@ -48,10 +48,9 @@ const UserList = () => {
   };
 
   return (
-    <div className="p-6 w-full mr-10">
+    <div className="p-6 w-full ">
       <h2 className="text-2xl font-semibold mb-6">User Management</h2>
-
-      <div className="overflow-x-auto">
+      <div className="">
         <table className="w-full border border-gray-200 shadow-md">
           <thead>
             <tr className="bg-gray-100">

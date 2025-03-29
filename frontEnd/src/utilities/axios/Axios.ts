@@ -11,9 +11,11 @@ export const CLIENT_API = axios.create({
 
 CLIENT_API.interceptors.request.use(
     (config) => {
+      console.log('Request sent:', config.url);
       return config;
     },
     (error) => {
+      console.error('Request interceptor error:', error);
       return Promise.reject(error);
     }
   );
@@ -22,9 +24,13 @@ CLIENT_API.interceptors.request.use(
     (response) => {
       if(response.data.isBlocked){
         console.log('user blocked')
+        localStorage.clear(); // Clear user data (e.g., userId)
+      window.location.href = '/login'; // Redirect to login
+      throw new Error('User is blocked')
       }
       return response;
     },
+
     (error) => {
       console.error('error in response interceptor',error.message)
       return Promise.reject(error);

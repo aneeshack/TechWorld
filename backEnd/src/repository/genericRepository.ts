@@ -2,15 +2,15 @@ import { Model } from "mongoose";
 import { IGenericRepository } from "../interfaces/IGenericRepository";
 
 export class GenericRepository<T> implements IGenericRepository<T> {
-  private model: Model<T>;
+  private _model: Model<T>;
 
   constructor(model: Model<T>) {
-    this.model = model;
+    this._model = model;
   }
 
   async findAll(query: any = {}): Promise<T[]> {
     try {
-      return await this.model.find(query).exec();
+      return await this._model.find(query).exec();
     } catch (error) {
       throw new Error(`Error fetching entities: ${(error as Error).message}`);
     }
@@ -18,7 +18,7 @@ export class GenericRepository<T> implements IGenericRepository<T> {
 
   async findById(id: string): Promise<T | null> {
     try {
-      const entity = await this.model.findById(id).exec();
+      const entity = await this._model.findById(id).exec();
       if (!entity) throw new Error("Entity not found");
       return entity;
     } catch (error) {
@@ -28,7 +28,7 @@ export class GenericRepository<T> implements IGenericRepository<T> {
 
   async create(entity: Partial<T>): Promise<T> {
     try {
-      const newEntity = new this.model(entity);
+      const newEntity = new this._model(entity);
       return (await newEntity.save()) as T; // Type assertion
     } catch (error) {
       throw new Error(`Error creating entity: ${(error as Error).message}`);
@@ -37,7 +37,7 @@ export class GenericRepository<T> implements IGenericRepository<T> {
 
   async update(id: string, data: Partial<T>): Promise<T | null> {
     try {
-      const updatedEntity = await this.model
+      const updatedEntity = await this._model
         .findByIdAndUpdate(id, { $set: data }, { new: true })
         .exec();
       if (!updatedEntity) throw new Error("Entity not found");
@@ -49,7 +49,7 @@ export class GenericRepository<T> implements IGenericRepository<T> {
 
   async findOne(query: any): Promise<T | null> {
     try {
-      const entity = await this.model.findOne(query).exec();
+      const entity = await this._model.findOne(query).exec();
       if (!entity) throw new Error("Entity not found");
       return entity;
     } catch (error) {

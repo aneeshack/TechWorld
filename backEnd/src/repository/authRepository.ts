@@ -1,3 +1,4 @@
+import { injectable } from "inversify";
 import { IUser, RequestStatus } from "../interfaces/database/IUser";
 import { IAuthRepository } from "../interfaces/user/IAuthRepository";
 import OtpModel from "../models/otpModel";
@@ -5,6 +6,7 @@ import UserModel from "../models/userModel";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
+@injectable()
 export class AuthRepository implements IAuthRepository {
 
   async findById(userId: mongoose.Types.ObjectId):Promise<IUser |null> {
@@ -78,7 +80,7 @@ export class AuthRepository implements IAuthRepository {
 
   async deleteOtp(email: string): Promise<void> {
     try {
-      const otp =await OtpModel.deleteOne({ email });
+      await OtpModel.deleteOne({ email });
     } catch (error) {
       console.error("authRepository error: delete otp", error);
       throw new Error(`Error in deleting otp: ${(error as Error).message}`);

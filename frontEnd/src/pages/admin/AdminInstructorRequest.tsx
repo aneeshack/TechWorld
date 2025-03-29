@@ -102,7 +102,7 @@ const AdminInstructorRequest = () => {
 
 
   return (
-    <div className="my-20 container mx-6 lg:mx-20">
+    <div className="my-20 container_fluid mx-6 lg:mx-6">
       {requests.length>0?(
         <>
   <h2 className="text-2xl font-bold mb-6 ">Instructor Requests</h2>

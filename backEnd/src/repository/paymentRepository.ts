@@ -1,12 +1,13 @@
 import Stripe from "stripe";
 import { IPayment } from "../interfaces/courses/IPayment";
 import { paymentModel } from "../models/paymentModel";
+import { payment } from "../services/userService";
 
 export class PaymentRepository {
-   private stripe: Stripe; 
+   private _stripe: Stripe; 
  
    constructor() {
-     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+     this._stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
        apiVersion: "2025-01-27.acacia",
      });
    }
@@ -19,7 +20,11 @@ export class PaymentRepository {
     courseThumbnail: string
   ) {
     try {
-      const session = await this.stripe.checkout.sessions.create({
+      const payment = await paymentModel.findOne({userId,courseId})
+      if(payment){
+        throw new Error('Payment for this course has already been completed')
+      }
+      const session = await this._stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
         // customer_email: `${userId}@example.com`, // Use actual email
@@ -46,20 +51,20 @@ export class PaymentRepository {
       return session;
     } catch (error) {
       console.error("Error creating Stripe session:", error);
-      throw new Error("Stripe session creation failed.");
+      throw new Error(`Stripe session creation failed: ${(error as Error).message}`);
     }
   }
 
-  async getSession(sessionId: string) {
+  async getSession(sessionId: string): Promise<Stripe.Checkout.Session> {
     try {
-      return await this.stripe.checkout.sessions.retrieve(sessionId);
+      return await this._stripe.checkout.sessions.retrieve(sessionId);
     } catch (error) {
       console.error("Error retrieving Stripe session:", error);
       throw new Error("Stripe session retrieval failed.");
     }
   }
 
-  async paymentCompletion(paymentData: any):Promise<IPayment>{
+  async paymentCompletion(paymentData: payment):Promise<IPayment>{
     try {
       const payment = new paymentModel(paymentData);
       await payment.save()

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch } from '../../hooks/Hooks';
 import { logoutAction } from '../../redux/store/actions/auth/LogoutAction';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { RequestStatus, Response, SignupFormData } from '../../types/IForm';
+import { RequestStatus, Response, Role, SignupFormData } from '../../types/IForm';
 import { toast } from 'react-toastify';
 import { Menu, X, ChevronDown, User, LogOut, Home, BookOpen, Briefcase } from 'lucide-react';
 import { useSocket } from '../../context/Sockets';
@@ -34,9 +34,9 @@ const Navbar = () => {
 
   const handleDashboard = async () => {
     try {
-      if (user?.role === 'student') {
+      if (user?.role === Role.Student) {
         navigate('/student/dashboard')
-      } else if (user?.role === 'instructor') {
+      } else if (user?.role === Role.Instructor) {
         switch (user?.requestStatus) {
           case RequestStatus.Pending:
             toast.warning("Your application is being processed.", {
@@ -60,6 +60,8 @@ const Navbar = () => {
             });
             navigate('/instructor/register')
         }
+      }else if (user?.role === Role.Admin) {
+        navigate('/admin/dashboard')
       }
     } catch (error) {
       console.error('error', error)
@@ -165,7 +167,7 @@ const Navbar = () => {
 
             {/* User profile or login buttons */}
             <div className="flex items-center">
-              {(userData?.role === 'instructor' || userData?.role === 'student') ? (
+              {(userData?.role === Role.Instructor|| userData?.role === Role.Student ||userData?.role===Role.Admin) ? (
                 <div className="relative user-dropdown">
                   <div
                     className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"

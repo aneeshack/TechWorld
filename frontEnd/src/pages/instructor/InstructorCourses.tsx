@@ -15,7 +15,7 @@ const InstructorCourses = () => {
         setCourses(response.data.data);
       })
       .catch((error) => {
-        console.log("api error", error);
+        console.error("api error", error);
       });
   }, []);
 
@@ -45,7 +45,11 @@ const InstructorCourses = () => {
             }
           })
           .catch((error) => {
+            
             console.log("api error", error);
+            const errorMessage =
+            error.response?.data?.message || "Something went wrong!";
+          toast.error(errorMessage);
           });
       }
     });

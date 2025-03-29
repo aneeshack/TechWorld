@@ -27,7 +27,7 @@ const CourseDetailsPage = () => {
   const handleFetchEnrollment = useCallback(async () => {
     try {
       if (user && user._id) {
-        CLIENT_API.get(`/user/enrolled/${user._id}`)
+        CLIENT_API.get(`/student/enrolled/${user._id}`)
           .then((response) => {
             if (response.data.success) {
               if (response.data?.data && Array.isArray(response.data.data)) {

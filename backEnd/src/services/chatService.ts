@@ -1,7 +1,6 @@
 import { Types } from "mongoose";
 import { IChat } from "../interfaces/database/IChat";
 import { IMessage } from "../interfaces/database/IMessage";
-import { ChatRepository } from "../repository/chatRepository";
 import { IChatRepository } from "../interfaces/chat/IChatRepository";
 
 export class ChatService {
@@ -39,7 +38,7 @@ export class ChatService {
     sender: string,
     reciever: string,
     content: string,
-    contentType: string='text'
+    contentType:'text'
   ): Promise<IChat> {
     try {
       console.log('inside save message')
@@ -55,7 +54,7 @@ export class ChatService {
         sender,
         reciever,
         content,
-        contentType:'text',
+        contentType,
         chatId: chat._id as string,
       });
 

@@ -19,5 +19,4 @@ export interface IInstructorService{
     fetchInstructorProfile(userId: string): Promise<IUser | null>;
     updateInstructorProfile(userId: string, updateData: Partial<IUser>): Promise<IUser | null>;
     addAssessment(lessonId: string, questions: any): Promise<ILesson>;
-    getPresignedUrlForVideo(lessonId: string): Promise<string>
 }
