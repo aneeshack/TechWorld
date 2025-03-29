@@ -4,6 +4,10 @@ import { PaymentRepository } from "../repository/paymentRepository";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { CategoryEntity } from "../interfaces/courses/category";
 import Stripe from "stripe";
+import { inject, injectable } from "inversify";
+import { USER_TYPES } from "../interfaces/types";
+
+
 
 export interface payment{
   userId:string, 
@@ -11,10 +15,12 @@ export interface payment{
   status:'completed',
   amount :number
 }
+
+@injectable()
 export class UserService {
   constructor(
-    private _userRepository: IUserRepository,
-    private _paymentRepo: PaymentRepository = new PaymentRepository(),
+   @inject(USER_TYPES.UserRepository) private _userRepository: IUserRepository,
+    @inject(USER_TYPES.PaymentRepository)private _paymentRepo: PaymentRepository = new PaymentRepository(),
   ) {}
   
   async getFilteredCourses(

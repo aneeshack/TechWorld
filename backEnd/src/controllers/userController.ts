@@ -4,10 +4,14 @@ import mongoose from "mongoose";
 import { reviewModel } from "../models/reviewModel";
 import { paymentModel } from "../models/paymentModel";
 import { throwError } from "../middlewares/errorMiddleware";
+import { inject, injectable } from "inversify";
+import { USER_TYPES } from "../interfaces/types";
 
+@injectable()
 export class UserController {
 
-  constructor(private _userService: IUserService){};
+  // constructor(private _userService: IUserService){};
+  constructor(@inject(USER_TYPES.UserService) private _userService: IUserService){};
 
 async getFilteredCourses(req: Request, res: Response): Promise<void> {
   try {

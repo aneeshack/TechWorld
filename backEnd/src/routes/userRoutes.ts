@@ -1,14 +1,13 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController";
-import { UserRepository } from "../repository/userRepository";
-import { UserService } from "../services/userService";
 import { authenticateStudent } from "../middlewares/studentAuth";
 import rateLimit from "express-rate-limit";
+import { userContainer } from "../containers/userContainer";
+import { USER_TYPES } from "../interfaces/types";
 
 const userRouter = Router();
-const userRepository = new UserRepository();
-const userService = new UserService(userRepository)
-const userController = new UserController(userService);
+
+const userController = userContainer.get<UserController>(USER_TYPES.UserController)
 
 const paymentLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, 

@@ -5,7 +5,9 @@ import { enrollmentModel } from "../models/enrollmentModel";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { Category } from "../models/categoryModel";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserRepository implements IUserRepository {
   
   async getAllCourses(): Promise<ICourse[]> {
