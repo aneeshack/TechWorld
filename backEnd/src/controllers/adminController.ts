@@ -29,6 +29,7 @@ export class AdminController{
 
     async approveInstructor(req: Request, res:Response):Promise<void>{
         try {
+            
             const { userId }= req.params;
             const updatedUser = await this._adminService.approveRequest(userId)
             res.status(201).json({ success: true, message:"Instructor approved", updatedUser });
