@@ -1,28 +1,76 @@
-name: Deploy Techworld Backend to GCP Cloud Run
+# name: Deploy Techworld Backend to GCP Cloud Run
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - 'backEnd/**'  # Only trigger on backEnd changes
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: backEnd  # Sets default dir to backEnd/
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v3
+
+#       - name: Login to Docker Hub
+#         run: |
+#           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+#       - name: Build and Push Docker Image to Docker Hub
+#         run: |
+#           docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest .
+#           docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
+
+#       - name: Authenticate with Google Cloud
+#         uses: google-github-actions/auth@v2
+#         with:
+#           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+#       - name: Set up Google Cloud SDK
+#         uses: google-github-actions/setup-gcloud@v2
+#         with:
+#           project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+#       - name: Deploy to Cloud Run
+#         run: |
+#           gcloud run deploy techworld-backend \
+#             --image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
+#             --platform managed \
+#             --region us-central1 \
+#             --allow-unauthenticated \
+#             --port 8000 \
+#             --env-vars-file .env
+
+name: Deploy Backend to Google Cloud Run
+
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'backEnd/**'  # Only trigger on backEnd changes
+      - main      
+
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     defaults:
       run:
-        working-directory: backEnd  # Sets default dir to backEnd/
+        working-directory: backend  
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
       - name: Login to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
       - name: Build and Push Docker Image to Docker Hub
         run: |
           docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest .
           docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
+
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
@@ -34,7 +82,7 @@ jobs:
         with:
           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Deploy to Cloud Run
+      - name: Deploy to Google Cloud Run from Docker Hub
         run: |
           gcloud run deploy techworld-backend \
             --image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
@@ -42,4 +90,6 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated \
             --port 8000 \
-            --env-vars-file .env
+            --set-env-vars NODE_ENV=production \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
