@@ -57,7 +57,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend  
+        working-directory: backEnd  
 
     steps:
       - name: Checkout Repository
