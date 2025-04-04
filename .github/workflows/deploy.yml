@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'backEnd/**'  # Trigger only on backEnd changes
+      - 'backEnd/**'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -17,17 +17,18 @@ jobs:
 
       - name: Debug Directory and Secrets
         run: |
-          pwd  # Should show /home/runner/work/TechWorld/TechWorld/backEnd
-          ls -la  # List files in backEnd/
-          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"  # Check secret
+          pwd  # Confirm /home/runner/work/TechWorld/TechWorld/backEnd
+          ls -la  # List files
+          echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build and Push Docker Image to Docker Hub
-        run: |
-          DOCKER_BUILDKIT=0 docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest .
-          docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
+      - name: Build Docker Image
+        run: DOCKER_BUILDKIT=0 docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest .
+
+      - name: Push Docker Image
+        run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
 
       - name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
