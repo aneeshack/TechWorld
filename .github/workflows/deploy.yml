@@ -22,6 +22,7 @@ jobs:
 
       - name: Build and Push to Docker Hub (Public)
         run: |
+          cd backEnd
           docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest .
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
 
