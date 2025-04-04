@@ -5,7 +5,7 @@ on:
     branches:
       - main  # Triggers on push to main branch
     paths:
-      - 'backend/**'
+      - 'backEnd/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
