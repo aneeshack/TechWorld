@@ -18,7 +18,8 @@ export class AdminController{
     }
 
     async rejectedInstructors(req: Request, res:Response):Promise<void>{
-        try {
+        try { 
+            
             const allRequsts = await this._adminService.getAllRejectedRequests()
             res.status(201).json({ success: true, data:allRequsts });
         } catch (error: unknown) {
