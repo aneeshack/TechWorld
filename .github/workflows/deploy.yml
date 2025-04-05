@@ -15,18 +15,29 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          install: true
+
       - name: Debug Environment
         run: |
           pwd
           ls -la
           echo "DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}"
           docker --version
+          docker buildx version
 
       - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build Docker Image
-        run: docker build -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest .
+      - name: Build Docker Image with Buildx
+        run: |
+          docker buildx build \
+            --tag docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
+            --output=type=docker \
+            --progress=plain \
+            .
 
       - name: Push Docker Image
         run: docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
@@ -43,9 +54,7 @@ jobs:
 
       - name: Deploy to Google Cloud Run
         run: |
-          # Ensure .env file exists (create empty if not present)
           touch .env
-          
           gcloud run deploy techworld-backend \
             --image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
             --platform managed \
