@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { app, server } from './util/app';
+import { server } from './util/app';
 import connectDb from './config/databaseConnection';
 import { envConfig } from './config/envConfig';
 

@@ -11,6 +11,9 @@ RUN npm install
 # Copy the rest of the application
 COPY . .
 
+# Build the TypeScript code
+RUN npm run build
+
 # Expose port 8000 (your backend port)
 EXPOSE 8000
 
@@ -18,4 +21,4 @@ EXPOSE 8000
 ENV NODE_ENV=production
 
 # Start the application with nodemon for development
-CMD ["npm", "run", "dev"]
+CMD ["npm", "start"]
