@@ -2,9 +2,12 @@ import { Types } from "mongoose";
 import { IChat } from "../interfaces/database/IChat";
 import { IMessage } from "../interfaces/database/IMessage";
 import { IChatRepository } from "../interfaces/chat/IChatRepository";
+import S3Service from "./s3Service";
 
 export class ChatService {
-  constructor(private _chatRepository: IChatRepository) {}
+  constructor(private _chatRepository: IChatRepository,
+    private _s3Service:S3Service
+  ) {}
 
   async getUserMessages(userId: string): Promise<IMessage[] |null> {
     try {
@@ -100,5 +103,7 @@ if (!existingNotification) {
       throw new Error(`${(error as Error).message}`);
     }
   }
+
+ 
 
 }

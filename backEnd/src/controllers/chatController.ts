@@ -6,6 +6,7 @@ import { Types } from "mongoose";
 import { notificationModel } from "../models/notificationModel";
 import { throwError } from "../middlewares/errorMiddleware";
 
+
 export class ChatController{
     constructor(private _chatService: ChatService){}
 
@@ -359,5 +360,8 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
         res.status(400).json({ success:false, message: message })
     }
   }
+
+
+
 }
 

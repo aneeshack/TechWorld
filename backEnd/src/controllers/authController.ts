@@ -10,7 +10,6 @@ import { AUTH_TYPES } from "../interfaces/types";
 @injectable()
 export class AuthController {
 
-  // constructor(private _authService: IAuthService) {}
   constructor(@inject(AUTH_TYPES.AuthService) private _authService: IAuthService) {}
 
   

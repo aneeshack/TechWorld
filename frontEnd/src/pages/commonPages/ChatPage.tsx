@@ -10,6 +10,7 @@ import ScrollToBottom from "react-scroll-to-bottom";
 import pic from '../../assets/commonPages/placeHolder.png'
 import { format, isToday, isYesterday, startOfDay, isSameDay } from 'date-fns';
 import EmojiPicker, { EmojiClickData }  from "emoji-picker-react";
+import { uploadToCloudinary } from "../../utilities/axios/UploadCloudinary";
 
 declare global {
   interface Window {
@@ -606,6 +607,61 @@ const ChatPage = () => {
     }
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedInstructor || !user?._id) return;
+  
+    try {
+      setLoading(true);
+  
+      const uploadedFileUrl = await uploadToCloudinary(file);
+
+    if (!uploadedFileUrl) {
+      console.error("File upload failed");
+      return;
+    }
+
+    // ⬇️ Determine file type
+    const contentType = getContentType(file.type);
+  
+      const messageData: IMessage = {
+        sender: user._id,
+        reciever: selectedInstructor,
+        content: uploadedFileUrl,
+        contentType,
+        _id: `temp-${Date.now()}`,
+        createdAt: new Date(),
+      };
+  
+      // Add temp message to UI
+      setMessages((prev) => [...prev, messageData]);
+      setLatestMessages((prev) => ({
+        ...prev,
+        [selectedInstructor]: messageData,
+      }));
+  
+      // Emit via socket
+      if (socket) {
+        socket.emit("sendMessage", messageData);
+      }
+  
+      // Clear file input
+      e.target.value = "";
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  // Helper to determine content type
+  const getContentType = (mimeType: string): IMessage["contentType"] => {
+    if (mimeType.startsWith("image/")) return "image";
+    if (mimeType.startsWith("video/")) return "video";
+    if (mimeType.startsWith("audio/")) return "audio";
+    return "file"; 
+  };
+  
   return (
     <div className="flex  h-[70vh]">
    <div className="w-1/4 bg-gray-100 p-4 h-[75vh]">
@@ -790,7 +846,28 @@ const ChatPage = () => {
                                 : "bg-gray-200 text-gray-800 rounded-bl-none"
                             }`}
                           >
-                            {msg.content}
+                            {/* {msg.content} */}
+                            {msg.contentType === "image" ? (
+    <img
+      src={msg.content}
+      alt="uploaded"
+      className="max-w-[200px] max-h-[200px] rounded-lg object-cover"
+    />
+  ) : msg.contentType === "video" ? (
+    <video controls className="max-w-[200px] rounded-lg">
+      <source src={msg.content} />
+      Your browser does not support the video tag.
+    </video>
+  ) : msg.contentType === "audio" ? (
+    <audio controls>
+      <source src={msg.content} />
+      Your browser does not support the audio tag.
+    </audio>
+  ) : (
+    <a href={msg.content} target="_blank" rel="noopener noreferrer" >
+      {msg.content}
+    </a>
+  )}
                           </span>
                           <span className="text-xs text-gray-500 mt-1">
                             {msg.createdAt
@@ -817,6 +894,34 @@ const ChatPage = () => {
       </div>
             </ScrollToBottom>
             
+            {/* <div className="flex">
+            <button
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          className="bg-gray-200 p-2 rounded-l-lg border-r"
+        >
+          😊
+        </button>
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => {
+                  setNewMessage(e.target.value)
+                  handleTyping()
+                }}
+                onKeyPress={handleKeyPress}
+                className="flex-1 p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+                placeholder="Type a message..."
+              />
+              <button
+                onClick={sendMessage}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg transition-colors"
+              >
+                Send
+              </button>
+            </div> */}
+
+
+
             <div className="flex">
             <button
           onClick={() => setShowEmojiPicker(!showEmojiPicker)}
@@ -835,6 +940,19 @@ const ChatPage = () => {
                 className="flex-1 p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
                 placeholder="Type a message..."
               />
+              <input
+    type="file"
+    id="file-upload"
+    className="hidden"
+    accept="image/*,video/*,audio/*,.pdf" // Define acceptable file types
+    onChange={handleFileUpload}
+  />
+  <label
+    htmlFor="file-upload"
+    className="bg-gray-200 p-3 cursor-pointer hover:bg-gray-300 transition-colors"
+  >
+    📎 {/* Attachment icon */}
+  </label>
               <button
                 onClick={sendMessage}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg transition-colors"

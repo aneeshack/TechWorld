@@ -1,14 +1,14 @@
 import { Server as SocketIOServer, Socket } from "socket.io";
-import { notificationModel } from "../models/notificationModel";
 import { ChatService } from "../services/chatService";
 import { ChatRepository } from "../repository/chatRepository";
 import { IMessage } from "../interfaces/database/IMessage";
+import s3Service from "../services/s3ServiceInstance";
 
 const onlineUsers: { [userId: string]: string[] } = {};
 
 export const initializeSocket = (io: SocketIOServer) => {
   const chatRepository = new ChatRepository();
-  const chatService = new ChatService(chatRepository);
+  const chatService = new ChatService(chatRepository,s3Service);
 
   io.on("connection", (socket: Socket) => {
     console.log("A user connected:", socket.id);

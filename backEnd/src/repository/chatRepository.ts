@@ -148,10 +148,6 @@ async getPopulatedMessage(messageId: Types.ObjectId): Promise<IMessage | null> {
   try {
 
     const message = await messageModel.findById(messageId)
-    // .populate('sender', 'userName email avatar')
-    // .populate('reciever', 'userName email avatar')
-    // .populate('chatId', 'users latestMessage');
-
   if (!message) throw new Error('message not found');
 
   return message;
@@ -160,6 +156,9 @@ async getPopulatedMessage(messageId: Types.ObjectId): Promise<IMessage | null> {
     throw new Error(` ${(error as Error).message}`);
   }
 }
+
+
+
 
 }
 

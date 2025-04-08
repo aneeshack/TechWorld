@@ -12,6 +12,6 @@ updateChatLatestMessage(chatId: string, messageId: string): Promise<IChat | null
 findNotification(sender: string, recipient: string): Promise<INotification | null>
 createNotification(recipient: string, sender: string, message: string, chat: string, isSeen: boolean): Promise<INotification | null>
 updateNotification(notificationId: string, updateData: Partial<INotification>): Promise<INotification | null>
- getPopulatedMessage(messageId: Types.ObjectId): Promise<IMessage | null>
+ getPopulatedMessage(messageId: Types.ObjectId): Promise<IMessage | null>;
 }
 

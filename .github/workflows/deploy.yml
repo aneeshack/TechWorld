@@ -1,67 +1,67 @@
-name: Deploy Techworld Backend to GCP Cloud Run
+# name: Deploy Techworld Backend to GCP Cloud Run
 
-on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'backEnd/**'
+# on:
+#   push:
+#     branches:
+#       - main
+#     paths:
+#       - 'backEnd/**'
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: backEnd  # Ensures all commands run in /backEnd
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: backEnd  # Ensures all commands run in /backEnd
 
-    steps:
-      # --- Checkout and Setup ---
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+#     steps:
+#       # --- Checkout and Setup ---
+#       - name: Checkout Repository
+#         uses: actions/checkout@v3
 
-      - name: Debug File Structure
-        run: |
-          pwd
-          ls -la
-          echo "Dockerfile contents:"
-          cat Dockerfile || echo "No Dockerfile found!"
+#       - name: Debug File Structure
+#         run: |
+#           pwd
+#           ls -la
+#           echo "Dockerfile contents:"
+#           cat Dockerfile || echo "No Dockerfile found!"
 
-      # --- Docker Setup ---
-      - name: Login to Docker Hub
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+#       # --- Docker Setup ---
+#       - name: Login to Docker Hub
+#         run: |
+#           echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
 
-      - name: Build Docker Image (Classic Build)
-        run: |
-          docker build \
-            -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
-            .
+#       - name: Build Docker Image (Classic Build)
+#         run: |
+#           docker build \
+#             -t docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
+#             .
 
-      - name: Push Docker Image
-        run: |
-          docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
+#       - name: Push Docker Image
+#         run: |
+#           docker push docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest
 
-      # --- GCP Deployment ---
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+#       # --- GCP Deployment ---
+#       - name: Authenticate with Google Cloud
+#         uses: google-github-actions/auth@v2
+#         with:
+#           credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+#       - name: Set up Google Cloud SDK
+#         uses: google-github-actions/setup-gcloud@v2
+#         with:
+#           project_id: ${{ secrets.GCP_PROJECT_ID }}
 
-      - name: Deploy to Cloud Run
-        run: |
-          # Create minimal .env if missing (Cloud Run requires it)
-          touch .env
+#       - name: Deploy to Cloud Run
+#         run: |
+#           # Create minimal .env if missing (Cloud Run requires it)
+#           touch .env
           
-          gcloud run deploy techworld-backend \
-            --image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated \
-            --port 8000 \
-            --set-env-vars "NODE_ENV=production" \
-            --project ${{ secrets.GCP_PROJECT_ID }}
+#           gcloud run deploy techworld-backend \
+#             --image docker.io/${{ secrets.DOCKERHUB_USERNAME }}/techworld-backend:latest \
+#             --platform managed \
+#             --region us-central1 \
+#             --allow-unauthenticated \
+#             --port 8000 \
+#             --set-env-vars "NODE_ENV=production" \
+#             --project ${{ secrets.GCP_PROJECT_ID }}
