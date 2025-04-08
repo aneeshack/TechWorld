@@ -105,31 +105,6 @@ export class AdminService{
         }
      }
 
-
-    // async getPresignedUrl(fileName: string, fileType: string): Promise<{ presignedUrl: string; imageUrl: string }> {
-    //     try {
-    //         const key = `categories/${Date.now()}-${encodeURIComponent(fileName)}`;
-    
-    //       const command = new PutObjectCommand({
-    //         Bucket: process.env.AWS_S3_BUCKET_NAME,
-    //         Key: key,
-    //         ContentType: fileType,
-    //       });
-    
-    //       // Generate a signed URL for uploading
-    //       const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 60 });
-    
-    //       // Construct the final image URL
-    //       const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-    
-    //       console.error('Generated Image URL:', imageUrl);
-    //       return { presignedUrl, imageUrl };
-    //     } catch (error) {
-    //       console.error('S3Service Error: Presigned URL generation failed', error);
-    //       throw new Error(`Error generating presigned URL: ${(error as Error).message}`);
-    //     }
-    //   }
-
     async getPresignedUrl(fileName: string, fileType: string): Promise<{ presignedUrl: string; imageUrl: string }> {
         try {
           const key = `categories/${Date.now()}-${encodeURIComponent(fileName)}`;
@@ -194,36 +169,7 @@ export class AdminService{
             throw new Error(`${(error as Error).message}`)
         }
      }
-    //  async getPresignedUrlForCategoryImage(categoryId: string): Promise<string> {
-    //     try {
-    //         const category = await this._adminRepository.getCategoryById(categoryId);
-    //         if(!category){
-    //             throw new Error('No category found')
-    //         }
-    //         const imageUrl = category.imageUrl ||''
-    //       // Extract the S3 object key from the URL
-    //       const imageKey = imageUrl.split(".amazonaws.com/")[1];
-      
-    //       if (!imageKey) {
-    //         throw new Error("Invalid S3 URL format");
-    //       }
-      
-    //       const params = {
-    //         Bucket: process.env.AWS_S3_BUCKET_NAME!,
-    //         Key: imageKey,
-    //         Expires: 300, // URL expires in 5 minutes
-    //       };
-      
-    //       const command = new GetObjectCommand(params);
-    //       const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
-      
-    //       return presignedUrl;
-    //     } catch (error) {
-    //       console.error("Error generating presigned URL for category image:", error);
-    //       throw new Error(`Failed to generate presigned URL: ${(error as Error).message}`);
-    //     }
-    //   }
-
+   
     async getPresignedUrlForCategoryImage(categoryId: string): Promise<string> {
         try {
           const category = await this._adminRepository.getCategoryById(categoryId);

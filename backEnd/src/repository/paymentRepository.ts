@@ -27,7 +27,6 @@ export class PaymentRepository {
       const session = await this._stripe.checkout.sessions.create({
         payment_method_types: ["card"],
         mode: "payment",
-        // customer_email: `${userId}@example.com`, // Use actual email
         line_items: [
           {
             price_data: {
