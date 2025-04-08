@@ -11,7 +11,7 @@ import { AUTH_TYPES } from "../interfaces/types";
 
 @injectable()
 export class AuthService {
-    // constructor(private _authRepository: IAuthRepository){}
+
     constructor(@inject(AUTH_TYPES.AuthRepository) private _authRepository: IAuthRepository) {}
     
   

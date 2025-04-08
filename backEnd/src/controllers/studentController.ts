@@ -151,17 +151,6 @@ export class StudentController{
       }
     }
 
-    // async submitAssessment(req: AuthRequest, res: Response):Promise<void> {
-    //   try {
-    //     const { lessonId, score } = req.body;
-    //     const userId = req.user?.id; 
-        
-    //     res.status(200).json({ message: "Assessment submitted successfully", score });
-    //   } catch (error) {
-    //     res.status(500).json({ message: "Error submitting assessment", error });
-    //   }
-    // };
-
       async updateLessonProgress(req:AuthRequest, res:Response):Promise<void> {
       try {
         const { courseId, lessonId } = req.body;

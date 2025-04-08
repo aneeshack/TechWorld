@@ -3,7 +3,7 @@ import { CategoryEntity } from "../courses/category";
 import { ICourse } from "../courses/ICourse";
 import { IAssessment, ILesson } from "../courses/ILesson";
 import { IUser } from "../database/IUser";
-// import { IUser } from "./IUser";
+
 
 export interface IInstructorRepository {
     fetchCategories(): Promise<CategoryEntity[]>;

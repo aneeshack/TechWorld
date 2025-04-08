@@ -10,7 +10,6 @@ import { USER_TYPES } from "../interfaces/types";
 @injectable()
 export class UserController {
 
-  // constructor(private _userService: IUserService){};
   constructor(@inject(USER_TYPES.UserService) private _userService: IUserService){};
 
 async getFilteredCourses(req: Request, res: Response): Promise<void> {
