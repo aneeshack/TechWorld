@@ -8,6 +8,7 @@ import { reviewModel } from "../models/reviewModel";
 import S3Service from "../services/s3Service";
 import s3Service from "../services/s3ServiceInstance";
 import { throwError } from "../middlewares/errorMiddleware";
+import { HTTP_STATUS } from "../constants/httpStatus";
 
 export class StudentController{
     constructor(
@@ -21,17 +22,17 @@ export class StudentController{
         try {
           const { userId } = req.params;
           if(!userId){
-            throwError(400, 'Student id is required')
+            throwError(HTTP_STATUS.BAD_REQUEST, 'Student id is required')
           }
           const student = await this._studentService.fetchStudentProfile(userId);
           if (!student) {
-            res.status(404).json({ success: false, message: 'Student not found' });
+            res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Student not found' });
             return;
           }
-          res.status(200).json({ success: true, data: student });
+          res.status(HTTP_STATUS.OK).json({ success: true, data: student });
         } catch (error) {
           console.error('Error in StudentController.getProfile:', error);
-          res.status(500).json({ success: false, message: 'Server error' });
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server error' });
         }
       }
     
@@ -41,13 +42,13 @@ export class StudentController{
         const updateData = req.body;
         const student = await this._studentService.updateStudentProfile(userId,  updateData);
         if (!student) {
-          res.status(404).json({ success: false, message: 'Student not found' });
+          res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: 'Student not found' });
           return;
         }
-        res.status(200).json({ success: true, data: student });
+        res.status(HTTP_STATUS.OK).json({ success: true, data: student });
       } catch (error) {
         console.error('Error in StudentController.updateProfile:', error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: 'Server error' });
       }
     }
 
@@ -57,14 +58,14 @@ export class StudentController{
       
           const payments = await this._studentService.getPaymentsByUserId(userId);
       
-          res.status(200).json({
+          res.status(HTTP_STATUS.OK).json({
             success: true,
             data: payments, 
             message: "Payments retrieved successfully",
           });
         } catch (error: unknown) {
           const message = error instanceof Error ? error.message : "An unexpected error occurred";
-            res.status(400).json({ success:false, message: message })
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
         }
       };
 
@@ -74,15 +75,15 @@ export class StudentController{
             const courseId = req.params.courseId;
             const course = await this._instructorService.fetchCourse(courseId);
             if (!course) {
-              res.status(404).json({ success: false, message: "Course not found" });
+              res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "Course not found" });
               return;
             }
             res
-              .status(200)
+              .status(HTTP_STATUS.OK)
               .json({ success: true, message: "fetch single course", data: course });
           }catch (error: unknown) {
             const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
         }
 
@@ -91,22 +92,22 @@ export class StudentController{
       const courseId = req.params.courseId;
       if (!courseId) {
         res
-          .status(400)
+          .status(HTTP_STATUS.BAD_REQUEST)
           .json({ success: false, message: "invalid credentials" });
         return;
       }
 
       const lessons = await this._instructorService.allLessons(courseId);
       if (!lessons || lessons.length === 0) {
-        res.status(404).json({ success: false, message: "No lessons found" });
+        res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "No lessons found" });
         return;
       }
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ success: true, message: "fetch all lessons", data: lessons });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -117,7 +118,7 @@ export class StudentController{
 
       const lesson = await this._instructorService.fetchLesson(lessonId); 
       if (!lesson || !lesson.video) {
-        res.status(404).json({ success: false, message: "Lesson or video not found" });
+        res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "Lesson or video not found" });
         return;
       }
 
@@ -125,11 +126,11 @@ export class StudentController{
       const presignedUrl = await this._s3Service.generatePresignedUrl(videoKey, 300); 
       console.log('presigned url',presignedUrl)
       
-      res.status(200).json({ success: true, presignedUrl });
+      res.status(HTTP_STATUS.OK).json({ success: true, presignedUrl });
     }catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
       console.error("Error in StudentController: get presigned URL for video", error);
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     } 
   }
 
@@ -139,11 +140,11 @@ export class StudentController{
   
         const lesson = await this._instructorService.fetchLesson(lessonId);
         if (!lesson) {
-          res.status(404).json({ success: false, message: "lesson not found" });
+          res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "lesson not found" });
           return;
         }
         res
-          .status(200)
+          .status(HTTP_STATUS.OK)
           .json({ success: true, message: "fetch single lesson", data: lesson });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
@@ -157,14 +158,14 @@ export class StudentController{
         const userId = req.user?.id; 
     
         if (!courseId || !lessonId) {
-            res.status(400).json({ message: "Invalid request data." });
+            res.status(HTTP_STATUS.BAD_REQUEST).json({ message: "Invalid request data." });
             return
         }
     
         const enrollment = await enrollmentModel.findOne({ userId, courseId });
     
         if (!enrollment) {
-            res.status(404).json({ message: "Enrollment not found." });
+            res.status(HTTP_STATUS.NOT_FOUND).json({ message: "Enrollment not found." });
             return
         }
     
@@ -188,10 +189,10 @@ export class StudentController{
           await enrollment.save();
         }
     
-        res.status(200).json({ message: "Lesson progress updated successfully." });
+        res.status(HTTP_STATUS.OK).json({ message: "Lesson progress updated successfully." });
       } catch (error) {
         console.error("Error updating progress:", error);
-        res.status(500).json({ message: "Internal server error." });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Internal server error." });
       }
     };
 
@@ -200,16 +201,16 @@ export class StudentController{
         const { userId } = req.params; 
     
         if (!userId) {
-          res.status(400).json({ success: false, message: "User ID is required" });
+          res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "User ID is required" });
           return;
         }
     
         const enrolledCourses = await this._studentService.getEnrolledCourses(userId);
     
-        res.status(200).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
+        res.status(HTTP_STATUS.OK).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
-          res.status(400).json({ success:false, message: message })
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
       }
     }
 
@@ -219,19 +220,19 @@ export class StudentController{
         const userId = req.user?.id
     
         if (!userId) {
-          res.status(400).json({ success: false, message: "User ID is required" });
+          res.status(HTTP_STATUS.FORBIDDEN).json({ success: false, message: "User ID is required" });
           return;
         }
     
         
         if (!courseId) {
-          res.status(400).json({ success: false, message: "course ID is required" });
+          res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "course ID is required" });
           return;
         }
     
         const enrollment = await this._studentService.getEnrollment(userId.toString(),courseId);
     
-        res.status(200).json({ success: true, message: "Fetched enrollment of courses", data: enrollment });
+        res.status(HTTP_STATUS.OK).json({ success: true, message: "Fetched enrollment of courses", data: enrollment });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
           res.status(400).json({ success:false, message: message })
@@ -245,21 +246,21 @@ export class StudentController{
         const {rating, review } = req.body
     
         if (!userId) {
-          res.status(400).json({ success: false, message: "User ID is required" });
+          res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "User ID is required" });
           return;
         }
           
         if (!courseId) {
-          res.status(400).json({ success: false, message: "course ID is required" });
+          res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "course ID is required" });
           return;
         }
     
         const courseReview = await this._studentService.addReview(userId.toString(),courseId, rating, review);
     
-        res.status(200).json({ success: true, message: "add review to a courses", data: courseReview });
+        res.status(HTTP_STATUS.OK).json({ success: true, message: "add review to a courses", data: courseReview });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
-          res.status(400).json({ success:false, message: message })
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
       }
     }
 
@@ -269,21 +270,21 @@ export class StudentController{
           const studentId = req.user?.id; 
   
           if (!studentId) {
-                res.status(401).json({ success: false, message: "Unauthorized" });
+                res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "Unauthorized" });
                 return
           }
   
           const review = await reviewModel.findOne({ studentId, courseId });
   
           if (!review) {
-                res.status(404).json({ success: false, message: "No review found" });
+                res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "No review found" });
                 return
           }
   
-          res.status(200).json({ success: true, data: review });
+          res.status(HTTP_STATUS.OK).json({ success: true, data: review });
       } catch (error) {
           console.error("Error fetching review:", error);
-          res.status(500).json({ success: false, message: "Internal server error" });
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
       }
     }
 }

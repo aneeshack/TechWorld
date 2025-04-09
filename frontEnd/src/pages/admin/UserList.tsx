@@ -48,37 +48,49 @@ const UserList = () => {
   };
 
   return (
-    <div className="p-6 w-full ">
-      <h2 className="text-2xl font-semibold mb-6">User Management</h2>
-      <div className="">
-        <table className="w-full border border-gray-200 shadow-md">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h2 className="text-xl sm:text-2xl font-semibold mb-6">User Management</h2>
+      
+      {/* Table Container */}
+      <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+        <table className="w-full border-collapse text-sm sm:text-base">
           <thead>
             <tr className="bg-gray-100">
-              <th className="px-4 py-2 border">Name</th>
-              <th className="px-4 py-2 border">Email</th>
-              <th className="px-4 py-2 border">Role</th>
-              <th className="px-4 py-2 border">Status</th>
-              <th className="px-4 py-2 border">Actions</th>
+              <th className="px-4 py-2 text-left border-b font-semibold">Name</th>
+              <th className="px-4 py-2 text-left border-b font-semibold hidden sm:table-cell">Email</th>
+              <th className="px-4 py-2 text-left border-b font-semibold hidden md:table-cell">Role</th>
+              <th className="px-4 py-2 text-left border-b font-semibold">Status</th>
+              <th className="px-4 py-2 text-left border-b font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user._id} className="text-center border hover:bg-gray-50">
-                <td className="px-4 py-2 border">{user.userName}</td>
-                <td className="px-4 py-2 border">{user.email}</td>
-                <td className="px-4 py-2 border">{user.role}</td>
-                <td
-                  className={`px-4 py-2 border font-semibold ${
-                    user.isBlocked ? "text-red-500" : "text-green-500"
-                  }`}
-                >
+              <tr 
+                key={user._id} 
+                className="border-b hover:bg-gray-50 transition-colors"
+              >
+                <td className="px-4 py-2">
+                  <div className="sm:hidden">
+                    <div>{user.userName}</div>
+                    <div className="text-xs text-gray-600">{user.email}</div>
+                    <div className="text-xs text-gray-600">{user.role}</div>
+                  </div>
+                  <div className="hidden sm:block">{user.userName}</div>
+                </td>
+                <td className="px-4 py-2 hidden sm:table-cell">{user.email}</td>
+                <td className="px-4 py-2 hidden md:table-cell">{user.role}</td>
+                <td className={`px-4 py-2 font-semibold ${
+                  user.isBlocked ? "text-red-500" : "text-green-500"
+                }`}>
                   {user.isBlocked ? "Blocked" : "Active"}
                 </td>
-                <td className="px-4 py-2 border">
+                <td className="px-4 py-2">
                   <button
-                    className={`px-4 py-2 rounded-lg text-white font-medium ${
-                      user.isBlocked ? "bg-green-500 hover:bg-green-600" : "bg-red-500 hover:bg-red-600"
-                    }`}
+                    className={`w-full sm:w-auto px-3 py-1 sm:px-4 sm:py-2 rounded-lg text-white font-medium text-sm sm:text-base
+                      ${user.isBlocked 
+                        ? "bg-green-500 hover:bg-green-600" 
+                        : "bg-red-500 hover:bg-red-600"
+                      } transition-colors`}
                     onClick={() => changeStatus(user?._id ?? "", user?.isBlocked ?? false)}
                   >
                     {user.isBlocked ? "Unblock" : "Block"}

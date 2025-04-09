@@ -4,6 +4,7 @@ import { Role } from "../interfaces/database/IUser";
 import { IInstructorService } from "../interfaces/instructor/IInstructorService";
 import S3Service from "../services/s3Service";
 import { throwError } from "../middlewares/errorMiddleware";
+import { HTTP_STATUS } from "../constants/httpStatus";
 
 
 export class InstructorController {
@@ -16,7 +17,7 @@ export class InstructorController {
     try {
       const categories = await this._instructorService.getCategories();
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({
           success: true,
           message: "fetch all categories",
@@ -24,21 +25,21 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
   async createCourse(req: AuthRequest, res: Response): Promise<void> {
     try {
       if (!req.user || req.user.role !== Role.Instructor || !req.user.id) {
-       return throwError(403, "Forbidden: Only instructors can create courses");
+       return throwError(HTTP_STATUS.FORBIDDEN, "Forbidden: Only instructors can create courses");
       }
 
       const { title, description, thumbnail, category, price } = req.body;
 
       const instructorId = req.user.id;
       if (!title || !description || !thumbnail || !category || !price) {
-        throwError(400, "Invalid credentials: All fields are required");
+        throwError(HTTP_STATUS.BAD_REQUEST, "Invalid credentials: All fields are required");
       }
 
       const courseData = {
@@ -51,11 +52,11 @@ export class InstructorController {
       };
       const course = await this._instructorService.createCourse(courseData);
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ success: true, message: "created the course", data: course });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -68,7 +69,7 @@ export class InstructorController {
         req.body
       );
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({
           success: true,
           message: "updated the course",
@@ -76,7 +77,7 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -84,12 +85,12 @@ export class InstructorController {
     try {
       if (!req.user) {
         res
-          .status(401)
+          .status(HTTP_STATUS.UNAUTHORIZED)
           .json({ success: false, message: "Unauthorized: No user data" });
         return;
       }
       if (req.user.role !== Role.Instructor || !req.user.id) {
-        throwError(401, "Unauthorized: Only instructors can fetch courses");
+        throwError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Only instructors can fetch courses");
       }
       const instructorId = req.user.id;
 
@@ -97,11 +98,11 @@ export class InstructorController {
         instructorId
       );
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ success: true, message: "fetch all course", data: courses });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -114,11 +115,11 @@ export class InstructorController {
         throwError(404, "Course not found");
       }
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ success: true, message: "fetch single course", data: course });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -126,7 +127,7 @@ export class InstructorController {
     try {
       const { fileName, fileType } = req.body;
       if (!fileName || !fileType) {
-        throwError(400, "Missing fileName or fileType");
+        throwError(HTTP_STATUS.BAD_REQUEST, "Missing fileName or fileType");
       }
       const { presignedUrl, videoUrl } =
         await this._instructorService.getPresignedUrl(fileName, fileType);
@@ -134,7 +135,7 @@ export class InstructorController {
       res.json({ presignedUrl, videoUrl });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -142,7 +143,7 @@ export class InstructorController {
     try {
       if (!req.user || req.user.role !== Role.Instructor || !req.user.id) {
         res
-          .status(403)
+          .status(HTTP_STATUS.FORBIDDEN)
           .json({
             success: false,
             message: "Forbidden: Only instructors can add lesson",
@@ -168,7 +169,7 @@ export class InstructorController {
       };
       const lesson = await this._instructorService.addLesson(lessonData);
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({
           success: true,
           message: "created the lesson",
@@ -176,7 +177,7 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -185,7 +186,7 @@ export class InstructorController {
       const courseId = req.params.courseId;
       if (!courseId) {
         res
-          .status(400)
+          .status(HTTP_STATUS.BAD_REQUEST)
           .json({ success: false, message: "invalid credentials" });
         return;
       }
@@ -196,11 +197,11 @@ export class InstructorController {
         return;
       }
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ success: true, message: "fetch all lessons", data: lessons });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -210,15 +211,15 @@ export class InstructorController {
 
       const lesson = await this._instructorService.fetchLesson(lessonId);
       if (!lesson) {
-        res.status(404).json({ success: false, message: "lesson not found" });
+        res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "lesson not found" });
         return;
       }
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ success: true, message: "fetch single lesson", data: lesson });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -231,7 +232,7 @@ export class InstructorController {
         req.body
       );
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({
           success: true,
           message: "updated the lesson",
@@ -239,7 +240,7 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -251,7 +252,7 @@ export class InstructorController {
         courseId
       );
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({
           success: true,
           message: "published the course",
@@ -259,7 +260,7 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -270,10 +271,10 @@ export class InstructorController {
 
       const lesson = await this._instructorService.addAssessment(lessonId, questions);
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({ message: "Assessment saved successfully", lesson });
     } catch (error) {
-      res.status(500).json({ message: "Server error", error });
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Server error", error });
     }
   }
 
@@ -284,7 +285,7 @@ export class InstructorController {
         await this._instructorService.fetchInstructorProfile(userId);
 
       res
-        .status(200)
+        .status(HTTP_STATUS.OK)
         .json({
           success: true,
           message: "instructor profile fetched successfully!",
@@ -292,7 +293,7 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
-        res.status(400).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }
 
@@ -308,13 +309,13 @@ export class InstructorController {
         );
 
       if (!updatedInstructor) {
-        throwError(400, "update instructor error");
+        throwError(HTTP_STATUS.BAD_REQUEST, "update instructor error");
       }
 
-      res.status(200).json({ success: true, data: updatedInstructor });
+      res.status(HTTP_STATUS.OK).json({ success: true, data: updatedInstructor });
     } catch (error) {
       console.error("Error in InstructorController.updateProfile:", error);
-      res.status(500).json({ success: false, message: "Server error" });
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
     }
   }
 
@@ -324,17 +325,17 @@ export class InstructorController {
 
       const lesson = await this._instructorService.fetchLesson(lessonId); 
       if (!lesson || !lesson.video) {
-        res.status(404).json({ success: false, message: "Lesson or video not found" });
+        res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: "Lesson or video not found" });
         return;
       }
 
       const videoKey = lesson.video.split(".amazonaws.com/")[1]; // Extract S3 key from URL
       const presignedUrl = await this._s3Service.generatePresignedUrl(videoKey, 300); // Use S3Service directly
       console.log('presigned url',presignedUrl)
-      res.status(200).json({ success: true, presignedUrl });
+      res.status(HTTP_STATUS.OK).json({ success: true, presignedUrl });
     } catch (error) {
       console.error("Error in InstructorController :get presigned url for video", error);
-      res.status(500).json({ success: false, message: "Server error" });
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
     }
   }
 

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IAdminService } from "../interfaces/admin/IAdminService";
 import { paymentModel } from "../models/paymentModel";
 import { throwError } from "../middlewares/errorMiddleware";
+import { HTTP_STATUS, MESSAGES } from "../constants/httpStatus";
 
 export class AdminController{
     constructor(private _adminService: IAdminService){}
@@ -10,10 +11,10 @@ export class AdminController{
         try {
 
             const allRequsts = await this._adminService.getAllRequsts()
-            res.status(201).json({ success: true, data:allRequsts });
+            res.status(HTTP_STATUS.OK).json({ success: true, data:allRequsts });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message : MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -21,10 +22,10 @@ export class AdminController{
         try { 
          
             const allRequsts = await this._adminService.getAllRejectedRequests()
-            res.status(201).json({ success: true, data:allRequsts });
+            res.status(HTTP_STATUS.OK).json({ success: true, data:allRequsts });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -32,10 +33,10 @@ export class AdminController{
         try {
             const { userId }= req.params;
             const updatedUser = await this._adminService.approveRequest(userId)
-            res.status(201).json({ success: true, message:"Instructor approved", updatedUser });
+            res.status(HTTP_STATUS.OK).json({ success: true, message:MESSAGES.INSTRUCTOR_APPROVED, updatedUser });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -43,10 +44,10 @@ export class AdminController{
         try {
             const { userId }= req.params;
             const updatedUser = await this._adminService.rejecteRequest(userId)
-            res.status(201).json({ success: true, message:"Instructor rejected", updatedUser });
+            res.status(HTTP_STATUS.OK).json({ success: true, message:MESSAGES.INSTRUCTOR_REJECTED, updatedUser });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -55,8 +56,8 @@ export class AdminController{
             const allUsers = await this._adminService.getAllUsers()
             res.status(200).json({success:true, data:allUsers})
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -64,10 +65,10 @@ export class AdminController{
         try {
             const { userId } = req.params;
             const blockedUser = await this._adminService.blockUser(userId)
-            res.status(201).json({ success:true, message:"user is blocked",blockedUser})
+            res.status(HTTP_STATUS.OK).json({ success:true, message:MESSAGES.USER_BLOCKED,blockedUser})
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -75,10 +76,10 @@ export class AdminController{
         try {
             const { userId } = req.params;
             const unblockedUser = await this._adminService.unBlockUser(userId)
-            res.status(201).json({ success:true, message:"user is unblocked",unblockedUser})
+            res.status(HTTP_STATUS.OK).json({ success:true, message:MESSAGES.USER_UNBLOCKED,unblockedUser})
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -90,8 +91,8 @@ export class AdminController{
             res.json({ presignedUrl, imageUrl });
             
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -99,29 +100,29 @@ export class AdminController{
         try {
             const { categoryName, description, imageUrl } = req.body
             if(!categoryName || !description || !imageUrl){
-                throwError(400, "All fields are required.");
+                throwError(HTTP_STATUS.BAD_REQUEST,MESSAGES.REQUIRED );
             }
             const newCategory = await this._adminService.createCategory(categoryName, description, imageUrl )
 
             if (!newCategory) {
-                throwError(500, "Error in creating new category.");
+                throwError(HTTP_STATUS.INTERNAL_SERVER_ERROR, "Error in creating new category.");
             }
 
-            res.status(201).json({success:true, message:'Category added successfully',newCategory});
+            res.status(HTTP_STATUS.CREATED).json({success:true, message:MESSAGES.CATEGORY_CREATED,newCategory});
             
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
     async getAllCategories(req:Request, res: Response):Promise<void>{
         try {
             const allCategories = await this._adminService.getAllCategories()
-            res.status(201).json({ success: true, data:allCategories });
+            res.status(HTTP_STATUS.OK).json({ success: true, data:allCategories });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -131,10 +132,10 @@ export class AdminController{
             const categoryId = req.params.categoryId;
             const category = await this._adminService.getCategoryById(categoryId)
 
-            res.status(200).json({ success: true, data:category });
+            res.status(HTTP_STATUS.OK).json({ success: true, data:category });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -144,7 +145,7 @@ export class AdminController{
             const categoryId = req.params.categoryId;
 
             if(!categoryId){
-                throwError(400, "All fields are required.");
+                throwError(HTTP_STATUS.BAD_REQUEST, MESSAGES.REQUIRED);
             }
              
             const { categoryName, description, imageUrl} = req.body
@@ -154,10 +155,10 @@ export class AdminController{
                 imageUrl
             })
 
-            res.status(200).json({ success: true, data:updateCategory });
+            res.status(HTTP_STATUS.OK).json({ success: true, data:updateCategory });
         } catch (error: unknown) {
-            const message = error instanceof Error ? error.message : "An unexpected error occurred";
-              res.status(400).json({ success:false, message: message })
+            const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
           }
     }
 
@@ -173,7 +174,7 @@ export class AdminController{
             res.json({ payments });
           } catch (error) {
             console.error("Error fetching payments:", error);
-            res.status(500).json({ message: "Failed to fetch payments" });
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Failed to fetch payments" });
           }
     }
 
@@ -181,7 +182,7 @@ export class AdminController{
         try {
           const { categoryId } = req.params;
           if(!categoryId){
-            throwError(400,'Category id not found')
+            throwError(HTTP_STATUS.BAD_REQUEST,'Category id not found')
           }
 
       
@@ -190,7 +191,7 @@ export class AdminController{
           res.json({ presignedUrl });
         } catch (error) {
           console.error("Error in InstructorController :get presigned url for video", error);
-          res.status(500).json({ success: false, message: "Server error" });
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
         }
       }
 }

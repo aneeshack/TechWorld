@@ -5,6 +5,7 @@ import { messageModel } from "../models/messageModel";
 import { Types } from "mongoose";
 import { notificationModel } from "../models/notificationModel";
 import { throwError } from "../middlewares/errorMiddleware";
+import { HTTP_STATUS } from "../constants/httpStatus";
 
 
 export class ChatController{
@@ -18,13 +19,13 @@ export class ChatController{
         }
         const messages = await this._chatService.getUserMessages(userId);
   
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
           success: true,
           data: messages,
         });
       } catch (error) {
         console.error("Error fetching user messages:", error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
           success: false,
           message: "Internal server error",
           error,
@@ -37,7 +38,7 @@ async accessChat(req: Request, res: Response):Promise<void> {
     const { userId, receiverId } = req.body;
     
     if (!userId || !receiverId) {
-        res.status(400).json({ 
+        res.status(HTTP_STATUS.BAD_REQUEST).json({ 
         success: false, 
         message: 'UserId and receiverId are required' 
       });
@@ -56,7 +57,7 @@ async accessChat(req: Request, res: Response):Promise<void> {
     }).populate('users', 'userName email profile.avatar');
 
     if (existingChat) {
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
         success: true,
         data: existingChat
       });
@@ -80,7 +81,7 @@ async accessChat(req: Request, res: Response):Promise<void> {
     return
   } catch (error) {
     console.error('Error in accessChat:', error);
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Internal server error',
       error: error
@@ -95,7 +96,7 @@ async sendMessage(req: Request, res: Response):Promise<void> {
     const { sender, reciever, content, contentType = 'text' } = req.body;
 
     if (!sender || !reciever || !content) {
-       throwError(400, "Sender, receiver and content are required.");
+       throwError(HTTP_STATUS.BAD_REQUEST, "Sender, receiver and content are required.");
     }
 
     // Find or create chat between sender and receiver
@@ -151,14 +152,14 @@ async sendMessage(req: Request, res: Response):Promise<void> {
       .populate('reciever', 'userName profilePicture')
       .populate('chatId');
 
-      res.status(201).json({
+      res.status(HTTP_STATUS.CREATED).json({
       success: true,
       data: populatedMessage
     });
     return
   } catch (error) {
     console.error('Error in sendMessage:', error);
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Internal server error',
       error: error
@@ -185,7 +186,7 @@ async getMessages(req: Request, res: Response):Promise<void> {
     });
 
     if (!chat) {
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
         success: true,
         data: [] // No chat exists yet, return empty array
       });
@@ -213,13 +214,13 @@ async getMessages(req: Request, res: Response):Promise<void> {
       .populate('reciever', 'userName profile.avatar')
       .sort({ createdAt: 1 });
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
       success: true,
       data: messages
     });
   } catch (error) {
     console.error('Error in getMessages:', error);
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Internal server error',
       error: error
@@ -241,13 +242,13 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
       { recieverSeen: true }
     );
 
-      res.status(200).json({
+      res.status(HTTP_STATUS.OK).json({
       success: true,
       message: 'Messages marked as seen'
     });
   } catch (error) {
     console.error('Error in markMessagesSeen:', error);
-      res.status(500).json({
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: 'Internal server error',
       error: error
@@ -283,13 +284,13 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
         })
       );
 
-        res.status(200).json({
+        res.status(HTTP_STATUS.OK).json({
         success: true,
         data: populatedChats
       });
     } catch (error) {
       console.error('Error in getUserChats:', error);
-        res.status(500).json({
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
         success: false,
         message: 'Internal server error',
         error: error
@@ -312,13 +313,13 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
           );
   
           console.log('unique students',uniqueStudents)
-          res.status(200).json({
+          res.status(HTTP_STATUS.OK).json({
               success: true,
               data: uniqueStudents
           });
       } catch (error) {
           console.error('Error in getMessagedStudents:', error);
-          res.status(500).json({
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
               success: false,
               message: 'Internal server error',
               error: error
@@ -337,10 +338,10 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
         .sort({ createdAt: -1 }); 
 
         console.log('notifications',notifications)
-       res.status(200).json({ success: true, data: notifications});
+       res.status(HTTP_STATUS.OK).json({ success: true, data: notifications});
     } catch (error) {
       console.error("Error fetching notifications:", error);
-       res.status(500).json({ message: "Server error" });
+       res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Server error" });
     }
   }
   
@@ -354,7 +355,7 @@ async markMessagesSeen(req: Request, res: Response):Promise<void> {
             { $set: { isSeen: true }}
         );
         await notificationModel.deleteOne({ _id: notificationId });
-        res.status(200).json({ message: "Notification marked as seen" });
+        res.status(HTTP_STATUS.OK).json({ message: "Notification marked as seen" });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to update the notification";
         res.status(400).json({ success:false, message: message })

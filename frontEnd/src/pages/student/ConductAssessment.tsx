@@ -51,19 +51,13 @@ const ConductAssessment = () => {
       }
     });
 
-    // const totalQuestions = questions.length;
-    // Store the raw score (number of correct answers)
     setScore(correctAnswers);
     
-    // Still calculate percentage for the backend
-    // const percentageScore = (correctAnswers / totalQuestions) * 100;
+
     setSubmitted(true);
 
     try {
-      // await CLIENT_API.post("/student/assessment/submit", {
-      //   lessonId,
-      //   score: percentageScore, // Still send the percentage to the backend
-      // });
+
 
       toast.success("Assessment submitted successfully!");
     } catch (error) {
