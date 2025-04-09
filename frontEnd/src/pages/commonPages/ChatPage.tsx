@@ -10,7 +10,7 @@ import ScrollToBottom from "react-scroll-to-bottom";
 import pic from '../../assets/commonPages/placeHolder.png'
 import { format, isToday, isYesterday, startOfDay, isSameDay } from 'date-fns';
 import EmojiPicker, { EmojiClickData }  from "emoji-picker-react";
-import { uploadToCloudinary } from "../../utilities/axios/UploadCloudinary";
+import { chatUploadToCloud } from "../../utilities/axios/UploadCloudinary";
 
 declare global {
   interface Window {
@@ -614,7 +614,7 @@ const ChatPage = () => {
     try {
       setLoading(true);
   
-      const uploadedFileUrl = await uploadToCloudinary(file);
+      const uploadedFileUrl = await chatUploadToCloud(file);
 
     if (!uploadedFileUrl) {
       console.error("File upload failed");
@@ -702,7 +702,7 @@ const ChatPage = () => {
                       </div>
                       {latestMessage ? (
                   <span className="text-sm text-gray-600 truncate">
-                    {latestMessage.content?.substring(0, 30) || "No message content"}
+                    {latestMessage.content?.substring(0, 10) || "No message content"}
                     {latestMessage.content && latestMessage.content.length > 30 ? "..." : ""}
                   </span>
                 ) : (
