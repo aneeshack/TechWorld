@@ -36,7 +36,7 @@ class S3Service {
   async generatePresignedUrlForUpload(
     key: string,
     fileType: string,
-    expiresIn: number = 60
+    expiresIn: number = 6000
   ): Promise<{ presignedUrl: string; videoUrl: string }> {
     try {
       const params = {
