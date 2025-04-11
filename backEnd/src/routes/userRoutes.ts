@@ -11,7 +11,7 @@ const userController = userContainer.get<UserController>(USER_TYPES.UserControll
 
 const paymentLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 5, // Limit each IP to 5 payment attempts per window
+    max: 5, 
   });
 userRouter.get('/courses', userController.getFilteredCourses.bind(userController));
 userRouter.get('/allCourses', userController.getAllCourses.bind(userController));

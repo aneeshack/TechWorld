@@ -93,6 +93,7 @@ const InstructorReg = () => {
       try {
         const result = await dispatch(RegisterAction({...values,_id:user?._id || ''}))
         const response = result.payload as Response;
+        console.log('response after register',response)
         if(!response.success){
           if(response?.message){
             toast.error(response.message)

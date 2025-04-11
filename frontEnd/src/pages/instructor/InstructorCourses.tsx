@@ -68,6 +68,9 @@ const InstructorCourses = () => {
         <h2 className="text-2xl font-bold">My Courses</h2>
       </div>
 
+      {courses.length>0 ? (
+
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {courses.map((course, index) => (
           <div
@@ -119,6 +122,10 @@ const InstructorCourses = () => {
           </div>
         ))}
       </div>
+      ):
+      (
+        <p>no course found</p>
+      )}
     </div>
   );
 };

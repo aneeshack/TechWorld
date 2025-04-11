@@ -49,7 +49,7 @@ class S3Service {
       const presignedUrl = await getSignedUrl(this._s3Client, command, { expiresIn });
 
       const videoUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-
+      console.log('presigned url',presignedUrl,'videourl',videoUrl)
       return { presignedUrl, videoUrl };
     } catch (error) {
       console.error("S3Service error: generating presigned URL for upload", error);

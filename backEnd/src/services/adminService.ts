@@ -1,6 +1,7 @@
 import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { IUser } from "../interfaces/database/IUser";
+import { UserDTO } from "../interfaces/dtos";
 import S3Service from "./s3Service";
 
 export class AdminService{
@@ -11,6 +12,17 @@ export class AdminService{
   constructor(adminRepository: IAdminRepository, s3Service: S3Service) {
     this._adminRepository = adminRepository;
     this._s3Service = s3Service;
+  }
+
+  private mapToUserDTO(user: IUser): UserDTO {
+    return {
+      _id:user.id,
+      userName: user.userName || "Unknown", 
+      email: user.email,
+      role: user.role || "pending",
+      requestStatus: user.requestStatus, 
+      isBlocked:user.isBlocked
+    };
   }
 
      async getAllRequsts():Promise<IUser[]>{
@@ -66,39 +78,41 @@ export class AdminService{
         }
      }
 
-     async getAllUsers():Promise<IUser[]>{
+     async getAllUsers():Promise<UserDTO[]>{
         try {
             const users = await this._adminRepository.getAllUsers()
             if(!users){
                 throw new Error('No user find')
             }
-            return users
+            // return users
+            return users.map((user)=>this.mapToUserDTO(user))
         } catch (error) {
             console.error('adminService error:get all users',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
-     async blockUser(userId: string):Promise<IUser |null>{
+     async blockUser(userId: string):Promise<UserDTO |null>{
         try {
             const blockedUser = await this._adminRepository.blockUser(userId);
             if(!blockedUser){
                 throw new Error('User is blocked')
             }
-            return blockedUser
+            return this.mapToUserDTO(blockedUser)
+            // return blockedUser
         } catch (error) {
             console.error('adminService error: block user',error)
             throw new Error(`${(error as Error).message}`)
         }
      }
 
-     async unBlockUser(userId: string):Promise<IUser |null>{
+     async unBlockUser(userId: string):Promise<UserDTO |null>{
         try {
             const unBlockUser = await this._adminRepository.unblockUser(userId);
             if(!unBlockUser){
                 throw new Error('User is unblocked')
             }
-            return unBlockUser
+            return this.mapToUserDTO(unBlockUser)
         } catch (error) {
             console.error('adminService error: unblocked user',error)
             throw new Error(`${(error as Error).message}`)

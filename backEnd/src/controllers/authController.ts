@@ -31,7 +31,7 @@ export class AuthController {
 
   async signup(req: Request, res: Response): Promise<void> {
     try {
-      // let roleInput;
+
       const { userName, email, password, confirmPassword, role } = req.body;
       
       if (!email || !password) {
@@ -175,6 +175,7 @@ export class AuthController {
   async registerInstructor(req: Request, res: Response):Promise<void>{
     try {
       const user = await this._authService.register(req.body)
+      console.log('user',user)
       res.status(HTTP_STATUS.OK).json({success:true, data: user})
 
     } catch (error: unknown) {

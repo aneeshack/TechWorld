@@ -61,5 +61,5 @@ export interface IUser extends Document{
     loginStreak?: number,
     createdAt?: Date,
     updatedAt?: Date,
-    experience?: Number
+    experience?: number
 }

@@ -125,13 +125,14 @@ export class AuthService {
         }
     }
     
-    async register(userData: Partial<IUser>):Promise<{message: string, user?:Partial<IUser>}>{
+    async register(userData: Partial<IUser>):Promise<IUser>{
         try {
             const user = await this._authRepository.updateRegister(userData)
             if(!user){
                 throw new Error('can not find user')
             }
-            return {message:'success', user}
+            return user
+            // return {message:'success', user}
         } catch (error) {
             console.error('authService error:signup',error)
             throw new Error(`${(error as Error).message}`)

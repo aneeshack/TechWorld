@@ -9,7 +9,7 @@ import S3Service from "./s3Service";
 export class InstructorService {
 
   private _instructorRepository: IInstructorRepository;
-  private _s3Service: S3Service; // Add S3Service as a private property
+  private _s3Service: S3Service; 
 
   constructor(
     instructorRepository: IInstructorRepository,

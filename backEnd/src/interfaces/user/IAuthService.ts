@@ -7,7 +7,7 @@ export interface IAuthService{
     verifyOtp(email: string, otp: string):Promise<{message:string, token?:string, user?:Partial<IUser>}>;
     resendOtp(email: string):Promise<{message: string}>;
     loginAction(userData: Partial<IUser>): Promise<{ message: string, user?:Partial<IUser>, token?: string }>;
-    register(userData: Partial<IUser>):Promise<{message: string, user?:Partial<IUser>}>;
+    register(userData: Partial<IUser>):Promise<IUser>;
     googleAuth(credentials: any, roleInput:Role):Promise<{ message: string, user?:Partial<IUser>, token?: string }>;
     forgotPassword(email: string, role:Role):Promise<{message: string}>;
     resetPassword(email: string, password: string, role:Role):Promise<{message: string}>;
