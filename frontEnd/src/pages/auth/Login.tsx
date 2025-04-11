@@ -122,6 +122,30 @@ const Login = () => {
             toast.error(payload.message || 'login faild. Please try again.')
           }
         }else{
+          if (socket) {
+            const userId = payload.data?._id;
+            if (!userId) {
+              console.error("User ID not found in login payload");
+              return;
+            }
+    
+            if (socket.connected) {
+              socket.emit("join_room", userId);
+              console.log(`App: Joined room for user ${userId} after Google login`);
+            } else {
+              console.log("App: Socket not connected, forcing connection after Google login");
+              socket.connect();
+    
+              socket.on("connect", () => {
+                socket.emit("join_room", userId);
+                console.log(`App: Joined room for user ${userId} after socket connect`);
+              });
+    
+              socket.on("connect_error", (error) => {
+                console.error("App: Socket connection error after Google login:", error.message);
+              });
+            }
+          }
           toast.success('Login successful')
           navigate('/')
         }
