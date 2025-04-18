@@ -9,7 +9,12 @@ export interface IInstructorRepository {
     fetchCategories(): Promise<CategoryEntity[]>;
     addCourse(courseData: Partial<ICourse>): Promise<ICourse>;
     editCourse(courseId: string, updateData: Partial<ICourse>):Promise<ICourse| null>;
-    getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]>;
+    getAllCoursesByInstructor(
+      instructorId: mongoose.Types.ObjectId,
+      page: number,
+      limit: number,
+      search: string
+    ): Promise<{ courses: ICourse[]; totalPages: number; totalCourses: number }>
     getSingleCourse(courseId: string): Promise<ICourse | null>;
     getSingleLesson(lessonId: string): Promise<ILesson | null>;
     addLesson( lessonData: Partial<ILesson>): Promise<ILesson | null>;

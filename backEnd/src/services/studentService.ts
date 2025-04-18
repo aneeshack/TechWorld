@@ -3,6 +3,7 @@ import { IStudentRepository } from "../interfaces/student/IStudentRepository";
 import { IUser } from "../interfaces/database/IUser";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { IReview } from "../interfaces/database/IReview";
+import { PaginationResult } from "../interfaces/courses/ICourse";
 
 export class StudentService{
     constructor(private _studentRepository: IStudentRepository){}
@@ -46,21 +47,21 @@ export class StudentService{
         }
       }
 
-       async getEnrolledCourses(userId: string): Promise<IEnrollment[] |null> {
-          try {
-            const enrolledCourses = await this._studentRepository.enrolledCourses(userId)
-        
-            if (!enrolledCourses) {
-              throw new Error("enrolledCourses not found");
-            }
-        
-            return enrolledCourses;
-          } catch (error:unknown) {
-            console.error('student service error:enrolled courses ',error)
-            throw new Error(`${(error as Error).message}`)
-          }
-        }
 
+      async getEnrolledCourses(userId: string, page: number, limit: number, search: string): Promise<PaginationResult> {
+        try {
+          const result = await this._studentRepository.enrolledCourses(userId, page, limit, search);
+          console.log('serahc result',result)
+          if (!result || !result.courses) {
+            throw new Error("No enrolled courses found");
+          }
+    
+          return result;
+        } catch (error: unknown) {
+          console.error("Student service error: enrolled courses", error);
+          throw new Error(`${(error as Error).message}`);
+        }
+      }
         async getEnrollment(userId: string, courseId: string): Promise<IEnrollment |null> {
           try {
             const enrolledCourses = await this._studentRepository.studentCourseEnrollment(userId, courseId)

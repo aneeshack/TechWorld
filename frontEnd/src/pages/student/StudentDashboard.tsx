@@ -1,4 +1,3 @@
-import FooterDashboard from "../../components/common/FooterDashboard"
 import NavbarDashboard from "../../components/common/NavbarDashboard"
 import StudentSidebar from "../../components/student/StudentSidebar"
 import { useSelector } from "react-redux";
@@ -25,7 +24,6 @@ const StudentDashboard = () => {
         <div className="flex-1 overflow-y-auto pt-5">
           <Outlet />
         </div>
-        <FooterDashboard />
       </div>
     </div>
   );

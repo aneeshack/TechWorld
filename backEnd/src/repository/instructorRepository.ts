@@ -23,6 +23,10 @@ export class InstructorRepository implements IInstructorRepository{
 
     async addCourse(courseData: Partial<ICourse>): Promise<ICourse> {
         try {
+           const course = await courseModel.countDocuments({category:courseData.category,instructor:courseData.instructor})
+           if(course >4){
+            throw new Error('cannot add more than 4 same catgory')
+           }
             const newCourse = new courseModel(courseData);
 
             return await newCourse.save()
@@ -46,90 +50,131 @@ export class InstructorRepository implements IInstructorRepository{
     }
 
 
-    async getAllCoursesByInstructor(instructorId: mongoose.Types.ObjectId): Promise<ICourse[]> {
-        try {
-          const courses = await courseModel.aggregate([
-            // Match courses by instructor
-            { $match: { instructor: instructorId } },
-      
-            // Lookup category details
-            {
-              $lookup: {
-                from: "categories",
-                localField: "category",
-                foreignField: "_id",
-                as: "category",
-              },
+    async getAllCoursesByInstructor(
+      instructorId: mongoose.Types.ObjectId,
+      page: number,
+      limit: number,
+      search: string
+    ): Promise<{ courses: ICourse[]; totalPages: number; totalCourses: number }> {
+      try {
+        // Build the search query
+        const searchQuery = search
+          ? {
+              $or: [
+                { title: { $regex: search, $options: "i" } },
+                { "category.categoryName": { $regex: search, $options: "i" } },
+              ],
+            }
+          : {};
+  
+        // Count total documents for pagination
+        const totalCourses = await courseModel.countDocuments({
+          instructor: instructorId,
+          ...searchQuery,
+        });
+  
+        // Calculate total pages
+        const totalPages = Math.ceil(totalCourses / limit);
+  
+        // Fetch courses with pagination
+        const courses = await courseModel.aggregate([
+          // Match courses by instructor and search criteria
+          {
+            $match: {
+              instructor: instructorId,
+              ...searchQuery,
             },
-            { $unwind: "$category" },
-      
-            // Lookup lessons
-            {
-              $lookup: {
-                from: "lessons",
-                localField: "lessons",
-                foreignField: "_id",
-                as: "lessons",
-              },
+          },
+  
+          // Lookup category details
+          {
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "category",
             },
-      
-            // Add lesson count
-            {
-              $addFields: {
-                lessonCount: { $size: "$lessons" },
-              },
+          },
+          { $unwind: "$category" },
+  
+          // Lookup lessons
+          {
+            $lookup: {
+              from: "lessons",
+              localField: "lessons",
+              foreignField: "_id",
+              as: "lessons",
             },
-      
-            // Lookup enrollment count
-            {
-              $lookup: {
-                from: "enrollments",
-                let: { courseId: "$_id" },
-                pipeline: [
-                  { $match: { $expr: { $eq: ["$courseId", "$$courseId"] } } },
-                  { $count: "studentsCount" },
-                ],
-                as: "enrollmentData",
-              },
+          },
+  
+          // Add lesson count
+          {
+            $addFields: {
+              lessonCount: { $size: "$lessons" },
             },
-      
-            // Unwind enrollmentData (preserve courses with no enrollments)
-            {
-              $unwind: {
-                path: "$enrollmentData",
-                preserveNullAndEmptyArrays: true,
-              },
+          },
+  
+          // Lookup enrollment count
+          {
+            $lookup: {
+              from: "enrollments",
+              let: { courseId: "$_id" },
+              pipeline: [
+                { $match: { $expr: { $eq: ["$courseId", "$$courseId"] } } },
+                { $count: "studentsCount" },
+              ],
+              as: "enrollmentData",
             },
-      
-            // First $project: Exclude unwanted fields
-            {
-              $project: {
-                lessons: 0, // Exclude lessons array
-              },
+          },
+  
+          // Unwind enrollmentData (preserve courses with no enrollments)
+          {
+            $unwind: {
+              path: "$enrollmentData",
+              preserveNullAndEmptyArrays: true,
             },
-      
-            // Second $project: Add computed studentsCount
-            {
-              $project: {
-                title: 1, 
-                category: 1,
-                price: 1,
-                thumbnail: 1,
-                lessonCount: 1,
-                instructor: 1,
-                isPublished:1,
-                studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] }, 
-              },
+          },
+  
+          // Sort by creation date (newest first)
+          { $sort: { createdAt: -1 } },
+  
+          // Pagination
+          { $skip: (page - 1) * limit },
+          { $limit: limit },
+  
+          // First $project: Exclude unwanted fields
+          {
+            $project: {
+              lessons: 0, // Exclude lessons array
             },
-          ]);
-      
-          console.log("courses with student count", courses);
-          return courses as ICourse[];
-        } catch (error) {
-          console.log("instructor repository error: get all courses", error);
-          throw new Error(` ${(error as Error).message}`);
-        }
+          },
+  
+          // Second $project: Add computed studentsCount
+          {
+            $project: {
+              title: 1,
+              description: 1,
+              category: 1,
+              price: 1,
+              thumbnail: 1,
+              lessonCount: 1,
+              instructor: 1,
+              isPublished: 1,
+              studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] },
+            },
+          },
+        ]);
+  
+        return {
+          courses: courses as ICourse[],
+          totalPages,
+          totalCourses,
+        };
+      } catch (error) {
+        console.log("instructor repository error: get all courses", error);
+        throw new Error(`${(error as Error).message}`);
       }
+    }
 
 
     async getSingleCourse(courseId: string): Promise<ICourse | null> {

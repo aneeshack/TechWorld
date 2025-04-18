@@ -39,6 +39,8 @@ const io = new Server(server, {
 });
 
 initializeSocket(io);
+app.set("io", io)
+
 
 // Morgan middleware for logging requests
 app.use(morgan("dev"));

@@ -196,24 +196,33 @@ export class StudentController{
       }
     };
 
+    
     async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
       try {
-        const { userId } = req.params; 
-    
+        const { userId } = req.params;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 2;
+        const search = req.query.search as string || "";
+  
         if (!userId) {
           res.status(HTTP_STATUS.BAD_REQUEST).json({ success: false, message: "User ID is required" });
           return;
         }
-    
-        const enrolledCourses = await this._studentService.getEnrolledCourses(userId);
-    
-        res.status(HTTP_STATUS.OK).json({ success: true, message: "Fetched enrolled courses", data: enrolledCourses });
+  
+        const result = await this._studentService.getEnrolledCourses(userId, page, limit, search);
+  
+        res.status(HTTP_STATUS.OK).json({
+          success: true,
+          message: "Fetched enrolled courses",
+          data: result?.courses,
+          pagination: result?.pagination,
+        });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
-          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message });
       }
     }
-
+    
     async getEnrollment(req: AuthRequest, res: Response): Promise<void> {
       try {
         const { courseId } = req.params; 

@@ -36,7 +36,12 @@ const userSlice = createSlice({
             if (state.data) {
                 state.data.requestStatus = action.payload; // Ensure requestStatus exists in SignupFormData
             }
-        }
+        },
+        updateUserProfile: (state: userState, action: PayloadAction<SignupFormData>) => {
+            if (state.data) {
+                state.data = action.payload; // Ensure requestStatus exists in SignupFormData
+            }
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -188,5 +193,5 @@ const userSlice = createSlice({
     }
 })
 
-export const { storeUserData, updateRequestStatus } = userSlice.actions;
+export const { storeUserData, updateRequestStatus, updateUserProfile } = userSlice.actions;
 export const userReducer = userSlice.reducer;

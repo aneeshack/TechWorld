@@ -1,6 +1,5 @@
 import { Outlet } from "react-router-dom"
 import AdminSidebar from "../../components/admin/AdminSidebar"
-import FooterDashboard from "../../components/common/FooterDashboard"
 import { useSelector } from "react-redux"
 import { RootState } from "../../redux/store"
 import NavbarDashboard from "../../components/common/NavbarDashboard"
@@ -21,7 +20,6 @@ const AdminDashboard = () => {
       <Outlet/>
         </main>
         
-      <FooterDashboard/>
       </div>
     </div>
   )

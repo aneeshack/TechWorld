@@ -67,23 +67,28 @@ export class InstructorService {
   }
 
   async fetchAllCourses(
-    instructorId: mongoose.Types.ObjectId
-  ): Promise<ICourse[] | null> {
+    instructorId: mongoose.Types.ObjectId,
+    page: number,
+    limit: number,
+    search: string
+  ): Promise<{ courses: ICourse[]; totalPages: number; totalCourses: number } | null> {
     try {
-      const courses = await this._instructorRepository.getAllCoursesByInstructor(
-        instructorId
+      const coursesData = await this._instructorRepository.getAllCoursesByInstructor(
+        instructorId,
+        page,
+        limit,
+        search
       );
-      console.log('all courses in service',courses)
-      if (!courses) {
-        throw new Error("No courses found");
+      if (!coursesData.courses.length && search) {
+        throw new Error("No courses found matching the search criteria");
       }
-      return courses;
+      return coursesData;
     } catch (error) {
-      console.error("instructorService error: update courses", error);
+      console.error("instructorService error: fetch courses", error);
       throw new Error(`${(error as Error).message}`);
     }
   }
-
+  
   async fetchCourse(courseId: string): Promise<ICourse | null> {
     try {
       return await this._instructorRepository.getSingleCourse(courseId);

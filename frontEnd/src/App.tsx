@@ -21,7 +21,7 @@ const App = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const socket = useSocket();
-  console.log("user", user);
+  console.log("user in app.tsx", user);
 
   
   useEffect(() => {
@@ -39,6 +39,7 @@ const App = () => {
           });
         }
       } else if (user.isBlocked) {
+        console.log('user is blocke in app')
         dispatch(logoutAction());
         toast.error("Techworld team blocked your account! Please contact us");
         navigate("/login", { state: { role: user.role }, replace: true });
@@ -78,9 +79,15 @@ const App = () => {
       console.log(`Initial online users for ${user?._id}:`, onlineUsersList);
     });
 
+    socket.on("user-blocked", () => {
+      dispatch(logoutAction());
+      toast.error("Techworld team blocked your account! Please contact us");
+      navigate("/login", { state: { role: user.role }, replace: true });
+    });
+
     socket.onAny((eventName, ...args) => {
     console.log(`Received event: ${eventName}`, args);
-});
+    });
 
 
     socket.on("online_status", ({ userId, isOnline }) => {
@@ -95,6 +102,7 @@ const App = () => {
       socket.off("connect", joinRoom);
       socket.off("initial_online_users");
       socket.off("online_status");
+      socket.off("user-blocked")
     };
   }, [socket, user?._id]);
   

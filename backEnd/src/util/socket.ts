@@ -3,6 +3,7 @@ import { ChatService } from "../services/chatService";
 import { ChatRepository } from "../repository/chatRepository";
 import { IMessage } from "../interfaces/database/IMessage";
 import s3Service from "../services/s3ServiceInstance";
+import UserModel from "../models/userModel";
 
 const onlineUsers: { [userId: string]: string[] } = {};
 
@@ -117,6 +118,11 @@ export const initializeSocket = (io: SocketIOServer) => {
     // Listen for stop typing event
     socket.on("stop_typing", ({ senderId, receiverId }) => {
       io.to(receiverId).emit("stop_typing", senderId); // Notify receiver
+    });
+
+    socket.on('profilePhotoUpdated', ({ userId, avatar }) => {
+       UserModel.findByIdAndUpdate(userId,{ $set:{'profile.avatar':avatar}})
+      io.to(userId).emit('profilePhotoUpdate', { userId, avatar });
     });
 
     socket.on("leave_room", (userId: string) => {

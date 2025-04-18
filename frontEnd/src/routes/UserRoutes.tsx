@@ -26,6 +26,8 @@ const PublicRoute = () => {
   }
   return <Outlet />; // Render public route if not authenticated
 };
+
+
 const UserRoutes = () => {
   return (
     <div>

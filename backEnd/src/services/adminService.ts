@@ -2,7 +2,9 @@ import { IAdminRepository } from "../interfaces/admin/IAdminRepository";
 import { CategoryEntity } from "../interfaces/courses/category";
 import { IUser } from "../interfaces/database/IUser";
 import { UserDTO } from "../interfaces/dtos";
+import UserModel from "../models/userModel";
 import S3Service from "./s3Service";
+import { FilterQuery } from 'mongoose';
 
 export class AdminService{
 
@@ -78,19 +80,49 @@ export class AdminService{
         }
      }
 
-     async getAllUsers():Promise<UserDTO[]>{
+    async getAllUsers({ page = 1, limit = 10, search = '' }: {
+        page: number;
+        limit: number;
+        search: string;
+      }): Promise<{
+        users: IUser[];
+        totalUsers: number;
+        totalPages: number;
+      }> {
         try {
-            const users = await this._adminRepository.getAllUsers()
-            if(!users){
-                throw new Error('No user find')
+          // Create search conditions
+          const searchCondition: FilterQuery<IUser>= {
+            role:{$in: ['instructor','student']}
+          } 
+          
+          if(search){ 
+            searchCondition.userName ={ $regex: search, $options: 'i' }
             }
-            // return users
-            return users.map((user)=>this.mapToUserDTO(user))
+               
+          // Calculate skip value for pagination
+          const skip = (page - 1) * limit;
+      
+          // Get total count for pagination
+          const totalUsers = await UserModel.countDocuments(searchCondition);
+          const totalPages = Math.ceil(totalUsers / limit);
+      
+          // Get users with pagination and search
+          const users = await UserModel.find(searchCondition)
+            .sort({ createdAt: -1 }) // Sort by most recent
+            .skip(skip)
+            .limit(limit)
+            .select('-password'); // Excluding password from results
+      
+          return {
+            users,
+            totalUsers,
+            totalPages
+          };
         } catch (error) {
-            console.error('adminService error:get all users',error)
-            throw new Error(`${(error as Error).message}`)
+          console.error('Error in getAllUsers service:', error);
+          throw new Error(`${(error as Error).message}`)
         }
-     }
+      }
 
      async blockUser(userId: string):Promise<UserDTO |null>{
         try {

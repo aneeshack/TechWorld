@@ -132,7 +132,7 @@ export class AuthController {
 
       const { message, user, token} = await this._authService.loginAction(userData);
       if(user?.isBlocked){
-        throwError(HTTP_STATUS.FORBIDDEN, "Admin  you. Please contact admin.");
+        throwError(HTTP_STATUS.FORBIDDEN, "Admin blocked you. Please contact admin.");
       }
       
       if(!token){

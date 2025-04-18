@@ -7,6 +7,9 @@ import { SignupFormData } from '../../types/IForm';
 import profilePic from '../../assets/commonPages/placeHolder.png';
 import { uploadToCloudinary } from '../../utilities/axios/UploadCloudinary';
 import { FormErrors } from '../../types/formErrors';
+import { useAppDispatch } from '../../hooks/Hooks';
+import { useSocket } from '../../context/Sockets';
+import { updateUserProfile } from '../../redux/store/slices/UserSlice';
 
 const StudentProfile = () => {
   const user = useSelector((state: RootState) => state.auth.data);
@@ -18,7 +21,8 @@ const StudentProfile = () => {
   const [formData, setFormData] = useState<Partial<SignupFormData>>({}); // Form state for editing
   const [avatarPreview, setAvatarPreview] = useState<string | null>((student?.profile?.avatar as string) || profilePic)
   const [errors, setErrors] = useState<FormErrors>({});
-
+  const dispatch = useAppDispatch();
+  const socket = useSocket();
 
   const validateForm =()=> {
     const newErrors :FormErrors ={};
@@ -99,10 +103,22 @@ const StudentProfile = () => {
       if (!validateForm()) return;
       const response = await CLIENT_API.put(`/student/profile/${user?._id}`, formData);
       console.log('Update Response:', response.data);
-      setAvatarPreview(response.data.data.profile?.avatar)
-      setStudent(response.data.data);
+      const updatedProfile = response.data.data
+      setAvatarPreview(updatedProfile.profile?.avatar)
+      setStudent(updatedProfile);
       setIsEditing(false); 
       setErrors({});
+
+      // Update Redux store
+      dispatch(updateUserProfile(updatedProfile));
+
+      // Emit socket event for profile photo update
+      if (socket && updatedProfile.profile?.avatar) {
+        socket.emit('profilePhotoUpdated', {
+          userId: user?._id,
+          avatar: updatedProfile.profile?.avatar,
+        });
+      }
     } catch (err) {
       console.error('Error updating profile:', err);
       setError('Failed to update profile.');

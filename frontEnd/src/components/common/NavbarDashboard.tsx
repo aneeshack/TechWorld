@@ -10,6 +10,7 @@ const NavbarDashboard = () => {
   const [name,setName]= useState('')
   const user = useSelector((state:RootState)=>state.auth.data)
 
+
   useEffect(()=>{
     setName(user?.userName|| '')
   },[user?.userName])
@@ -22,6 +23,7 @@ const NavbarDashboard = () => {
           <img 
           // src={placeholder} 
           src={ user?.profile?.avatar ?? placeholder}
+          // src={ newAvatar ?? placeholder}
           alt="Profile" className="w-14 h-14 rounded-full" />
           <p className="text-gray-900 font-semibold">{name}</p>
           <img src={bell} alt="bell icon" className='w-12 h-12'/>

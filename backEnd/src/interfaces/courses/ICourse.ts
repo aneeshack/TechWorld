@@ -1,4 +1,5 @@
-import mongoose,{Schema,Document} from "mongoose";
+import mongoose,{Document} from "mongoose";
+import { IEnrollment } from "../database/IEnrollment";
 
 export interface ICourse extends Document{
     title:string,
@@ -13,4 +14,23 @@ export interface ICourse extends Document{
     lessons:mongoose.Types.ObjectId[]
     rating: number,
     isBlocked: boolean,
+    createdAt: Date;
+    updatedAt: Date;
 }
+
+
+export interface QueryParams {
+    page?: string;
+    limit?: string;
+    search?: string;
+  }
+
+ export interface PaginationResult {
+    courses: IEnrollment[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      pageSize: number;
+      totalItems: number;
+    };
+  }

@@ -49,5 +49,7 @@ export interface ICourse {
     lessonCount?:number,
     rating?: number,
     isBlocked?: boolean,
-    studentsCount?: number
+    studentsCount?: number,
+    createdAt: Date;
+    updatedAt: Date;
 }

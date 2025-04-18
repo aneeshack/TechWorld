@@ -228,10 +228,13 @@ const AdminInstructorRequest = () => {
                     Name
                   </th>
                   <th className="py-3 px-4 border-b text-left text-sm sm:text-base">
-                    Qualification
+                    Email
                   </th>
                   <th className="py-3 px-4 border-b text-left text-sm sm:text-base">
                     View Profile
+                  </th>
+                  <th className="py-3 px-4 border-b text-left text-sm sm:text-base">
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -257,6 +260,14 @@ const AdminInstructorRequest = () => {
                         <span>View</span>
                       </button>
                     </td>
+                    <td>
+                    <button
+                        onClick={() => handleApprove(request._id ?? "")}
+                        className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded flex-1 text-sm"
+                      >
+                        Approve
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -275,7 +286,7 @@ const AdminInstructorRequest = () => {
                     <span>{request.userName}</span>
                   </div>
                   <div>
-                    <span className="font-semibold">Qualification: </span>
+                    <span className="font-semibold">Email: </span>
                     <span>{request.email}</span>
                   </div>
                   <button
@@ -289,6 +300,7 @@ const AdminInstructorRequest = () => {
                     <EyeIcon className="h-5 w-5 mr-2" />
                     View Profile
                   </button>
+                  
                 </div>
               </div>
             ))}

@@ -663,81 +663,104 @@ const ChatPage = () => {
   };
   
   return (
-    <div className="flex  h-[70vh]">
-   <div className="w-1/4 bg-gray-100 p-4 h-[75vh]">
-            <h2 className="text-lg font-semibold mb-4">
-              {user?.role === Role.Student ? "Instructors" : "Students"}
-            </h2>
-            {loading && !selectedInstructor ? (
-              <p className="text-gray-500">Loading Contacts...</p>
-            ) : (
-              <ul className="space-y-2">
-                {instructors.map((contact) => {
-                  const hasNotification = notifications.some(
-                    (notif) => notif.sender === contact._id && !notif.isSeen
-                  );
-                  const latestMessage = latestMessages? latestMessages[contact?._id || ""] || null :null;
-                  return (
-                    <li
-                      key={contact._id}
-                      className={`p-3 rounded-lg cursor-pointer flex flex-col items-center hover:bg-blue-100 transition-colors ${
-                        selectedInstructor === contact._id
-                          ? "bg-blue-200"
-                          : "bg-white"
-                      }`}
-                      onClick={() => fetchMessages(contact?._id || "")}
-                    >
-                      <div className="flex items-center space-x-3">
-                      <img
-                        src={contact.profile?.avatar || pic} 
-                        alt={contact.userName}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                      <span>{contact.userName}</span>
-                      {hasNotification && (
-                        <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                          New
-                        </span>
-                      )}
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
+      {/* Contacts sidebar - hide on mobile when chat is selected */}
+      <div className={`${selectedInstructor ? 'hidden md:block' : 'block'} w-full md:w-1/3 lg:w-1/4 bg-gray-100 p-4 h-[80vh] overflow-y-auto`}>
+        <h2 className="text-lg font-semibold mb-4">
+          {user?.role === Role.Student ? "Instructors" : "Students"}
+        </h2>
+        {loading && !selectedInstructor ? (
+          <p className="text-gray-500">Loading Contacts...</p>
+        ) : (
+          <ul className="space-y-2">
+            {instructors.map((contact) => {
+              const hasNotification = notifications.some(
+                (notif) => notif.sender === contact._id && !notif.isSeen
+              );
+              const latestMessage = latestMessages ? latestMessages[contact?._id || ""] || null : null;
+              return (
+                <li
+                  key={contact._id}
+                  className={`p-3 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors ${
+                    selectedInstructor === contact._id ? "bg-blue-200" : "bg-white"
+                  } shadow-sm`}
+                  onClick={() => fetchMessages(contact?._id || "")}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="relative">
+                        <img
+                          src={contact.profile?.avatar || pic}
+                          alt={contact.userName}
+                          className="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                        />
+                        {contact._id && onlineUsers[contact._id] && (
+                          <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border border-white"></span>
+                        )}
                       </div>
-                      {latestMessage ? (
-                  <span className="text-sm text-gray-600 truncate">
-                    {latestMessage.content?.substring(0, 10) || "No message content"}
-                    {latestMessage.content && latestMessage.content.length > 30 ? "..." : ""}
-                  </span>
-                ) : (
-                  
-                  <span className="text-sm text-gray-400">No messages yet</span>
-                )}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-            {instructors.length === 0 && !loading && (
-              <p className="text-gray-500">No contacts found</p>
-            )}
-          </div>
-
-      <div className="w-3/4 p-4 flex flex-col h-[80vh]">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-gray-800 truncate max-w-xs">{contact.userName}</span>
+                        {latestMessage ? (
+                          <span className="text-xs text-gray-600 truncate max-w-xs">
+                            {latestMessage.content?.substring(0, 20) || "No message content"}
+                            {latestMessage.content && latestMessage.content.length > 20 ? "..." : ""}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-gray-400">No messages yet</span>
+                        )}
+                      </div>
+                    </div>
+                    {hasNotification && (
+                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+                        New
+                      </span>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {instructors.length === 0 && !loading && (
+          <p className="text-gray-500 text-center mt-8">No contacts found</p>
+        )}
+      </div>
+  
+      {/* Chat area - show on mobile only when chat is selected */}
+      <div className={`${selectedInstructor ? 'block' : 'hidden md:block'} w-full md:w-2/3 lg:w-3/4 flex flex-col h-[80vh]`}>
         {selectedInstructor ? (
           <>
-            <div className="bg-white rounded-lg shadow p-2 mb-4 flex justify-between items-center">
-              <div className="flex flex-col">
-                <div className="flex items-center">
+            {/* Chat header */}
+            <div className="bg-white shadow p-3 flex justify-between items-center sticky top-0 z-10 border-b ">
+              <div className="flex items-center space-x-3">
+                <button
+                  className="md:hidden text-gray-600 hover:text-gray-800"
+                  onClick={() => fetchMessages("")} // Deselect to show contact list
+                  aria-label="Back to contacts"
+                > 
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <img
+                  src={instructors.find((i) => i._id === selectedInstructor)?.profile?.avatar || pic}
+                  alt="Profile"
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+                <div className="flex flex-col">
                   <h3 className="font-medium text-gray-800">
                     {instructors.find((i) => i._id === selectedInstructor)?.userName || "Chat"}
                   </h3>
                   {onlineUsers[selectedInstructor] && (
-                    <span
-                      className="ml-2 w-3 h-3 bg-green-500 rounded-full"
-                      title="Online"
-                    ></span>
+                    <p className="text-xs text-green-600">online</p>
                   )}
                 </div>
-                {onlineUsers[selectedInstructor] && (
-                  <p className="text-xs text-gray-600">online</p>
-                )}
               </div>
               <button
                 onClick={startVideoCall}
@@ -745,59 +768,32 @@ const ChatPage = () => {
                   isVideoCallActive
                     ? "bg-red-500 hover:bg-red-600"
                     : "bg-green-500 hover:bg-green-600"
-                } text-white px-4 py-2 rounded-lg transition-colors`}
+                } text-white px-3 py-2 rounded-lg transition-colors text-sm flex items-center`}
                 disabled={!jitsiLoaded}
               >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
                 {!jitsiLoaded
-                  ? "Loading Jitsi..."
+                  ? "Loading..."
                   : isVideoCallActive
                   ? "End Call"
-                  : "Start Video Call"}
+                  : "Video Call"}
               </button>
-              {incomingCall && (
-                <div className="fixed bottom-5 right-5 bg-white shadow-lg rounded-lg p-4 border border-gray-300 w-64">
-                  <p className="text-sm font-medium text-gray-700">
-                    📞 {incomingCall?.callerName} is calling...
-                  </p>
-                  <div className="flex justify-between mt-3">
-                    <button
-                      className="bg-green-500 text-white px-3 py-1 rounded-md text-sm hover:bg-green-600"
-                      onClick={() => {
-                        setIsVideoCallActive(true);
-                        setRoomName(incomingCall.roomName);
-                        window.location.href = `https://meet.jit.si/${incomingCall.roomName}`;
-                        setIncomingCall(null);
-                      }}
-                    >
-                      ✅ Join
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600"
-                      onClick={() => {
-                        socket?.emit("callRejected", {
-                          callerId: incomingCall.callerId,
-                        });
-                        setIncomingCall(null);
-                      }}
-                    >
-                      ❌ Reject
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
-
+  
+            {/* Video call container */}
             {isVideoCallActive && (
               <div
                 ref={jitsiContainerRef}
-                className="mb-4 border rounded-lg overflow-hidden h-96"
+                className="border rounded-lg overflow-hidden h-64 md:h-96 mx-2"
               />
             )}
-      
-
+  
+            {/* Messages area */}
             <ScrollToBottom
-              className={`flex-1 overflow-y-auto border rounded-lg p-4 mb-4 bg-gray-50 ${
-                isVideoCallActive ? "max-h-40" : "h-60"
+              className={`flex-1 overflow-y-auto p-4 bg-gray-50 ${
+                isVideoCallActive ? "max-h-40" : "flex-grow"
               }`}
             >
               {loading ? (
@@ -809,66 +805,59 @@ const ChatPage = () => {
                   const currentDate = msg.createdAt ? new Date(msg.createdAt) : null;
                   const prevMsg = index > 0 ? messages[index - 1] : null;
                   const prevDate = prevMsg?.createdAt ? new Date(prevMsg.createdAt) : null;
-
+  
                   const showDateSeparator =
                     index === 0 || (currentDate && prevDate && !isSameDay(currentDate, prevDate));
-
+  
+                  const isCurrentUser = (typeof msg.sender === "object" && msg.sender?._id === user?._id) ||
+                    (typeof msg.sender === "string" && msg.sender === user?._id);
+  
                   return (
                     <div key={msg._id || index}>
                       {showDateSeparator && currentDate && (
-                        <div className="flex justify-center my-2">
-                          <span className="text-xs text-gray-600 bg-gray-200 px-2 py-1 rounded">
+                        <div className="flex justify-center my-3">
+                          <span className="text-xs text-gray-600 bg-gray-200 px-3 py-1 rounded-full">
                             {getDateLabel(startOfDay(currentDate))}
                           </span>
                         </div>
                       )}
                       <div
                         className={`flex ${
-                          (typeof msg.sender === "object" && msg.sender?._id === user?._id) ||
-                          (typeof msg.sender === "string" && msg.sender === user?._id)
-                            ? "justify-end"
-                            : "justify-start"
+                          isCurrentUser ? "justify-end" : "justify-start"
                         } my-2`}
                       >
                         <div
                           className={`flex flex-col ${
-                            (typeof msg.sender === "object" && msg.sender?._id === user?._id) ||
-                            (typeof msg.sender === "string" && msg.sender === user?._id)
-                              ? "items-end"
-                              : "items-start"
-                          }`}
+                            isCurrentUser ? "items-end" : "items-start"
+                          } max-w-xs sm:max-w-sm md:max-w-md`}
                         >
-                          <span
-                            className={`inline-block px-4 py-2 rounded-lg max-w-xs break-words ${
-                              (typeof msg.sender === "object" && msg.sender?._id === user?._id) ||
-                              (typeof msg.sender === "string" && msg.sender === user?._id)
+                          <div
+                            className={`inline-block px-4 py-2 rounded-lg ${
+                              isCurrentUser
                                 ? "bg-blue-500 text-white rounded-br-none"
-                                : "bg-gray-200 text-gray-800 rounded-bl-none"
+                                : "bg-white text-gray-800 rounded-bl-none shadow-sm"
                             }`}
                           >
-                            {/* {msg.content} */}
                             {msg.contentType === "image" ? (
-    <img
-      src={msg.content}
-      alt="uploaded"
-      className="max-w-[200px] max-h-[200px] rounded-lg object-cover"
-    />
-  ) : msg.contentType === "video" ? (
-    <video controls className="max-w-[200px] rounded-lg">
-      <source src={msg.content} />
-      Your browser does not support the video tag.
-    </video>
-  ) : msg.contentType === "audio" ? (
-    <audio controls>
-      <source src={msg.content} />
-      Your browser does not support the audio tag.
-    </audio>
-  ) : (
-    <a href={msg.content} target="_blank" rel="noopener noreferrer" >
-      {msg.content}
-    </a>
-  )}
-                          </span>
+                              <img
+                                src={msg.content}
+                                alt="uploaded"
+                                className="max-w-full rounded-lg object-cover"
+                              />
+                            ) : msg.contentType === "video" ? (
+                              <video controls className="max-w-full rounded-lg">
+                                <source src={msg.content} />
+                                Your browser does not support the video tag.
+                              </video>
+                            ) : msg.contentType === "audio" ? (
+                              <audio controls className="max-w-full">
+                                <source src={msg.content} />
+                                Your browser does not support the audio tag.
+                              </audio>
+                            ) : (
+                              msg.content
+                            )}
+                          </div>
                           <span className="text-xs text-gray-500 mt-1">
                             {msg.createdAt
                               ? format(new Date(msg.createdAt), "h:mm a")
@@ -876,109 +865,137 @@ const ChatPage = () => {
                           </span>
                         </div>
                       </div>
-         
                     </div>
-
                   );
                 })
-                
               ) : (
-                <p className="text-center text-gray-500 my-8">
-                  No messages yet. Start the conversation!
-                </p>
+                <div className="flex flex-col items-center justify-center h-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                  <p className="text-center text-gray-500">
+                    No messages yet. Start the conversation!
+                  </p>
+                </div>
               )}
-                           <div className="chat-box">
-        {typingUser === selectedInstructor && (
-          <div className="typing-indicator">Typing...</div>
-        )}
-      </div>
+              <div className="chat-box">
+                {typingUser === selectedInstructor && (
+                  <div className="typing-indicator flex items-center space-x-1 p-2">
+                    <div className="bg-gray-300 rounded-full w-2 h-2 animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                    <div className="bg-gray-300 rounded-full w-2 h-2 animate-bounce" style={{ animationDelay: "150ms" }}></div>
+                    <div className="bg-gray-300 rounded-full w-2 h-2 animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                  </div>
+                )}
+              </div>
             </ScrollToBottom>
-            
-            {/* <div className="flex">
-            <button
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className="bg-gray-200 p-2 rounded-l-lg border-r"
-        >
-          😊
-        </button>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => {
-                  setNewMessage(e.target.value)
-                  handleTyping()
-                }}
-                onKeyPress={handleKeyPress}
-                className="flex-1 p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
-                placeholder="Type a message..."
-              />
-              <button
-                onClick={sendMessage}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg transition-colors"
-              >
-                Send
-              </button>
-            </div> */}
-
-
-
-            <div className="flex">
-            <button
-          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          className="bg-gray-200 p-2 rounded-l-lg border-r"
-        >
-          😊
-        </button>
-              <input
-                type="text"
-                value={newMessage}
-                onChange={(e) => {
-                  setNewMessage(e.target.value)
-                  handleTyping()
-                }}
-                onKeyPress={handleKeyPress}
-                className="flex-1 p-3 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
-                placeholder="Type a message..."
-              />
-              <input
-    type="file"
-    id="file-upload"
-    className="hidden"
-    accept="image/*,video/*,audio/*,.pdf" // Define acceptable file types
-    onChange={handleFileUpload}
-  />
-  <label
-    htmlFor="file-upload"
-    className="bg-gray-200 p-3 cursor-pointer hover:bg-gray-300 transition-colors"
-  >
-    📎 {/* Attachment icon */}
-  </label>
-              <button
-                onClick={sendMessage}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-r-lg transition-colors"
-              >
-                Send
-              </button>
+  
+            {/* Message input area */}
+            <div className="p-3 bg-white border-t relative">
+              <div className="flex rounded-lg overflow-hidden border">
+                <button
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="bg-gray-100 hover:bg-gray-200 p-3 transition-colors flex-shrink-0"
+                  aria-label="Emoji picker"
+                >
+                  😊
+                </button>
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => {
+                    setNewMessage(e.target.value);
+                    handleTyping();
+                  }}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1 p-3 focus:outline-none focus:ring-1 focus:ring-blue-300"
+                  placeholder="Type a message..."
+                />
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  accept="image/*,video/*,audio/*,.pdf"
+                  onChange={handleFileUpload}
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="bg-gray-100 hover:bg-gray-200 p-3 cursor-pointer transition-colors flex items-center justify-center flex-shrink-0"
+                  aria-label="Attach file"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                </label>
+                <button
+                  onClick={sendMessage}
+                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 transition-colors flex items-center justify-center flex-shrink-0"
+                  aria-label="Send message"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                </button>
+              </div>
+              {/* Emoji Picker Dropdown */}
+              {showEmojiPicker && (
+                <div className="absolute bottom-16 left-0 z-10">
+                  <EmojiPicker onEmojiClick={handleEmojiClick} />
+                </div>
+              )}
             </div>
-             {/* Emoji Picker Dropdown */}
-      {showEmojiPicker && (
-        <div className="absolute bottom-12 left-0">
-          <EmojiPicker onEmojiClick={handleEmojiClick} />
-        </div>
-      )}
           </>
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-lg">
+          <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-4 md:flex">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+            </svg>
+            <p className="text-gray-500 text-lg text-center">
               Select a contact to start chatting
             </p>
           </div>
         )}
       </div>
+  
+      {/* Incoming call notification */}
+      {incomingCall && (
+        <div className="fixed bottom-5 right-5 bg-white shadow-lg rounded-lg p-4 border border-gray-300 w-64 z-50 animate-bounce">
+          <p className="text-sm font-medium text-gray-700">
+            <span className="text-lg mr-2">📞</span> {incomingCall?.callerName} is calling...
+          </p>
+          <div className="flex justify-between mt-3">
+            <button
+              className="bg-green-500 text-white px-4 py-2 rounded-md text-sm hover:bg-green-600 w-full mr-2 flex items-center justify-center"
+              onClick={() => {
+                setIsVideoCallActive(true);
+                setRoomName(incomingCall.roomName);
+                window.location.href = `https://meet.jit.si/${incomingCall.roomName}`;
+                setIncomingCall(null);
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              Join
+            </button>
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded-md text-sm hover:bg-red-600 w-full flex items-center justify-center"
+              onClick={() => {
+                socket?.emit("callRejected", {
+                  callerId: incomingCall.callerId,
+                });
+                setIncomingCall(null);
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Reject
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-
-
 };
 
 export default ChatPage;

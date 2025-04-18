@@ -5,6 +5,7 @@ import { IInstructorService } from "../interfaces/instructor/IInstructorService"
 import S3Service from "../services/s3Service";
 import { throwError } from "../middlewares/errorMiddleware";
 import { HTTP_STATUS } from "../constants/httpStatus";
+import { QueryParams } from "../interfaces/courses/ICourse";
 
 
 export class InstructorController {
@@ -81,6 +82,7 @@ export class InstructorController {
     }
   }
 
+
   async fetchAllCourses(req: AuthRequest, res: Response): Promise<void> {
     try {
       if (!req.user) {
@@ -93,13 +95,22 @@ export class InstructorController {
         throwError(HTTP_STATUS.UNAUTHORIZED, "Unauthorized: Only instructors can fetch courses");
       }
       const instructorId = req.user.id;
+      const { page = "1", limit = "6", search = "" } = req.query as QueryParams;
 
-      const courses = await this._instructorService.fetchAllCourses(
-        instructorId
+      const coursesData = await this._instructorService.fetchAllCourses(
+        instructorId,
+        parseInt(page),
+        parseInt(limit),
+        search
       );
-      res
-        .status(HTTP_STATUS.OK)
-        .json({ success: true, message: "fetch all course", data: courses });
+
+      res.status(HTTP_STATUS.OK).json({
+        success: true,
+        message: "Fetched all courses",
+        data: coursesData?.courses,
+        totalPages: coursesData?.totalPages,
+        totalCourses: coursesData?.totalCourses,
+      });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
         res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })

@@ -9,6 +9,7 @@ import { enrollmentModel } from "../models/enrollmentModel";
 import { IReview } from "../interfaces/database/IReview";
 import { reviewModel } from "../models/reviewModel";
 import { courseModel } from "../models/courseModel";
+import { PaginationResult } from "../interfaces/courses/ICourse";
 
 export class StudentRepository implements IStudentRepository{
 
@@ -46,71 +47,107 @@ export class StudentRepository implements IStudentRepository{
         }
     }
 
-     async enrolledCourses(userId: string ):Promise<IEnrollment[] | null>{
-        try {
-          const enrolledCourses = await enrollmentModel.aggregate([
-            { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-            {
-              $lookup:{
-                from:'courses',
-                localField: 'courseId',
-                foreignField:'_id',
-                as:'courseDetails'
-              }
-            },
-            {
-              $unwind:'$courseDetails'
-            },
-            {
-                $lookup:{
-                    from: 'categories',
-                    localField: 'courseDetails.category',
-                    foreignField: '_id',
-                    as:'courseDetails.category'
-                }
-            },
-            {
-                $unwind:'$courseDetails.category'
-            },
-            {
-                $lookup:{
-                    from: 'users',
-                    localField: 'courseDetails.instructor',
-                    foreignField: '_id',
-                    as:'courseDetails.instructor'
-                }
-            },
-            {
-                $unwind:'$courseDetails.instructor'
-            },
-            {
-              $project: {
-                _id:1,
-                userId:1,
-                courseId:1,
-                enrolledAt:1,
-                completionStatus:1,
-                progress:1,
-                'courseDetails.title':1,
-                "courseDetails.description": 1,
-                "courseDetails.thumbnail": 1,
-                "courseDetails.category": 1,
-                "courseDetails.lessonCount": 1,
-                "courseDetails.instructor._id" :1,
-                "courseDetails.instructor.userName":1,
-                "courseDetails.instructor.profile.avatar":1,
-              }
-            }
-          ])
+
+    async enrolledCourses(
+      userId: string,
+      page: number,
+      limit: number,
+      search: string
+    ): Promise<PaginationResult> {
+      try {
+        const skip = (page - 1) * limit;
     
-          return  enrolledCourses;
+        // Single aggregation pipeline
+        const aggregationPipeline: mongoose.PipelineStage[] = [
+          { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+          {
+            $lookup: {
+              from: 'courses',
+              localField: 'courseId',
+              foreignField: '_id',
+              as: 'courseDetails',
+            },
+          },
+          { $unwind: '$courseDetails' },
+          {
+            $lookup: {
+              from: 'categories',
+              localField: 'courseDetails.category',
+              foreignField: '_id',
+              as: 'courseDetails.category',
+            },
+          },
+          { $unwind: '$courseDetails.category' },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'courseDetails.instructor',
+              foreignField: '_id',
+              as: 'courseDetails.instructor',
+            },
+          },
+          { $unwind: '$courseDetails.instructor' },
+          // Search filter if search term is provided
+          ...(search
+            ? [
+                {
+                  $match: {
+                    $or: [
+                      { 'courseDetails.title': { $regex: search, $options: 'i' } },
+                      ],
+                  },
+                },
+              ]
+            : []),
+          // Sorting, pagination, and projection
+          { $sort: { enrolledAt: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+          {
+            $project: {
+              _id: 1,
+              userId: 1,
+              courseId: 1,
+              enrolledAt: 1,
+              completionStatus: 1,
+              progress: 1,
+              'courseDetails.title': 1,
+              'courseDetails.description': 1,
+              'courseDetails.thumbnail': 1,
+              'courseDetails.category': 1,
+              'courseDetails.lessonCount': 1,
+              'courseDetails.instructor._id': 1,
+              'courseDetails.instructor.userName': 1,
+              'courseDetails.instructor.profile.avatar': 1,
+            },
+          },
+        ];
     
-        } catch (error) {
-          console.error("user Repository error: enrolled courses", error);
-          throw new Error(`${(error as Error).message}`);
-        }
+        // Execute aggregation for courses
+        const courses = await enrollmentModel.aggregate(aggregationPipeline);
+    
+        // Calculate total count for pagination
+        const countPipeline = aggregationPipeline.slice(0, -3); // Remove $skip, $limit, $project
+        countPipeline.push({ $count: 'total' });
+        const totalCount = await enrollmentModel.aggregate(countPipeline);
+        const total = totalCount.length > 0 ? totalCount[0].total : 0;
+        const totalPages = Math.ceil(total / limit);
+    
+        return {
+          courses,
+          pagination: {
+            currentPage: page,
+            totalPages,
+            pageSize: limit,
+            totalItems: total,
+          },
+        };
+      } catch (error) {
+        console.error('Student repository error: enrolled courses', error);
+        throw new Error(`${(error as Error).message}`);
       }
-    
+    }
+
       async studentCourseEnrollment(userId: string, courseId: string): Promise<IEnrollment| null> {
         try {
               const enrollment = await enrollmentModel
