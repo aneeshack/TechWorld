@@ -38,10 +38,15 @@ const StudentCourses = () => {
   };
 
   useEffect(() => {
+    // Reset to page 1 when search term changes
+    setCurrentPage(1);
+  }, [search]);
+  
+  useEffect(() => {
     if (user?._id) {
       fetchCourses(currentPage, search);
     }
-  }, [user?._id, currentPage]);
+  }, [user?._id, currentPage,search]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);

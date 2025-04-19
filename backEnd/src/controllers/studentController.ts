@@ -200,6 +200,7 @@ export class StudentController{
     async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
       try {
         res.set('Cache-Control', 'no-store');
+        console.log('inside fetch enrolled course',req.query)
         const { userId } = req.params;
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 2;
@@ -211,7 +212,7 @@ export class StudentController{
         }
   
         const result = await this._studentService.getEnrolledCourses(userId, page, limit, search);
-    console.log('serach result',result)
+        console.log('serach result',result)
         res.status(HTTP_STATUS.OK).json({
           success: true,
           message: "Fetched enrolled courses",
