@@ -24,7 +24,7 @@ studentRouter.post('/enrollment/updateProgress',authenticateStudent, studentCont
 
 // studentRouter.get('/enrolled/:userId', authenticateStudent, studentController.fetchEnrolledCourses.bind(studentController));
 studentRouter.get('/enrollment/:courseId', authenticateStudent, studentController.getEnrollment.bind(studentController));
-studentRouter.get('/enrolled/:userId', (req, res) => {
+studentRouter.get('/search/enrolled/:userId', (req, res) => {
     // Nuclear cache prevention
     res.set({
       'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
