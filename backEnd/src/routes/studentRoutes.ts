@@ -25,8 +25,19 @@ studentRouter.post('/enrollment/updateProgress',authenticateStudent, studentCont
 // studentRouter.get('/enrolled/:userId', authenticateStudent, studentController.fetchEnrolledCourses.bind(studentController));
 studentRouter.get('/enrollment/:courseId', authenticateStudent, studentController.getEnrollment.bind(studentController));
 studentRouter.get('/enrolled/:userId', (req, res) => {
-    console.log('TEST ROUTE HIT', req.params.userId, req.query);
-    res.json({ working: true });
+    // Nuclear cache prevention
+    res.set({
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
+      'Vary': '*'
+    });
+    
+    console.log('🔥 TEST ROUTE HIT', req.params.userId, req.query);
+    res.json({ 
+      working: true,
+      timestamp: Date.now() // Dynamic value prevents caching
+    });
   });
 studentRouter.post('/review/add/:courseId', authenticateStudent, studentController.updateReview.bind(studentController));
 studentRouter.get('/review/get/:courseId', authenticateStudent, studentController.getStudentReview .bind(studentController));
