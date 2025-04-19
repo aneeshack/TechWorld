@@ -85,6 +85,7 @@ export class InstructorController {
 
   async fetchAllCourses(req: AuthRequest, res: Response): Promise<void> {
     try {
+      res.set('Cache-Control', 'no-store');
       if (!req.user) {
         res
           .status(HTTP_STATUS.UNAUTHORIZED)

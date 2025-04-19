@@ -199,6 +199,7 @@ export class StudentController{
     
     async fetchEnrolledCourses(req: Request, res: Response): Promise<void> {
       try {
+        res.set('Cache-Control', 'no-store');
         const { userId } = req.params;
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 2;

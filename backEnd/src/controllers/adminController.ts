@@ -54,6 +54,7 @@ export class AdminController{
 
     async getAllUsers(req: Request, res: Response): Promise<void> {
         try {
+          res.set('Cache-Control', 'no-store');
           const page = parseInt(req.query.page as string) || 1;
           const limit = parseInt(req.query.limit as string) || 10;
           const search = req.query.search as string || '';
@@ -191,6 +192,7 @@ export class AdminController{
   
 async fetchPayments (req: Request, res: Response): Promise<void> {
   try {
+    res.set('Cache-Control', 'no-store');
     const { page = '1', limit = '10', search = '' } = req.query;
 
     const pageNum = parseInt(page as string, 10) || 1;
