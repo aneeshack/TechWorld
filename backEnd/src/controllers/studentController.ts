@@ -211,7 +211,7 @@ export class StudentController{
         }
   
         const result = await this._studentService.getEnrolledCourses(userId, page, limit, search);
-  
+  console.log('serach result',result)
         res.status(HTTP_STATUS.OK).json({
           success: true,
           message: "Fetched enrolled courses",
