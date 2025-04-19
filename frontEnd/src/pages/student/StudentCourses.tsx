@@ -26,7 +26,7 @@ const StudentCourses = () => {
     setLoading(true);
     try {
       const response = await CLIENT_API.get(
-        `/student/search/enrolled/${user?._id}?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}`
+        `/student/enrolled/${user?._id}?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}`
       );
       setEnrolledCourses(response.data.data);
       setPagination(response.data.pagination);
