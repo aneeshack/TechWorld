@@ -7,6 +7,8 @@ import { SignupFormData } from '../../types/IForm';
 import profilePic from '../../assets/commonPages/placeHolder.png';
 import { uploadToCloudinary } from '../../utilities/axios/UploadCloudinary';
 import { FormErrors } from '../../types/formErrors';
+import { updateUserProfile } from '../../redux/store/slices/UserSlice';
+import { useAppDispatch } from '../../hooks/Hooks';
 
 const InstructorProfile = () => {
   const user = useSelector((state: RootState) => state.auth.data);
@@ -18,6 +20,7 @@ const InstructorProfile = () => {
   const [formData, setFormData] = useState<Partial<SignupFormData>>({}); // Form state for editing
   const [avatarPreview, setAvatarPreview] = useState<string | null>((instructor?.profile?.avatar as string) || profilePic)
   const [errors, setErrors] = useState<FormErrors>({});
+  const dispatch = useAppDispatch()
 
   const validateForm =()=> {
     const newErrors :FormErrors ={};
@@ -96,10 +99,15 @@ const InstructorProfile = () => {
     try {
       if (!validateForm()) return;
       const response = await CLIENT_API.put(`/instructor/profile/${user?._id}`, formData);
-      setAvatarPreview(response.data.data.profile?.avatar)
-      setInstructor(response.data.data);
+      const updatedProfile = response.data.data
+      setAvatarPreview(updatedProfile.profile?.avatar)
+      setInstructor(updatedProfile);
       setIsEditing(false); 
       setErrors({});
+
+       // Update Redux store
+            dispatch(updateUserProfile(updatedProfile));
+
     } catch (err) {
       console.error('Error updating profile:', err);
       setError('Failed to update profile.');
@@ -383,7 +391,15 @@ const InstructorProfile = () => {
                     className="border-b-2 border-green-600 outline-none w-full"
                   />
                 ) : (
-                  <a href="#" className="text-green-600 hover:underline">{instructor?.cv}</a>
+                  // <a href="#" className="text-green-600 hover:underline">{instructor?.cv}</a>
+                  <a 
+                  href={instructor?.cv || ''} 
+                  className="text-green-600 hover:underline" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  View CV (PDF)
+                </a>
                 )}
               </div>
             </div>

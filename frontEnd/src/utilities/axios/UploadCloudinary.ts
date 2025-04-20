@@ -8,11 +8,19 @@ const cloudName = env.CLOUD_NAME;
 export const uploadToCloudinary = async(file: File|string|undefined):Promise<string> =>{
     console.log('name',presetName,cloudName)
     if(file === undefined) return ""
+
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset',presetName);
+
+    let resourceType = "image";
+
+    if (file instanceof File && file.type === "application/pdf") {
+        resourceType = "raw";
+    }
+    
     try {
-        const {data} = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, 
+        const {data} = await axios.post(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, 
         formData, 
         {withCredentials: false})
         console.log('image or data from cloudinary:',data,data.secure_url)

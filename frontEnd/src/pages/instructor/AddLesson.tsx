@@ -41,7 +41,7 @@ const AddLesson = () => {
           video: lessonData.video,
           course: lessonData.course,
         });
-
+        setThumbnailPreview(lessonData.thumbnail)
         // Fetch presigned URL for the video
         if (lessonData.video) {
           await fetchPresignedUrl();

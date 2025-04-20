@@ -48,105 +48,6 @@ export class StudentRepository implements IStudentRepository{
     }
 
 
-    // async enrolledCourses(
-    //   userId: string,
-    //   page: number,
-    //   limit: number,
-    //   search: string
-    // ): Promise<PaginationResult> {
-    //   try {
-    //     const skip = (page - 1) * limit;
-    
-    //     // Single aggregation pipeline
-    //     const aggregationPipeline: mongoose.PipelineStage[] = [
-    //       { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-    //       {
-    //         $lookup: {
-    //           from: 'courses',
-    //           localField: 'courseId',
-    //           foreignField: '_id',
-    //           as: 'courseDetails',
-    //         },
-    //       },
-    //       { $unwind: '$courseDetails' },
-    //       {
-    //         $lookup: {
-    //           from: 'categories',
-    //           localField: 'courseDetails.category',
-    //           foreignField: '_id',
-    //           as: 'courseDetails.category',
-    //         },
-    //       },
-    //       { $unwind: '$courseDetails.category' },
-    //       {
-    //         $lookup: {
-    //           from: 'users',
-    //           localField: 'courseDetails.instructor',
-    //           foreignField: '_id',
-    //           as: 'courseDetails.instructor',
-    //         },
-    //       },
-    //       { $unwind: '$courseDetails.instructor' },
-    //       // Search filter if search term is provided
-    //       ...(search
-    //         ? [
-    //             {
-    //               $match: {
-              
-    //                    'courseDetails.title': { $regex: search, $options: 'i' } 
-    //               },
-    //             },
-    //           ]
-    //         : []),
-    //       // Sorting, pagination, and projection
-    //       { $sort: { enrolledAt: -1 } },
-    //       { $skip: skip },
-    //       { $limit: limit },
-    //       {
-    //         $project: {
-    //           _id: 1,
-    //           userId: 1,
-    //           courseId: 1,
-    //           enrolledAt: 1,
-    //           completionStatus: 1,
-    //           progress: 1,
-    //           'courseDetails.title': 1,
-    //           'courseDetails.description': 1,
-    //           'courseDetails.thumbnail': 1,
-    //           'courseDetails.category': 1,
-    //           'courseDetails.lessonCount': 1,
-    //           'courseDetails.instructor._id': 1,
-    //           'courseDetails.instructor.userName': 1,
-    //           'courseDetails.instructor.profile.avatar': 1,
-    //         },
-    //       },
-    //     ];
-    
-    //     // Execute aggregation for courses
-        
-    //     // Calculate total count for pagination
-    //     const countPipeline = aggregationPipeline.slice(0, -3); // Remove $skip, $limit, $project
-    //     countPipeline.push({ $count: 'total' });
-    //     const totalCount = await enrollmentModel.aggregate(countPipeline);
-    //     const total = totalCount.length > 0 ? totalCount[0].total : 0;
-    //     const totalPages = Math.ceil(total / limit);
-        
-    //     const courses = await enrollmentModel.aggregate(aggregationPipeline);
-    //     return {
-    //       courses,
-    //       pagination: {
-    //         currentPage: page,
-    //         totalPages,
-    //         pageSize: limit,
-    //         totalItems: total,
-    //       },
-    //     };
-    //   } catch (error) {
-    //     console.error('Student repository error: enrolled courses', error);
-    //     throw new Error(`${(error as Error).message}`);
-    //   }
-    // }
-
     async enrolledCourses(
       userId: string,
       page: number,
@@ -156,12 +57,9 @@ export class StudentRepository implements IStudentRepository{
       try {
         const skip = (page - 1) * limit;
     
-        // Main aggregation pipeline
-        const pipeline: mongoose.PipelineStage[] = [
-          // Initial match for user
+        // Single aggregation pipeline
+        const aggregationPipeline: mongoose.PipelineStage[] = [
           { $match: { userId: new mongoose.Types.ObjectId(userId) } },
-    
-          // Course lookup and unwind
           {
             $lookup: {
               from: 'courses',
@@ -171,8 +69,6 @@ export class StudentRepository implements IStudentRepository{
             },
           },
           { $unwind: '$courseDetails' },
-    
-          // Category lookup and unwind
           {
             $lookup: {
               from: 'categories',
@@ -182,8 +78,6 @@ export class StudentRepository implements IStudentRepository{
             },
           },
           { $unwind: '$courseDetails.category' },
-    
-          // Instructor lookup and unwind
           {
             $lookup: {
               from: 'users',
@@ -193,60 +87,63 @@ export class StudentRepository implements IStudentRepository{
             },
           },
           { $unwind: '$courseDetails.instructor' },
-    
-          // Search filter
-          ...(search ? [{ $match: { 'courseDetails.title': { $regex: search, $options: 'i' } } }] : []),
-    
-          // Sorting
+          // Search filter if search term is provided
+          ...(search
+            ? [
+                {
+                  $match: {
+              
+                       'courseDetails.title': { $regex: search, $options: 'i' } 
+                  },
+                },
+              ]
+            : []),
+          // Sorting, pagination, and projection
           { $sort: { enrolledAt: -1 } },
-    
-          // Pagination
           { $skip: skip },
           { $limit: limit },
-    
-          // Projection
           {
             $project: {
+              _id: 1,
+              userId: 1,
+              courseId: 1,
+              enrolledAt: 1,
+              completionStatus: 1,
+              progress: 1,
               'courseDetails.title': 1,
               'courseDetails.description': 1,
               'courseDetails.thumbnail': 1,
               'courseDetails.category': 1,
               'courseDetails.lessonCount': 1,
+              'courseDetails.instructor._id': 1,
               'courseDetails.instructor.userName': 1,
               'courseDetails.instructor.profile.avatar': 1,
-              enrolledAt: 1,
-              completionStatus: 1,
-              progress: 1
             },
-          }
+          },
         ];
     
-        // Get paginated results
-        const [courses, total] = await Promise.all([
-          enrollmentModel.aggregate(pipeline),
-          enrollmentModel.aggregate([
-            ...pipeline
-              .filter(stage => !['$skip', '$limit', '$project'].includes(Object.keys(stage)[0]))
-              .slice(0, -3), // Remove pagination and projection
-            { $count: 'total' }
-          ])
-        ]);
-    
-        const totalItems = total[0]?.total || 0;
-        const totalPages = Math.ceil(totalItems / limit);
-    
+        // Execute aggregation for courses
+        
+        // Calculate total count for pagination
+        const countPipeline = aggregationPipeline.slice(0, -3); // Remove $skip, $limit, $project
+        countPipeline.push({ $count: 'total' });
+        const totalCount = await enrollmentModel.aggregate(countPipeline);
+        const total = totalCount.length > 0 ? totalCount[0].total : 0;
+        const totalPages = Math.ceil(total / limit);
+        
+        const courses = await enrollmentModel.aggregate(aggregationPipeline);
         return {
           courses,
           pagination: {
             currentPage: page,
             totalPages,
             pageSize: limit,
-            totalItems
-          }
+            totalItems: total,
+          },
         };
       } catch (error) {
-        console.error('Error fetching enrolled courses:', error);
-        throw new Error('Failed to retrieve enrolled courses');
+        console.error('Student repository error: enrolled courses', error);
+        throw new Error(`${(error as Error).message}`);
       }
     }
 

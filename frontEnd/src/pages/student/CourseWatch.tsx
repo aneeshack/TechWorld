@@ -26,6 +26,7 @@ const CourseWatching = () => {
 // Fetch existing review when component mounts
 useEffect(() => {
   const fetchReview = async () => {
+    console.log('courseid in course watch',courseId)
     try {
       const response = await CLIENT_API.get(`/student/review/get/${courseId}`);
       if (response.data) {
