@@ -190,6 +190,74 @@ export class AdminController{
     }
 
   
+    async fetchCourseRevenue(req:Request, res: Response):Promise<void>{
+      try {
+        
+        // Aggregate course-wise revenue
+        const courseRevenue = await paymentModel.aggregate([
+          {
+            $match: { status: 'completed' }, 
+          },
+          {
+            $group: {
+              _id: '$courseId', 
+              revenue: { $sum: '$amount' }, 
+            },
+          },
+          {
+            $lookup: {
+              from: 'courses',
+              localField: '_id',
+              foreignField: '_id',
+              as: 'course',
+            },
+          },
+          {
+            $unwind: '$course', 
+          },
+          {
+            $project: {
+              courseTitle: '$course.title', 
+              revenue: 1, 
+            },
+          },
+          {
+            $sort: { revenue: -1 }, 
+          },
+        ]);
+    
+        // Calculate total sales and total payments
+        const totalStats = await paymentModel.aggregate([
+          {
+            $match: { status: 'completed' }, // Optional: Include only completed payments
+          },
+          {
+            $group: {
+              _id: null,
+              totalSales: { $sum: '$amount' }, // Sum of all amounts
+              totalPayments: { $sum: 1 }, // Count of all documents
+            },
+          },
+        ]);
+    
+        // Extract totalSales and totalPayments (default to 0 if no data)
+        const totalSales = totalStats[0]?.totalSales || 0;
+        const totalPayments = totalStats[0]?.totalPayments || 0;
+    
+        // Send response in the expected format
+        res.status(200).json({
+          courseRevenue,
+          totalSales,
+          totalPayments,
+        });
+
+          
+      } catch (error: unknown) {
+          const message = error instanceof Error ? error.message :  MESSAGES.GENERIC_ERROR;
+            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
+        }
+  }
+
 async fetchPayments (req: Request, res: Response): Promise<void> {
   try {
     res.set('Cache-Control', 'no-store');

@@ -37,6 +37,7 @@ const AdminHome: React.FC = () => {
   const [totalPayments, setTotalPayments] = useState<number>(0);
   const limit = 3; // Payments per page
   const debouncedSearch = useDebounce(search, 500);
+  const [courseRevenue, setCourseRevenue] = useState<{ name: string; fullName: string; Sales: number }[]>([]);
 
   const exportToPDF = () => {
     const doc = new jsPDF();
@@ -60,8 +61,32 @@ const AdminHome: React.FC = () => {
     doc.save("sales_report.pdf");
   };
 
+  // Fetch course-wise revenue and total stats
+  const fetchCourseRevenue = async () => {
+    try {
+      const response = await CLIENT_API.get("/admin/courseRevenue");
+      const { courseRevenue, totalSales, totalPayments } = response.data;
+
+      const formattedData = courseRevenue
+        .map((item: { courseTitle: string; revenue: number }) => ({
+          name: item.courseTitle.length > 15 ? `${item.courseTitle.substring(0, 15)}...` : item.courseTitle,
+          fullName: item.courseTitle,
+          Sales: item.revenue,
+        }))
+        .sort((a: { Sales: number }, b: { Sales: number }) => b.Sales - a.Sales)
+        .slice(0, 10); // Limit to top 10 courses
+
+      setCourseRevenue(formattedData);
+      setTotalSales(totalSales);
+      setTotalPayments(totalPayments);
+    } catch (error) {
+      console.error("Error fetching course revenue", error);
+    }
+  };
+
   useEffect(() => {
     fetchPayments();
+    fetchCourseRevenue()
   }, [currentPage, debouncedSearch]);
 
   const fetchPayments = async () => {
@@ -71,10 +96,10 @@ const AdminHome: React.FC = () => {
         params: { page: currentPage, limit, search: debouncedSearch },
       });
       setPayments(response.data.payments);
-      setTotalPayments(response.data.totalPayments);
+      // setTotalPayments(response.data.totalPayments);
       setTotalPages(response.data.totalPages);
-      const total = response.data.payments.reduce((sum: number, payment: IPayment) => sum + (payment.amount ?? 0), 0);
-      setTotalSales(total);
+      // const total = response.data.payments.reduce((sum: number, payment: IPayment) => sum + (payment.amount ?? 0), 0);
+      // setTotalSales(total);
     } catch (error) {
       console.error("Error fetching payments", error);
     } finally {
@@ -336,6 +361,42 @@ const AdminHome: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-8">
+
+
+          {/* Top 10 Course-Wise Revenue Table */}
+          <div className="bg-white p-4 rounded-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-3 text-gray-800">Top 10 Courses by Revenue</h3>
+            <div className="overflow-x-auto">
+              {loading ? (
+                <div className="text-center py-10">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <p className="mt-2 text-gray-600">Loading course revenue...</p>
+                </div>
+              ) : courseRevenue.length === 0 ? (
+                <div className="text-center py-10">
+                  <p className="text-gray-600">No course revenue data available</p>
+                </div>
+              ) : (
+                <table className="w-full border-collapse border border-gray-300 text-sm sm:text-base">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border p-2 text-left">Course</th>
+                      <th className="border p-2 text-left">Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {courseRevenue.map((course) => (
+                      <tr key={course.fullName} className="hover:bg-gray-50">
+                        <td className="border p-2">{course.fullName}</td>
+                        <td className="border p-2 font-medium">₹{course.Sales.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+          
           {/* Monthly Sales Trend Line Chart */}
           <div className="bg-white p-4 rounded-lg border border-gray-200">
             <h3 className="text-lg font-semibold mb-3 text-gray-800">Monthly Sales Trend</h3>

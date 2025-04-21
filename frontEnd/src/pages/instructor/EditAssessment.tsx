@@ -95,6 +95,17 @@ export default function EditAssessment() {
     }
   };
 
+
+   // Delete a question
+   const deleteQuestion = (qIndex: number) => {
+    if (questions.length === 1) {
+      toast.error("At least one question is required.");
+      return;
+    }
+    const updatedQuestions = questions.filter((_, index) => index !== qIndex);
+    setQuestions(updatedQuestions);
+  };
+  
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
@@ -102,9 +113,19 @@ export default function EditAssessment() {
 
         {questions.map((question, qIndex) => (
           <div key={qIndex} className="mb-6">
+            <div className="flex justify-between items-center">
             <label className="block text-green-700 font-semibold mb-1">
               Question {qIndex + 1}
             </label>
+            {questions.length > 1 && (
+                <button
+                  className="text-red-600 hover:text-red-800 font-semibold"
+                  onClick={() => deleteQuestion(qIndex)}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
             <textarea
               className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               value={question.question}

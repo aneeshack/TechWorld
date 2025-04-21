@@ -236,4 +236,5 @@ export class AdminService{
           throw new Error(`Failed to generate presigned URL: ${(error as Error).message}`);
         }
       }
+      
 }

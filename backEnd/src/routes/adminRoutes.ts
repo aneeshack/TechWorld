@@ -31,6 +31,7 @@ adminRouter.get('/category/getPresignedUrl/:categoryId', authenticateAdmin, admi
 
 
 adminRouter.get('/salesReport', authenticateAdmin, adminController.fetchPayments.bind(adminController));
+adminRouter.get('/courseRevenue', authenticateAdmin, adminController.fetchCourseRevenue.bind(adminController));
 
 
 export default adminRouter;

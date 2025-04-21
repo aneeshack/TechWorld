@@ -128,6 +128,7 @@ const InstructorHome = () => {
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Students</th>
+                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
@@ -151,6 +152,7 @@ const InstructorHome = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{course.price.toFixed(2)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{course.studentsCount || 0}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{(course.price * (course.studentsCount||0)).toFixed(2)}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <Link to={`/instructor/dashboard/editCourse/${course._id}`}>
                           <button className="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
