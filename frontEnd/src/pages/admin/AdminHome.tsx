@@ -35,7 +35,7 @@ const AdminHome: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalPayments, setTotalPayments] = useState<number>(0);
-  const limit = 3; // Payments per page
+  const limit = 5; // Payments per page
   const debouncedSearch = useDebounce(search, 500);
   const [courseRevenue, setCourseRevenue] = useState<{ name: string; fullName: string; Sales: number }[]>([]);
 
@@ -96,10 +96,8 @@ const AdminHome: React.FC = () => {
         params: { page: currentPage, limit, search: debouncedSearch },
       });
       setPayments(response.data.payments);
-      // setTotalPayments(response.data.totalPayments);
       setTotalPages(response.data.totalPages);
-      // const total = response.data.payments.reduce((sum: number, payment: IPayment) => sum + (payment.amount ?? 0), 0);
-      // setTotalSales(total);
+
     } catch (error) {
       console.error("Error fetching payments", error);
     } finally {
