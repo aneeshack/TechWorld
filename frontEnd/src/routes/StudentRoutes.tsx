@@ -9,6 +9,9 @@ import ConductAssessment from "../pages/student/ConductAssessment"
 import ChatPage from "../pages/commonPages/ChatPage"
 import CourseCertificate from "../pages/student/CourseCertificate"
 import ErrorPage from "../pages/commonPages/ErrorPage"
+import DiscussionForum from "../pages/commonPages/DiscussionForum"
+import ForumsPage from "../pages/student/ForumList"
+// import DiscussionDetail from "../pages/commonPages/DiscussionDetail"
 
 
 const StudentRoutes = () => {
@@ -26,6 +29,9 @@ const StudentRoutes = () => {
               <Route path="assessment/:lessonId" element={<ConductAssessment/>}/>
               <Route path="chat" element={<ChatPage/>}/>
               <Route path="certificate/:courseId" element={<CourseCertificate/>}/>
+              <Route path="forum/:courseId" element={<DiscussionForum/>}/>
+              <Route path="forums" element={<ForumsPage/>}/>
+              {/* <Route path="discussion/:discussionId" element={<DiscussionDetail/>}/> */}
 
 
             <Route path="*" element={<ErrorPage />} />

@@ -78,6 +78,7 @@ export class InstructorController {
         });
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "An unexpected error occurred";
+      console.log('message in controller',message)
         res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success:false, message: message })
     }
   }

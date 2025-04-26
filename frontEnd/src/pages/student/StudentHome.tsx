@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Award,
   Book,
+  ChevronRight,
   Clock,
   Menu,
   PieChart,
@@ -17,6 +18,9 @@ const StudentHome = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const user = useSelector((state: RootState) => state.auth.data);
   const [enrollments, setEnrollments] = useState<IEnrollment[] | null>([]);
+  const [showAll, setShowAll]= useState(false)
+
+
   const initialStats: Record<IEnrollment["completionStatus"], number> = {
     enrolled: 0,
     "in-progress": 0,
@@ -52,6 +56,8 @@ const StudentHome = () => {
     return acc;
   }, initialStats);
 
+  const displayEnrollments = showAll ? enrollments: enrollments?.slice(0,3)
+
   return (
     <div className="flex  bg-gray-50">
       <div className="lg:hidden fixed top-0 left-0 z-20 m-4">
@@ -66,16 +72,22 @@ const StudentHome = () => {
       {/* Main Content */}
       <div className="flex-1 overflow-x-hidden overflow-y-auto p-4 lg:p-8">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-800">
-              Hello, {user?.userName}!
-            </h1>
-            <p className="mt-1 text-gray-600">
-              Welcome back to your learning dashboard
-            </p>
-          </div>
-        </div>
+
+    <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-800">
+          Hello, <span className="text-transparent text-4xl bg-clip-text bg-gradient-to-r from-purple-500 to-blue-500">{user?.userName}!</span> 
+        </h1>
+        <p className="mt-1 text-gray-600">
+          Ready to continue your learning journey today?
+        </p>
+      </div>
+      <div className="mt-4 md:mt-0">
+        <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:opacity-90 transition">
+          <a href="/student/dashboard/courses">Resume Learning</a>
+        </button>
+      </div>
+    </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -156,7 +168,7 @@ const StudentHome = () => {
               <div className="p-6">
                 {enrollments && enrollments.length > 0 ? (
                   <div className="space-y-6">
-                    {enrollments.map((enrollment) => (
+                    {displayEnrollments && displayEnrollments.map((enrollment) => (
                       <div
                         key={enrollment?._id}
                         className="flex flex-col md:flex-row border rounded-lg overflow-hidden"
@@ -236,15 +248,16 @@ const StudentHome = () => {
                   </p>
                 )}
               </div>
-              {/* <div className="px-6 py-3 border-t text-right">
+              <div className="px-6 py-3 border-t text-right">
                 <a
                   href="#"
+                  onClick={()=> setShowAll(!showAll)}
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center justify-end"
                 >
-                  View all courses
+                  {showAll ? 'Show Less': 'View All Courses'}
                   <ChevronRight size={16} className="ml-1" />
                 </a>
-              </div> */}
+              </div>
             </div>
           </div>
         </div>

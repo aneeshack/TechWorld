@@ -103,7 +103,7 @@ const ConductAssessment = () => {
         </div>
       ) : (
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-green-600">Your Score: {score} out of {totalScore}</h2>
+          <h2 className="text-2xl font-bold text-blue-600">Your Score: {score} out of {totalScore}</h2>
           <p className="mt-2 text-gray-600">
             {score !== null && score >= totalScore * 0.7 ? 
               "Congratulations! You passed the assessment." : 

@@ -8,6 +8,7 @@ import { courseModel } from "../models/courseModel";
 import { lessonModel } from "../models/lessonModel";
 import { IUser } from "../interfaces/database/IUser";
 import UserModel from "../models/userModel";
+import { throwError } from "../middlewares/errorMiddleware";
 
 export class InstructorRepository implements IInstructorRepository{
 
@@ -38,7 +39,13 @@ export class InstructorRepository implements IInstructorRepository{
 
     async editCourse(courseId: string, updateData: Partial<ICourse>): Promise<ICourse | null> {
         try {
-            const course = courseModel.findByIdAndUpdate(courseId, updateData,{new: true})
+            console.log('course ', updateData)
+            const existingCourse = await courseModel.find({instructor:updateData._id, title:updateData.title})
+
+            if(existingCourse){
+              throwError(409,'Course Already exist')
+            }
+            const course = await courseModel.findByIdAndUpdate(courseId, updateData,{new: true})
             if(!course){
                 throw new Error('course does not exist')
             }

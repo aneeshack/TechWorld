@@ -15,20 +15,12 @@ import chatRouter from '../routes/chatRoutes';
 import morgan from "morgan";
 import { errorHandler } from '../middlewares/errorMiddleware';
 import helmet from 'helmet';
-// import rateLimit from 'express-rate-limit';
+import discussionRouter from "../routes/discussionRoutes";
 
 const app = express();
 const server = createServer(app);
 app.use(helmet()); 
 
-
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100, // Limit each IP to 100 requests per windowMs
-//   message: "Too many requests, please try again later.",
-// });
-
-// app.use(limiter);
 
 const io = new Server(server, {
   cors: {
@@ -65,6 +57,7 @@ app.use('/user', userRouter);
 app.use('/instructor', instructorRouter);
 app.use('/student', studentRouter);
 app.use('/chats', chatRouter);
+app.use('/discussion', discussionRouter);
 
 app.use(errorHandler)
 

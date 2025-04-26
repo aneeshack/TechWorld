@@ -28,6 +28,7 @@ export class UserRepository implements IUserRepository {
       throw new Error(`${(error as Error).message}`);
     }
   }
+  
   async findCourses(
     searchTerm: string = "",
     categoryIds: string[] = [],

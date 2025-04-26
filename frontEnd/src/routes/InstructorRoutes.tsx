@@ -10,6 +10,8 @@ import Assessment from "../pages/instructor/Assessment"
 import EditAssessment from "../pages/instructor/EditAssessment"
 import ChatPage from "../pages/commonPages/ChatPage"
 import ErrorPage from "../pages/commonPages/ErrorPage"
+import DiscussionForum from "../pages/commonPages/DiscussionForum"
+import InstructorForum from "../pages/instructor/InstructorForum"
 
 
 const InstructorRoutes = () => {
@@ -31,6 +33,9 @@ const InstructorRoutes = () => {
         <Route path="addAssessment/:lessonId" element={<Assessment/>}/>
         <Route path="editAssessment/:lessonId" element={<EditAssessment/>}/>
         <Route path="chat" element={<ChatPage/>}/>
+        <Route path="forum/:courseId" element={<DiscussionForum/>}/>
+        <Route path="forums" element={<InstructorForum/>}/>
+
         
         <Route path="*" element={<ErrorPage />} />
         </Route>

@@ -245,7 +245,7 @@ useEffect(() => {
           <div className="mt-4 flex justify-center">
             <button
               onClick={viewCertificate}
-              className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition flex items-center"
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center"
             >
               <span className="mr-2">🏆</span> View Course Certificate
             </button>
@@ -287,7 +287,7 @@ useEffect(() => {
         className={`mt-2 px-4 py-2 text-white rounded-md transition ${
           loading
             ? "bg-gray-400 cursor-not-allowed"
-            : "bg-green-600 hover:bg-green-700"
+            : "bg-blue-600 hover:bg-blue-700"
         }`}
       >
         {loading ? "Submitting..." : "Submit Review"}
@@ -318,7 +318,7 @@ useEffect(() => {
             </p>
             {/* Chat with Instructor Button */}
             <button
-              className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-blue-700 transition"
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
               onClick={() => openChatWithInstructor()}
             >
               💬 Chat with Instructor
@@ -334,7 +334,7 @@ useEffect(() => {
                 <a
                   href={selectedLesson.pdf}
                   download
-                  className="inline-block px-4 py-2 bg-green-600 text-white rounded-md hover:bg-blue-700 transition"
+                  className="inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
                 >
                   Download PDF Notes
                 </a>
@@ -370,13 +370,13 @@ useEffect(() => {
                 
                 {/* Add check mark for completed lessons */}
                 {enrollmentData?.progress?.completedLessons?.includes(lesson._id) && (
-                  <span className="ml-2 text-green-600">✓</span>
+                  <span className="ml-2 text-blue-600">✓</span>
                 )}
               </div>
               {lesson.assessment?.length ? (
                 <div className="mt-2 ml-9">
                   <Link to={`/student/dashboard/assessment/${lesson._id}`}>
-                    <button className="text-sm px-3 py-1 bg-green-600 text-white rounded-md hover:bg-blue-700 transition">
+                    <button className="text-sm px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                       Take Assessment
                     </button>
                   </Link>

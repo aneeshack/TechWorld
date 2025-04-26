@@ -26,4 +26,6 @@ userRouter.post('/payment/process', authenticateStudent,paymentLimiter, userCont
 userRouter.get('/payment/status/:sessionId', authenticateStudent, userController.getPaymentSession.bind(userController));
 userRouter.post('/course/enrolled', authenticateStudent, userController.courseEnrollment.bind(userController));
 
+
+
 export default userRouter;

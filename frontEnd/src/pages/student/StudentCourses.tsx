@@ -20,7 +20,7 @@ const StudentCourses = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [search, setSearch] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [limit] = useState<number>(2);
+  const [limit] = useState<number>(3);
 
   const fetchCourses = async (page: number, searchTerm: string = "") => {
     setLoading(true);
@@ -58,7 +58,7 @@ const StudentCourses = () => {
   };
 
   return (
-    <div className="p-8 my-5 mx-5 shadow-lg">
+    <div className="p-8 my-5 mx-5 ">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Enrolled Courses</h2>
         <form onSubmit={handleSearch} className="flex">

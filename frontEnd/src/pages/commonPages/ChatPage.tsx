@@ -665,7 +665,7 @@ const ChatPage = () => {
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden">
       {/* Contacts sidebar - hide on mobile when chat is selected */}
-      <div className={`${selectedInstructor ? 'hidden md:block' : 'block'} w-full md:w-1/3 lg:w-1/4 bg-gray-100 p-4 h-[80vh] overflow-y-auto`}>
+      <div className={`${selectedInstructor ? 'hidden md:block' : 'block'} w-full md:w-1/3 lg:w-1/4 bg-gray-100 p-4 h-full overflow-y-auto`}>
         <h2 className="text-lg font-semibold mb-4">
           {user?.role === Role.Student ? "Instructors" : "Students"}
         </h2>
@@ -727,7 +727,7 @@ const ChatPage = () => {
       </div>
   
       {/* Chat area - show on mobile only when chat is selected */}
-      <div className={`${selectedInstructor ? 'block' : 'hidden md:block'} w-full md:w-2/3 lg:w-3/4 flex flex-col h-[80vh]`}>
+      <div className={`${selectedInstructor ? 'block' : 'hidden md:block'} w-full md:w-2/3 lg:w-3/4 flex flex-col h-full`}>
         {selectedInstructor ? (
           <>
             {/* Chat header */}

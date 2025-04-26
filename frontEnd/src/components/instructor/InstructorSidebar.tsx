@@ -10,7 +10,7 @@ import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
 import { Response } from "../../types/IForm";
 import { toast } from "react-toastify";
-import { MenuIcon, MessageCircle, User, XIcon } from "lucide-react";
+import { MenuIcon, MessageCircle, MessageSquare, User, XIcon } from "lucide-react";
 import { useSocket } from "../../context/Sockets";
 
 
@@ -154,6 +154,22 @@ const InstructorSidebar: React.FC = () => {
               <span className="font-medium hover:text-white">Profile</span>
             </NavLink>
           </li>
+          <li>
+              <NavLink
+                to="/instructor/dashboard/forums"
+                className={({ isActive }) =>
+                  `flex items-center justify-center lg:justify-start space-x-0 lg:space-x-3 px-2 lg:px-4 py-3 rounded-lg transition-all duration-300 group ${
+                    isActive 
+                      ? "bg-white text-blue-700 shadow-md" 
+                      : "bg-blue-800/30 text-white hover:bg-blue-600/50"
+                  }`
+                }
+              >
+                <MessageSquare className="h-5 w-5" />
+                <span className="hidden lg:inline font-medium">Forums</span>
+              </NavLink>
+            </li>
+
           {/* <li>
             <NavLink
               to="/courses"

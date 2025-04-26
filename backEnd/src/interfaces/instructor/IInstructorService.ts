@@ -8,12 +8,12 @@ export interface IInstructorService{
     getCategories(): Promise<CategoryEntity[]>;
     createCourse(courseData: Partial<ICourse>): Promise<ICourse | null>;
     updateCourse(courseId: string,courseData: Partial<ICourse>): Promise<ICourse | null>;
-fetchAllCourses(
-    instructorId: mongoose.Types.ObjectId,
-    page: number,
-    limit: number,
-    search: string
-  ): Promise<{ courses: ICourse[]; totalPages: number; totalCourses: number } | null>    
+    fetchAllCourses(
+        instructorId: mongoose.Types.ObjectId,
+        page: number,
+        limit: number,
+        search: string
+    ): Promise<{ courses: ICourse[]; totalPages: number; totalCourses: number } | null>    
    fetchCourse(courseId: string): Promise<ICourse | null>;
     getPresignedUrl(fileName: string,fileType: string): Promise<{ presignedUrl: string; videoUrl: string }>;
     addLesson(lessonData: Partial<ILesson>): Promise<ILesson | null>;

@@ -57,8 +57,12 @@ const CreateCourse = () => {
               navigate('/instructor/dashboard/courses')
               toast.success("Course updated successfully.");
             }
+            
           })
-          .catch((error) => console.error("Error updating course", error));
+          .catch((error) => { 
+            const message = error.response?.data?.message || 'Course already exists';
+            toast.error(message);
+            console.error("Error updating course", error)});
       } else {
     CLIENT_API.post(`/instructor/course/add`,values)
       .then((response) => {

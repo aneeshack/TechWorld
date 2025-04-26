@@ -33,9 +33,9 @@ const PurchaseHistory = () => {
       case 'completed':
       case 'success':
         return {
-          icon: <CheckCircle size={16} className="text-green-500" />,
-          bgColor: 'bg-green-50',
-          textColor: 'text-green-700'
+          icon: <CheckCircle size={16} className="text-blue-500" />,
+          bgColor: 'bg-blue-50',
+          textColor: 'text-blue-700'
         };
       case 'pending':
         return {
@@ -65,7 +65,7 @@ const PurchaseHistory = () => {
     .reduce((sum, purchase) => sum + (purchase?.amount || 0), 0);
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-3 sm:p-6 bg-white rounded-lg shadow-md my-4 sm:my-10">
+    <div className="w-full max-w-6xl mx-auto p-3 sm:p-6 bg-white  my-4 sm:my-10">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-200">
         <div>

@@ -162,7 +162,7 @@ const StudentProfile = () => {
     <div className="max-w-6xl mx-auto p-6 lg:w-5/6 bg-white rounded-lg shadow-md my-10">
       {/* Header with student basic info */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6 pb-6 border-b">
-        <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center">
+        <div className="w-32 h-32 bg-blue-100 rounded-full flex items-center justify-center">
           {/* <img src={avatarPreview?? profilePic} alt="profile picture" className="w-full h-full object-cover rounded-full" /> */}
           {isEditing ? (
     <label className="w-full h-full rounded-full cursor-pointer">
@@ -225,7 +225,7 @@ const StudentProfile = () => {
                 name="qualification"
                 value={formData.qualification || ''}
                 onChange={handleInputChange}
-                className="border-b-2 border-green-600 outline-none"
+                className="border-b-2 border-blue-600 outline-none"
               />
             ) : (
               <span>Qualification: {student.qualification}</span>
@@ -237,13 +237,13 @@ const StudentProfile = () => {
       {/* Tabs Navigation */}
       <div className="flex border-b mt-6">
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'profile' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'profile' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('profile')}
         >
           Profile
         </button>
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'contact' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'contact' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('contact')}
         >
           Contact
@@ -262,7 +262,7 @@ const StudentProfile = () => {
                   name="qualification"
                   value={formData.qualification || ''}
                   onChange={handleInputChange}
-                  className="w-full border border-green-600 rounded p-2 outline-none"
+                  className="w-full border border-blue-600 rounded p-2 outline-none"
                 />
                 {errors.qualification && (
                   <p className="text-red-500 text-sm mt-1">{errors.qualification}</p>
@@ -282,7 +282,7 @@ const StudentProfile = () => {
                   name="dateOfBirth"
                   value={formData.profile?.dateOfBirth || ''}
                   onChange={handleInputChange}
-                  className="w-full border border-green-600 rounded p-2 outline-none"
+                  className="w-full border border-blue-600 rounded p-2 outline-none"
                 />
                 {errors.dateOfBirth && (
                   <p className="text-red-500 text-sm mt-1">{errors.dateOfBirth}</p>
@@ -302,7 +302,7 @@ const StudentProfile = () => {
                   name="gender"
                   value={formData.profile?.gender || ''}
                   onChange={handleInputChange}
-                  className="w-full border border-green-600 rounded p-2 outline-none"
+                  className="w-full border border-blue-600 rounded p-2 outline-none"
                 >
                   <option value="">Select Gender</option>
                   <option value="Male">Male</option>
@@ -333,7 +333,7 @@ const StudentProfile = () => {
                     name="phoneNumber"
                     value={formData.contact?.phoneNumber || ''}
                     onChange={handleInputChange}
-                    className="border-b-2 border-green-600 outline-none w-full"
+                    className="border-b-2 border-blue-600 outline-none w-full"
                   />
                   {errors.phoneNumber && (
                     <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
@@ -361,7 +361,7 @@ const StudentProfile = () => {
       <div className="mt-8 flex gap-4">
         <button
           onClick={() => (isEditing ? handleUpdateProfile() : setIsEditing(true))}
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           {isEditing ? 'Save Changes' : 'Edit Profile'}
         </button>
