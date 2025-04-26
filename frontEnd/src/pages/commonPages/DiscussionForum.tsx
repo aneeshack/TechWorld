@@ -15,7 +15,7 @@ const DiscussionForum = () => {
   const [sortOption, setSortOption] = useState('recent');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  // const [totalPages, setTotalPages] = useState(1);
   const user = useSelector((state:RootState)=>state.auth.data)
   const [upvotedDiscussions, setUpvotedDiscussions] = useState<Set<string>>(new Set());
   const [newReplies, setNewReplies] = useState<{ [key: string]: string }>({});
@@ -43,7 +43,8 @@ const DiscussionForum = () => {
         console.log('response',response.data)
         if (response.data.success) {
           setDiscussions(response.data.discussions);
-          setTotalPages(response.data.pages);
+          setPage(page)
+          // setTotalPages(response.data.pages);
         } else {
           toast.error('Failed to load discussions');
         }
