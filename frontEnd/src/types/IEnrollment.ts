@@ -1,4 +1,7 @@
-
+export  interface IFinalAssessment {
+  completed: boolean;
+  score: number;
+}
 
 export interface IEnrollment{
   _id:string,
@@ -8,7 +11,7 @@ export interface IEnrollment{
   completionStatus: "enrolled" | "in-progress" | "completed";
   progress: {
     completedLessons: string[];
-    completedAssessments: string[];
+    finalAssessment: IFinalAssessment;
     overallCompletionPercentage: number;
   };
   createdAt?: Date;

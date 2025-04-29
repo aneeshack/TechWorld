@@ -227,6 +227,7 @@ export class StudentController{
     
     async getEnrollment(req: AuthRequest, res: Response): Promise<void> {
       try {
+        console.log('inside enrollemnt')
         const { courseId } = req.params; 
         const userId = req.user?.id
     
@@ -242,7 +243,7 @@ export class StudentController{
         }
     
         const enrollment = await this._studentService.getEnrollment(userId.toString(),courseId);
-    
+        console.log('enrollment',enrollment)
         res.status(HTTP_STATUS.OK).json({ success: true, message: "Fetched enrollment of courses", data: enrollment });
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : "An unexpected error occurred";
@@ -297,5 +298,37 @@ export class StudentController{
           console.error("Error fetching review:", error);
           res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
       }
+    }
+
+
+    async submitFinalExam(req: Request, res: Response): Promise<void> {
+      try {
+        const { userId, courseId, score } = req.body;
+  
+        // Validate input
+        if (!userId || !courseId || score === undefined) {
+          res.status(400).json({ message: "Missing required fields: userId, courseId, score" });
+          return;
+        }
+  
+        if (typeof score !== "number" || score < 0 || score > 100) {
+          res.status(400).json({ message: "Score must be a number between 0 and 100" });
+          return;
+        }
+  
+        const updatedEnrollment = await this._studentService.submitFinalExam(
+          userId,
+          courseId,
+          score
+        );
+  
+        res.status(200).json({
+          message: "Assessment submitted successfully",
+          data: updatedEnrollment,
+        });
+      } catch (error: unknown) {
+        console.error("Error in submit exam:", error);
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Internal server error" });
+        }
     }
 }

@@ -110,12 +110,12 @@ export default function Assessment() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 text-center mb-4">Add Assessment</h2>
+        <h2 className="text-2xl font-bold text-indigo-700 text-center mb-4">Add Assessment</h2>
 
         {questions.map((question, qIndex) => (
           <div key={qIndex} className="mb-6 relative">
             <div className="flex justify-between items-center">
-            <label className="block text-green-700 font-semibold mb-1">
+            <label className="block text-indigo-700 font-semibold mb-1">
               Question {qIndex + 1}
             </label>
             {questions.length > 1 && (
@@ -128,17 +128,17 @@ export default function Assessment() {
               )}
             </div>
             <textarea
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
               value={question.question}
               onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
             />
             <div className="mt-4">
-              <label className="block text-green-700 font-semibold mb-1">Options</label>
+              <label className="block text-indigo-700 font-semibold mb-1">Options</label>
               {question?.options?.map((option, oIndex) => (
                 <div key={oIndex} className="flex items-center gap-2 mb-2">
                   <input
                     type="text"
-                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     placeholder={`Option ${oIndex + 1}`}
                     value={option.text}
                     onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
@@ -148,7 +148,7 @@ export default function Assessment() {
                     name={`correctAnswer-${qIndex}`}
                     checked={option.isCorrect}
                     onChange={() => handleCorrectAnswer(qIndex, oIndex)}
-                    className="h-5 w-5 text-green-500"
+                    className="h-5 w-5 text-indigo-500"
                   />
                 </div>
               ))}
@@ -166,7 +166,7 @@ export default function Assessment() {
         )}
 
         <button
-          className="w-full mt-6 bg-green-700 text-white font-bold py-2 rounded-lg hover:bg-green-800 transition"
+          className="w-full mt-6 bg-indigo-700 text-white font-bold py-2 rounded-lg hover:bg-indigo-800 transition"
           onClick={saveAssessment}
         >
           Save Assessment

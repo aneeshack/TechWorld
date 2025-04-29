@@ -581,36 +581,6 @@ const DiscussionForum = () => {
         </div>
         
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Popular Tags</h3>
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center">
-              <Tag className="w-3 h-3 mr-1" />React
-              <span className="ml-1 text-xs bg-blue-100 text-blue-800 rounded-full px-1.5">32</span>
-            </span>
-            <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center">
-              <Tag className="w-3 h-3 mr-1" />JavaScript
-              <span className="ml-1 text-xs bg-blue-100 text-blue-800 rounded-full px-1.5">28</span>
-            </span>
-            <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center">
-              <Tag className="w-3 h-3 mr-1" />Node.js
-              <span className="ml-1 text-xs bg-blue-100 text-blue-800 rounded-full px-1.5">26</span>
-            </span>
-            <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center">
-              <Tag className="w-3 h-3 mr-1" />MongoDB
-              <span className="ml-1 text-xs bg-blue-100 text-blue-800 rounded-full px-1.5">19</span>
-            </span>
-            <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center">
-              <Tag className="w-3 h-3 mr-1" />Express
-              <span className="ml-1 text-xs bg-blue-100 text-blue-800 rounded-full px-1.5">17</span>
-            </span>
-            <span className="text-sm bg-blue-50 text-blue-700 px-3 py-1 rounded-full flex items-center">
-              <Tag className="w-3 h-3 mr-1" />CSS
-              <span className="ml-1 text-xs bg-blue-100 text-blue-800 rounded-full px-1.5">15</span>
-            </span>
-          </div>
-        </div>
-        
-        <div className="mb-8">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Top Contributors</h3>
           <div className="space-y-3">
             {topContributors.length > 0 ? (

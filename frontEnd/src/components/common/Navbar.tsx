@@ -124,7 +124,7 @@ const Navbar = () => {
 
   return (
     <div className="sticky top-0 z-50 shadow-md">
-      <nav className="bg-white border-b py-3">
+      <nav className="bg-white border-b ">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-between h-16">
             {/* Mobile menu button */}
@@ -170,7 +170,7 @@ const Navbar = () => {
               {(userData?.role === Role.Instructor|| userData?.role === Role.Student ||userData?.role===Role.Admin) ? (
                 <div className="relative user-dropdown">
                   <div
-                    className="flex items-center gap-2 p-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
+                    className="flex items-center gap-2  border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                     onClick={toggleDropDown}
                   >
                     <img

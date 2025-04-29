@@ -11,5 +11,10 @@ export interface IStudentService{
     // getEnrolledCourses(userId: string): Promise<IEnrollment[] |null>
     getEnrolledCourses(userId: string, page: number, limit: number, search: string): Promise<PaginationResult>    
     getEnrollment(userId: string, courseId: string): Promise<IEnrollment |null>;
-    addReview(userId: string, courseId: string,rating: string, reviewText:string): Promise<IReview |null>
+    addReview(userId: string, courseId: string,rating: string, reviewText:string): Promise<IReview |null>;
+    submitFinalExam(
+              userId: string,
+              courseId: string,
+              score: number
+            ): Promise<IEnrollment>
 }

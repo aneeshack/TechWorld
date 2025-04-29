@@ -4,6 +4,7 @@ import { IUser } from "../interfaces/database/IUser";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 import { IReview } from "../interfaces/database/IReview";
 import { PaginationResult } from "../interfaces/courses/ICourse";
+import { courseModel } from "../models/courseModel";
 
 export class StudentService{
     constructor(private _studentRepository: IStudentRepository){}
@@ -103,4 +104,45 @@ export class StudentService{
             throw new Error(`${(error as Error).message}`)
           }
         }
+
+        async submitFinalExam(
+          userId: string,
+          courseId: string,
+          score: number
+        ): Promise<IEnrollment> {
+          // Find the enrollment
+          const enrollment = await this._studentRepository.findByUserAndCourse(userId, courseId);
+          if (!enrollment) {
+            throw new Error("Enrollment not found");
+          }
+      
+          // Calculate overallCompletionPercentage
+          // const totalLessons = await this.getTotalLessons(courseId);
+          // const completedLessons = enrollment.progress.completedLessons.length;
+          // const lessonCompletionPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 50 : 0; // 50% weight for lessons
+          // const examPercentage = (score / 100) * 50; // 50% weight for exam (score is already a percentage)
+          // const overallCompletionPercentage = Math.min(100, lessonCompletionPercentage + examPercentage);
+      
+          // Update final assessment and completion percentage
+          const updatedEnrollment = await this._studentRepository.updateFinalAssessment(
+            enrollment._id.toString(),
+            {
+              completed: true, // Mark as completed since the exam is submitted
+              score, // Store percentage score
+            },
+            // overallCompletionPercentage
+          );
+      
+          if (!updatedEnrollment) {
+            throw new Error("Failed to update enrollment");
+          }
+      
+          return updatedEnrollment;
+        }
+      
+       async getTotalLessons(courseId: string): Promise<number> {
+          const course = await courseModel.findById(courseId).exec();
+          return course?.lessons?.length || 0; // Assuming course has a lessons array
+        }
+      
 }

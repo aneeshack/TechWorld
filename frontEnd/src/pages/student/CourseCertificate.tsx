@@ -7,12 +7,14 @@ import { ICourse } from "../../types/ICourse";
 import { SignupFormData } from "../../types/IForm";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import { IEnrollment } from "../../types/IEnrollment";
 
 const CourseCertificate = () => {
   const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<ICourse>();
   const [user, setUser] = useState<SignupFormData>();
   const [loading, setLoading] = useState(true);
+  const [ enrollment, setEnrollment] = useState<IEnrollment>()
   const [currentDate] = useState(new Date().toLocaleDateString());
   const student = useSelector((state:RootState)=>state.auth.data)
 
@@ -25,8 +27,13 @@ const CourseCertificate = () => {
         
         // Fetch course data
         const courseResponse = await CLIENT_API.get(`/student/course/${courseId}`);
+        console.log('response from back',courseResponse.data.data)
         setCourse(courseResponse.data.data);
         
+        const enrolledResponse = await CLIENT_API.get(`/student/enrollment/${courseId}`);
+
+        setEnrollment(enrolledResponse.data.data);
+
         // Fetch user data
         if(student && student._id){
           const userResponse = await CLIENT_API.get(`/student/profile/${student._id}`);
@@ -101,7 +108,10 @@ const CourseCertificate = () => {
         <div className="text-center mb-8">
           <p className="text-xl text-gray-600">has successfully completed the course</p>
           <h3 className="text-2xl font-bold text-blue-800 mt-2">
-            {course?.title?.toUpperCase() || "Course Title"}
+            {course?.title?.toUpperCase() || "Course Title"} 
+          </h3>
+          <h3 className="text-xl text-gray-600">with a passing percentage of 
+            <span className="text-2xl font-bold text-blue-800 mt-2">{enrollment && enrollment.progress?.finalAssessment?.score}</span> percentage
           </h3>
           <p className="text-lg text-gray-700 mt-1">
             {course?.description?.substring(0, 100) || "Course Description"}

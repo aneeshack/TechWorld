@@ -4,21 +4,22 @@ import { CLIENT_API } from "../../utilities/axios/Axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function EditAssessment() {
-  const { lessonId } = useParams();
+export default function EditFinalAssessment() {
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const [questions, setQuestions] = useState<IAssessment[]>([]);
 
   useEffect(() => {
-    if (lessonId) {
-      CLIENT_API.get(`/instructor/lesson/${lessonId}`)
+    if (courseId) {
+      CLIENT_API.get(`/instructor/course/${courseId}`)
         .then((response) => {
+            console.log('response for edit final assessment',response.data.data)
           const lesson = response.data.data;
-          if (lesson.assessment && lesson.assessment.length > 0) {
-            setQuestions(lesson.assessment);
+          if (lesson.finalAssessment && lesson.finalAssessment.length > 0) {
+            setQuestions(lesson.finalAssessment);
           } else {
             toast.error("No assessment found for this lesson");
-            navigate(`/instructor/dashboard/addAssessment/${lessonId}`);
+            navigate(`/instructor/dashboard/editFinalAssessment/${courseId}`);
           }
         })
         .catch((error) => {
@@ -26,7 +27,7 @@ export default function EditAssessment() {
           toast.error("Failed to load assessment");
         });
     }
-  }, [lessonId, navigate]);
+  }, [courseId, navigate]);
 
   const handleQuestionChange = (qIndex: number, value: string) => {
     const updatedQuestions = [...questions];
@@ -86,7 +87,7 @@ export default function EditAssessment() {
     }
 
     try {
-      const response = await CLIENT_API.post(`/instructor/lesson/${lessonId}/assessment`, { questions });
+      const response = await CLIENT_API.post(`/instructor/course/${courseId}/finalAssessment`, { questions });
       toast.success(response.data.message);
       navigate("/instructor/dashboard/courses");
     } catch (error) {

@@ -149,10 +149,10 @@ const InstructorProfile = () => {
       }
     };
   return (
-    <div className="max-w-6xl mx-auto p-6 lg:w-5/6 bg-white rounded-lg shadow-md my-10">
+    <div className="max-w-6xl mx-auto p-6 lg:w-5/6 bg-white  my-10">
       {/* Header with instructor basic info */}
       <div className="flex flex-col md:flex-row items-start md:items-center gap-6 pb-6 border-b">
-        <div className="w-32 h-32 bg-green-100 rounded-full flex items-center justify-center">
+        <div className="w-32 h-32 bg-indigo-100 rounded-full flex items-center justify-center">
           {isEditing ? (
     <label className="w-full h-full rounded-full cursor-pointer">
       <img
@@ -184,7 +184,7 @@ const InstructorProfile = () => {
                 name="userName"
                 value={formData.userName || ''}
                 onChange={handleInputChange}
-                className="text-3xl font-bold border-b-2 border-green-600 outline-none w-full mb-2"
+                className="text-3xl font-bold border-b-2 border-indigo-600 outline-none w-full mb-2"
               />
               <div className="flex items-center gap-2 mt-1">
                 <Mail size={16} className="text-gray-500" />
@@ -193,7 +193,7 @@ const InstructorProfile = () => {
                   name="email"
                   value={formData.email || ''}
                   onChange={handleInputChange}
-                  className="text-gray-700 border-b-2 border-green-600 outline-none w-full"
+                  className="text-gray-700 border-b-2 border-indigo-600 outline-none w-full"
                 />
               </div>
             </>
@@ -207,10 +207,10 @@ const InstructorProfile = () => {
             </>
           )}
           <div className="flex flex-wrap gap-4 mt-4">
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+            <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
               {instructor.requestStatus}
             </span>
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+            <span className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
               {instructor.qualification}
             </span>
             {instructor.isOtpVerified && (
@@ -241,7 +241,7 @@ const InstructorProfile = () => {
                 name="qualification"
                 value={formData.qualification || ''}
                 onChange={handleInputChange}
-                className="border-b-2 border-green-600 outline-none"
+                className="border-b-2 border-indigo-600 outline-none"
               />
             ) : (
               <span>Qualification: {instructor.qualification}</span>
@@ -253,19 +253,19 @@ const InstructorProfile = () => {
       {/* Tabs Navigation */}
       <div className="flex border-b mt-6">
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'profile' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'profile' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('profile')}
         >
           Profile
         </button>
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'contact' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'contact' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('contact')}
         >
           Contact
         </button>
         <button
-          className={`px-4 py-2 font-medium ${activeTab === 'documents' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-600'}`}
+          className={`px-4 py-2 font-medium ${activeTab === 'documents' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600'}`}
           onClick={() => setActiveTab('documents')}
         >
           Documents
@@ -283,7 +283,7 @@ const InstructorProfile = () => {
                   name="profileDescription"
                   value={formData.profile?.profileDescription || ''}
                   onChange={handleInputChange}
-                  className="w-full border border-green-600 rounded p-2 outline-none"
+                  className="w-full border border-indigo-600 rounded p-2 outline-none"
                   rows={3}
                 />
               ) : (
@@ -300,7 +300,7 @@ const InstructorProfile = () => {
                   name="qualification"
                   value={formData.qualification || ''}
                   onChange={handleInputChange}
-                  className="w-full border border-green-600 rounded p-2 outline-none"
+                  className="w-full border border-indigo-600 rounded p-2 outline-none"
                 />
                 {errors.qualification && (
                   <p className="text-red-500 text-sm mt-1">{errors.qualification}</p>
@@ -326,7 +326,7 @@ const InstructorProfile = () => {
                     name="phoneNumber"
                     value={formData.contact?.phoneNumber || ''}
                     onChange={handleInputChange}
-                    className="border-b-2 border-green-600 outline-none w-full"
+                    className="border-b-2 border-indigo-600 outline-none w-full"
                   />
                   {errors.phoneNumber && (
                     <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
@@ -348,7 +348,7 @@ const InstructorProfile = () => {
                     name="email"
                     value={formData.email || ''}
                     readOnly
-                    className="border-b-2 border-green-600 outline-none w-full"
+                    className="border-b-2 border-indigo-600 outline-none w-full"
                   />
                 ) : (
                   <p className="text-gray-700">{instructor?.email}</p>
@@ -366,7 +366,7 @@ const InstructorProfile = () => {
                     name="city"
                     value={formData.contact?.address?.city || ''}
                     onChange={handleInputChange}
-                    className="border-b-2 border-green-600 outline-none w-full"
+                    className="border-b-2 border-indigo-600 outline-none w-full"
                   />
                 ) : (
                   <p className="text-gray-700">{instructor?.contact?.address?.city}</p>
@@ -379,7 +379,7 @@ const InstructorProfile = () => {
         {activeTab === 'documents' && (
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <FileText size={24} className="text-green-500" />
+              <FileText size={24} className="text-indigo-500" />
               <div>
                 <h3 className="font-medium">CV/Resume</h3>
                 {isEditing ? (
@@ -388,13 +388,13 @@ const InstructorProfile = () => {
                     name="cv"
                     value={formData.cv || ''}
                     onChange={handleInputChange}
-                    className="border-b-2 border-green-600 outline-none w-full"
+                    className="border-b-2 border-indigo-600 outline-none w-full"
                   />
                 ) : (
-                  // <a href="#" className="text-green-600 hover:underline">{instructor?.cv}</a>
+                  // <a href="#" className="text-indigo-600 hover:underline">{instructor?.cv}</a>
                   <a 
                   href={instructor?.cv || ''} 
-                  className="text-green-600 hover:underline" 
+                  className="text-indigo-600 hover:underline" 
                   target="_blank" 
                   rel="noopener noreferrer"
                 >
@@ -411,7 +411,7 @@ const InstructorProfile = () => {
       <div className="mt-8 flex gap-4">
         <button
           onClick={() => (isEditing ? handleUpdateProfile() : setIsEditing(true))}
-          className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+          className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
         >
           {isEditing ? 'Save Changes' : 'Edit Profile'}
         </button>

@@ -722,7 +722,7 @@ const ChatPage = () => {
           </ul>
         )}
         {instructors.length === 0 && !loading && (
-          <p className="text-gray-500 text-center mt-8">No contacts found</p>
+          <p className="text-gray-500 text-center mt-8">Please enroll in a course to start chatting with the instructor.</p>
         )}
       </div>
   
@@ -834,7 +834,12 @@ const ChatPage = () => {
                           <div
                             className={`inline-block px-4 py-2 rounded-lg ${
                               isCurrentUser
-                                ? "bg-blue-500 text-white rounded-br-none"
+                                // ? "bg-blue-500 text-white rounded-br-none"
+                                ? `${
+                                  msg.contentType === "image" || msg.contentType === "video"
+                                    ? "text-white rounded-br-none"
+                                    : "bg-blue-500 text-white rounded-br-none"
+                                }`
                                 : "bg-white text-gray-800 rounded-bl-none shadow-sm"
                             }`}
                           >
@@ -946,9 +951,12 @@ const ChatPage = () => {
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full bg-gray-50 p-4 md:flex">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-            </svg>
+
+            <img
+    src="https://cdn-icons-png.flaticon.com/512/4076/4076549.png" 
+    alt="Empty Chat"
+    className="h-40 w-40 object-contain mb-4 opacity-50"
+  />
             <p className="text-gray-500 text-lg text-center">
               Select a contact to start chatting
             </p>

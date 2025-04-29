@@ -243,4 +243,29 @@ export class InstructorService {
     }
   }
 
+  async addFinalAssessment(courseId: string, questions: IAssessment[]): Promise<ICourse> {
+    try {
+
+      if (!courseId) {
+        throw new Error("course ID is required");
+      }
+      if (!questions || !Array.isArray(questions)) {
+        throw new Error("Questions must be provided as an array");
+      }
+
+      const course = await this._instructorRepository.getCourseById(courseId);
+      if (!course) {
+        throw new Error("Course not found");
+      }
+
+      // Update assessment
+      const updatedCourse = await this._instructorRepository.updateCourseAssessment(courseId, questions);
+
+      return updatedCourse;
+    } catch (error) {
+      console.error("Error in InstructorService.addOrUpdate finalAssessment:", error);
+      throw error; // Propagate error to controller
+    }
+  }
+
 }

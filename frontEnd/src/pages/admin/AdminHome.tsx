@@ -421,7 +421,7 @@ const AdminHome: React.FC = () => {
                       type="monotone" 
                       dataKey="value" 
                       name="Monthly Sales" 
-                      stroke="#8884d8" 
+                      stroke="#28a745" 
                       strokeWidth={2}
                       dot={{ r: 4 }}
                       activeDot={{ r: 6 }}
@@ -459,7 +459,7 @@ const AdminHome: React.FC = () => {
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip content={<CustomTooltip />} />
                     <Legend />
-                    <Bar dataKey="Sales" name="Course Sales" fill="#4A90E2" barSize={30} />
+                    <Bar dataKey="Sales" name="Course Sales" fill="#9b59b6"  barSize={100} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (

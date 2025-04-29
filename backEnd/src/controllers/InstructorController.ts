@@ -121,6 +121,7 @@ export class InstructorController {
 
   async fetchSingleCourse(req: AuthRequest, res: Response): Promise<void> {
     try {
+      
       const courseId = req.params.courseId;
 
       const course = await this._instructorService.fetchCourse(courseId);
@@ -349,6 +350,20 @@ export class InstructorController {
     } catch (error) {
       console.error("Error in InstructorController :get presigned url for video", error);
       res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: "Server error" });
+    }
+  }
+
+  async addAssessment(req: Request, res: Response): Promise<void> {
+    try {
+      const { courseId } = req.params;
+      const { questions } = req.body;
+
+      const course = await this._instructorService.addFinalAssessment(courseId, questions);
+      res
+        .status(HTTP_STATUS.OK)
+        .json({ message: "Assessment saved successfully", course });
+    } catch (error) {
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: "Server error", error });
     }
   }
 

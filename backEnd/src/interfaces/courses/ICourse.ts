@@ -1,5 +1,6 @@
 import mongoose,{Document} from "mongoose";
 import { IEnrollment } from "../database/IEnrollment";
+import { IAssessment } from "./ILesson";
 
 export interface ICourse extends Document{
     title:string,
@@ -14,6 +15,7 @@ export interface ICourse extends Document{
     lessons:mongoose.Types.ObjectId[]
     rating: number,
     isBlocked: boolean,
+    finalAssessment: IAssessment[];
     createdAt: Date;
     updatedAt: Date;
 }

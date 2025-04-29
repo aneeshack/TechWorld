@@ -1,6 +1,11 @@
 import { Schema, model } from "mongoose";
 import { IEnrollment } from "../interfaces/database/IEnrollment";
 
+export  interface IFinalAssessment {
+  completed: boolean;
+  score: number;
+}
+
 const enrollmentSchema = new Schema(
   {
     userId: {
@@ -30,9 +35,12 @@ const enrollmentSchema = new Schema(
         ref: "lessons",
         default: [],
       },
-      completedAssessments: {
-        type: [Schema.Types.ObjectId],
-        default: [],
+      finalAssessment: { 
+        type: {
+          completed: { type: Boolean, default: false },
+          score: { type: Number, default: 0, min: 0, max: 100 },
+        },
+        default: { completed: false, score: 0 },
       },
       overallCompletionPercentage: {
         type: Number,

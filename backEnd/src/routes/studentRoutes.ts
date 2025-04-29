@@ -20,12 +20,15 @@ studentRouter.get('/course/:courseId',authenticateStudent, studentController.fet
 studentRouter.get('/lessons/:courseId',authenticateStudent, studentController.fetchAllLessons.bind(studentController));
 studentRouter.get('/lesson/getPresignedUrlForVideo/:lessonId',authenticateStudent, studentController.presSignedUrlForVideo.bind(studentController));
 studentRouter.get('/lesson/:lessonId',authenticateStudent, studentController.fetchSingleLesson.bind(studentController));
-studentRouter.post('/enrollment/updateProgress',authenticateStudent, studentController.updateLessonProgress.bind(studentController));
+studentRouter.post('/enrollment/update/updateProgress',authenticateStudent, studentController.updateLessonProgress.bind(studentController));
 
 studentRouter.get('/enrolled/:userId', authenticateStudent, studentController.fetchEnrolledCourses.bind(studentController));
 studentRouter.get('/enrollment/:courseId', authenticateStudent, studentController.getEnrollment.bind(studentController));
 
 studentRouter.post('/review/add/:courseId', authenticateStudent, studentController.updateReview.bind(studentController));
-studentRouter.get('/review/get/:courseId', authenticateStudent, studentController.getStudentReview .bind(studentController));
+studentRouter.post('/review/get/:courseId', authenticateStudent, studentController.getStudentReview.bind(studentController));
+
+
+studentRouter.post('/course/finalExam/:courseId', authenticateStudent, studentController.submitFinalExam.bind(studentController));
 
 export default studentRouter;

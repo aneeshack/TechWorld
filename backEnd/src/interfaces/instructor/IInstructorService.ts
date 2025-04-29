@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { CategoryEntity } from "../courses/category";
 import { ICourse } from "../courses/ICourse";
-import { ILesson } from "../courses/ILesson";
+import { IAssessment, ILesson } from "../courses/ILesson";
 import { IUser } from "../database/IUser";
 
 export interface IInstructorService{
@@ -24,4 +24,5 @@ export interface IInstructorService{
     fetchInstructorProfile(userId: string): Promise<IUser | null>;
     updateInstructorProfile(userId: string, updateData: Partial<IUser>): Promise<IUser | null>;
     addAssessment(lessonId: string, questions: any): Promise<ILesson>;
+    addFinalAssessment(courseId: string, questions: IAssessment[]): Promise<ICourse>
 }

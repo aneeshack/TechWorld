@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { IStudentRepository } from "../interfaces/student/IStudentRepository";
 import { IUser } from "../interfaces/database/IUser";
 import UserModel from "../models/userModel";
@@ -234,5 +234,42 @@ export class StudentRepository implements IStudentRepository{
         console.error("Error update the review:", error);
         throw new Error("Failed student course review");
     }
+}
+
+async findByUserAndCourse(userId: string, courseId: string): Promise<IEnrollment | null> {
+  return await enrollmentModel
+    .findOne({
+      userId: new Types.ObjectId(userId),
+      courseId: new Types.ObjectId(courseId),
+    })
+    .exec();
+}
+
+async updateFinalAssessment(
+  enrollmentId: string,
+  finalAssessment: { completed: boolean; score: number },
+  overallCompletionPercentage?: number
+): Promise<IEnrollment | null> {
+  const updateObj: any = {
+    "progress.finalAssessment.completed": finalAssessment.completed,
+    "progress.finalAssessment.score": finalAssessment.score,
+  };
+
+  if (overallCompletionPercentage !== undefined) {
+    updateObj["progress.overallCompletionPercentage"] = overallCompletionPercentage;
+  }
+
+  // Set completionStatus to "completed" if assessment is completed and score >= 70
+  if (finalAssessment.completed && finalAssessment.score >= 70) {
+    updateObj.completionStatus = "completed";
+  }
+
+  return await enrollmentModel
+    .findByIdAndUpdate(
+      enrollmentId,
+      { $set: updateObj },
+      { new: true, runValidators: true }
+    )
+    .exec();
 }
 }

@@ -28,6 +28,12 @@ export class InstructorRepository implements IInstructorRepository{
            if(course >4){
             throw new Error('cannot add more than 4 same catgory')
            }
+           
+           const existingCourse = await courseModel.find({instructor:courseData._id, title:courseData.title})
+
+           if(existingCourse){
+             throwError(409,'Course Already exist')
+           }
             const newCourse = new courseModel(courseData);
 
             return await newCourse.save()
@@ -40,11 +46,7 @@ export class InstructorRepository implements IInstructorRepository{
     async editCourse(courseId: string, updateData: Partial<ICourse>): Promise<ICourse | null> {
         try {
             console.log('course ', updateData)
-            const existingCourse = await courseModel.find({instructor:updateData._id, title:updateData.title})
-
-            if(existingCourse){
-              throwError(409,'Course Already exist')
-            }
+           
             const course = await courseModel.findByIdAndUpdate(courseId, updateData,{new: true})
             if(!course){
                 throw new Error('course does not exist')
@@ -167,6 +169,7 @@ export class InstructorRepository implements IInstructorRepository{
               lessonCount: 1,
               instructor: 1,
               isPublished: 1,
+              createdAt:1,
               studentsCount: { $ifNull: ["$enrollmentData.studentsCount", 0] },
             },
           },
@@ -348,6 +351,33 @@ export class InstructorRepository implements IInstructorRepository{
         } catch (error) {
           console.log('find lesson by id error:',error)
           throw new Error(`Error fetching lesson`);
+        }
+      }
+
+      async getCourseById(courseId: string): Promise<ICourse | null> {
+        try {
+          const course = await courseModel.findById(courseId);
+          return course;
+        } catch (error) {
+          console.error("Error in InstructorRepository.getLessonById:", error);
+          throw new Error(`Error fetching lesson: ${(error as Error).message}`);
+        }
+      }
+
+      async updateCourseAssessment(courseId: string, questions: IAssessment[]): Promise<ICourse> {
+        try {
+          const course = await courseModel.findByIdAndUpdate(
+            courseId,
+            { finalAssessment: questions },
+            { new: true, runValidators: true }
+          );
+          if (!course) {
+            throw new Error("course not found during update");
+          }
+          return course;
+        } catch (error) {
+          console.error("Error in InstructorRepository.update course finalAssessment:", error);
+          throw new Error(`Error updating course final assessment: ${(error as Error).message}`);
         }
       }
 }

@@ -11,6 +11,7 @@ import CourseCertificate from "../pages/student/CourseCertificate"
 import ErrorPage from "../pages/commonPages/ErrorPage"
 import DiscussionForum from "../pages/commonPages/DiscussionForum"
 import ForumsPage from "../pages/student/ForumList"
+import ConductFinalExam from "../pages/student/ConductFinalExam"
 // import DiscussionDetail from "../pages/commonPages/DiscussionDetail"
 
 
@@ -27,11 +28,11 @@ const StudentRoutes = () => {
               <Route path="profile" element={<StudentProfile/>}/>
               <Route path="purchase" element={<PurchaseHistory/>}/>
               <Route path="assessment/:lessonId" element={<ConductAssessment/>}/>
+              <Route path="finalAssessment/:courseId" element={<ConductFinalExam/>}/>
               <Route path="chat" element={<ChatPage/>}/>
               <Route path="certificate/:courseId" element={<CourseCertificate/>}/>
               <Route path="forum/:courseId" element={<DiscussionForum/>}/>
               <Route path="forums" element={<ForumsPage/>}/>
-              {/* <Route path="discussion/:discussionId" element={<DiscussionDetail/>}/> */}
 
 
             <Route path="*" element={<ErrorPage />} />

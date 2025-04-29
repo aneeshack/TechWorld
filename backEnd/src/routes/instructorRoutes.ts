@@ -31,4 +31,7 @@ instructorRouter.get('/profile/:userId',authenticateInstructor, instructorContro
 instructorRouter.put('/profile/:userId',authenticateInstructor, instructorController.updateProfile.bind(instructorController));
 
 
+
+instructorRouter.post('/course/:courseId/finalAssessment',authenticateInstructor, instructorController.addAssessment.bind(instructorController));
+
 export default instructorRouter;

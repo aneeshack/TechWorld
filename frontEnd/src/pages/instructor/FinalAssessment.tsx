@@ -1,39 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { IAssessment } from "../../types/ICourse";
 import { CLIENT_API } from "../../utilities/axios/Axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
-export default function EditAssessment() {
-  const { lessonId } = useParams();
-  const navigate = useNavigate();
-  const [questions, setQuestions] = useState<IAssessment[]>([]);
+export default function FinalAssessment() {
 
-  useEffect(() => {
-    if (lessonId) {
-      CLIENT_API.get(`/instructor/lesson/${lessonId}`)
-        .then((response) => {
-          const lesson = response.data.data;
-          if (lesson.assessment && lesson.assessment.length > 0) {
-            setQuestions(lesson.assessment);
-          } else {
-            toast.error("No assessment found for this lesson");
-            navigate(`/instructor/dashboard/addAssessment/${lessonId}`);
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching assessment:", error);
-          toast.error("Failed to load assessment");
-        });
-    }
-  }, [lessonId, navigate]);
+  const { courseId } = useParams(); 
+  console.log('lessonid',courseId)
+  const navigate = useNavigate()
+  const [questions, setQuestions] = useState<IAssessment[]>([
+    {
+      question: "",
+      options: [
+        { text: "", isCorrect: false },
+        { text: "", isCorrect: false },
+        { text: "", isCorrect: false },
+        { text: "", isCorrect: false },
+      ],
+    },
+  ]);
 
+  // Handle question text change
   const handleQuestionChange = (qIndex: number, value: string) => {
     const updatedQuestions = [...questions];
-    updatedQuestions[qIndex].question = value;
+    updatedQuestions[qIndex].question = value; 
     setQuestions(updatedQuestions);
   };
 
+  // Handle option text change
   const handleOptionChange = (qIndex: number, oIndex: number, value: string) => {
     const updatedQuestions = [...questions];
     if (!updatedQuestions[qIndex].options) updatedQuestions[qIndex].options = []; 
@@ -41,15 +36,17 @@ export default function EditAssessment() {
     setQuestions(updatedQuestions);
   };
 
+  // Mark the selected option as correct
   const handleCorrectAnswer = (qIndex: number, oIndex: number) => {
     const updatedQuestions = [...questions];
     updatedQuestions[qIndex].options = updatedQuestions[qIndex].options?.map((opt, i) => ({
-        ...opt,
-        isCorrect: i === oIndex, 
-      }));;
+      ...opt,
+      isCorrect: i === oIndex, // Set only the selected option as correct
+    }));
     setQuestions(updatedQuestions);
   };
 
+  // Add a new question
   const addQuestion = () => {
     if (questions.length < 5) {
       setQuestions([
@@ -67,37 +64,41 @@ export default function EditAssessment() {
     }
   };
 
-  const saveAssessment = async () => {
+  // Save the assessment (send data to backend)
+  const saveAssessment = () => {
     if (questions.length === 0) {
       toast.error("Please add at least one question before saving.");
       return;
     }
-    const isValid = questions.every((q) =>{
-    //   q.question?.trim() !== "" && q.options?.some((opt) => opt.text.trim() !== "")
-    const hasQuestionText = q.question?.trim() !== "";
-      const hasValidOption = q.options?.some((opt) => opt.text.trim() !== "");
-      const hasCorrectAnswer = q.options?.some((opt) => opt.isCorrect === true);
-      return hasQuestionText && hasValidOption && hasCorrectAnswer;
-  });
 
+    const isValid = questions.every((q) =>{
+        // q.question?.trim() !== "" && q.options?.some((opt) => opt.text.trim() !== "")
+      const hasQuestionText = q.question?.trim() !== "";
+        const hasValidOption = q.options?.some((opt) => opt.text.trim() !== "");
+        const hasCorrectAnswer = q.options?.some((opt) => opt.isCorrect === true);
+        return hasQuestionText && hasValidOption && hasCorrectAnswer;
+    });
+  
     if (!isValid) {
       toast.error("Each question must have text and at least one valid option.");
       return;
     }
+    console.log("Saving assessment:", questions);
+    CLIENT_API.post(`/instructor/course/${courseId}/finalAssessment`,{questions})
+    .then((response)=>{
+      console.log('response',response,response.data.data)
+      navigate(`/instructor/dashboard/lesson/${courseId}/add`)
+      toast.success(response.data.message)
 
-    try {
-      const response = await CLIENT_API.post(`/instructor/lesson/${lessonId}/assessment`, { questions });
-      toast.success(response.data.message);
-      navigate("/instructor/dashboard/courses");
-    } catch (error) {
-      console.error("Error updating assessment:", error);
-      toast.error("Failed to update assessment");
-    }
+    })
+    .catch((error)=>{
+      console.log(error)
+    })
   };
 
 
-   // Delete a question
-   const deleteQuestion = (qIndex: number) => {
+  // Delete a question
+  const deleteQuestion = (qIndex: number) => {
     if (questions.length === 1) {
       toast.error("At least one question is required.");
       return;
@@ -105,16 +106,16 @@ export default function EditAssessment() {
     const updatedQuestions = questions.filter((_, index) => index !== qIndex);
     setQuestions(updatedQuestions);
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-indigo-700 text-center mb-4">Edit Assessment</h2>
+        <h2 className="text-2xl font-bold text-green-700 text-center mb-4">Add Assessment</h2>
 
         {questions.map((question, qIndex) => (
-          <div key={qIndex} className="mb-6">
+          <div key={qIndex} className="mb-6 relative">
             <div className="flex justify-between items-center">
-            <label className="block text-indigo-700 font-semibold mb-1">
+            <label className="block text-green-700 font-semibold mb-1">
               Question {qIndex + 1}
             </label>
             {questions.length > 1 && (
@@ -127,17 +128,17 @@ export default function EditAssessment() {
               )}
             </div>
             <textarea
-              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               value={question.question}
               onChange={(e) => handleQuestionChange(qIndex, e.target.value)}
             />
             <div className="mt-4">
-              <label className="block text-indigo-700 font-semibold mb-1">Options</label>
+              <label className="block text-green-700 font-semibold mb-1">Options</label>
               {question?.options?.map((option, oIndex) => (
                 <div key={oIndex} className="flex items-center gap-2 mb-2">
                   <input
                     type="text"
-                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder={`Option ${oIndex + 1}`}
                     value={option.text}
                     onChange={(e) => handleOptionChange(qIndex, oIndex, e.target.value)}
@@ -147,7 +148,7 @@ export default function EditAssessment() {
                     name={`correctAnswer-${qIndex}`}
                     checked={option.isCorrect}
                     onChange={() => handleCorrectAnswer(qIndex, oIndex)}
-                    className="h-5 w-5 text-indigo-500"
+                    className="h-5 w-5 text-green-500"
                   />
                 </div>
               ))}
@@ -165,10 +166,10 @@ export default function EditAssessment() {
         )}
 
         <button
-          className="w-full mt-6 bg-indigo-700 text-white font-bold py-2 rounded-lg hover:bg-indigo-800 transition"
+          className="w-full mt-6 bg-green-700 text-white font-bold py-2 rounded-lg hover:bg-green-800 transition"
           onClick={saveAssessment}
         >
-          Update Assessment
+          Save Assessment
         </button>
       </div>
     </div>

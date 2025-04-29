@@ -33,7 +33,9 @@ export interface ICourse {
         _id:string,
         userName: string,
         email?: string,
-        profile?: string
+        profile?: {
+            avatar?: string
+        }
     },
     category:{
         _id:string,
@@ -50,6 +52,6 @@ export interface ICourse {
     rating?: number,
     isBlocked?: boolean,
     studentsCount?: number,
-    createdAt: Date;
+    createdAt?: Date;
     updatedAt: Date;
 }

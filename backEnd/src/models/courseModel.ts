@@ -1,6 +1,16 @@
 import mongoose, { model, Schema } from "mongoose";
 import { ICourse } from "../interfaces/courses/ICourse";
+import { IAssessment } from "../interfaces/courses/ILesson";
 
+const assessmentSchema = new Schema<IAssessment>({
+  question: { type: String, required: true },
+  options: [
+    {
+      text: { type: String, required: true },
+      isCorrect: { type: Boolean, required: true },
+    },
+  ],
+});
 
 const courseSchema = new Schema(
   {
@@ -56,6 +66,12 @@ const courseSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    finalAssessment: [
+      {
+        type: assessmentSchema,
+        required: true, // Final assessment is mandatory
+      },
+    ],
   },
   { timestamps: true }
 );

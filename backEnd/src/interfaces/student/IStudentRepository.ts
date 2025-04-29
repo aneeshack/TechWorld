@@ -14,4 +14,10 @@ export interface IStudentRepository {
     getReview(studentId: string, courseId: string): Promise<IReview| null>;
     createReview(studentId: string, courseId: string, rating: string, reviewText:string): Promise<IReview| null>;
     updateReview(studentId: string, courseId: string, rating: string, reviewText:string): Promise<IReview| null>;
+    findByUserAndCourse(userId: string, courseId: string): Promise<IEnrollment | null>
+    updateFinalAssessment(
+        enrollmentId: string,
+        finalAssessment: { completed: boolean; score: number },
+        overallCompletionPercentage?: number
+      ): Promise<IEnrollment | null>
 }

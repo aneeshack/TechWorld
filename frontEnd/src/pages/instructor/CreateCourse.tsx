@@ -8,7 +8,7 @@ import { courseValidationSchema } from "../../utilities/validation/courseValidat
 import { Accept, useDropzone } from "react-dropzone";
 import { uploadToCloudinary } from "../../utilities/axios/UploadCloudinary";
 import { toast } from "react-toastify";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 const CreateCourse = () => {
   const { courseId } = useParams(); 
@@ -68,7 +68,8 @@ const CreateCourse = () => {
       .then((response) => {
         if (response.data.success) {
           const courseId = response.data.data._id
-          navigate(`/instructor/dashboard/lesson/${courseId}/add`)
+          // navigate(`/instructor/dashboard/lesson/${courseId}/add`)
+          navigate(`/instructor/dashboard/courses/${courseId}/finalAssessment`)
           toast.success("Course created successfully.");
         }
       })
@@ -122,7 +123,7 @@ const CreateCourse = () => {
     <div className="w-5xl lg:w-5/6 mx-auto p-6">
       {isEditing ?(
       <a href={`/instructor/dashboard/lessons/${courseId}`} className="flex justify-end">
-      <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
+      <button className="border bg-indigo-700 p-4 rounded-lg text-white font-semibold">
       Lessons
       </button>
       </a>
@@ -224,8 +225,19 @@ const CreateCourse = () => {
             </div>
           </div>
         </div>
+
+        
         <div className="mt-6 flex justify-center">
-          <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded-lg">
+          {isEditing ? (
+        <Link
+            // to={`/instructor/dashboard/courses/${courseId}/finalAssessment`}
+            to={`/instructor/dashboard/editFinalAssessment/${courseId}`}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg mr-4"
+          >
+            {isEditing ? 'Edit Final Assessment' : 'Create Final Assessment'}
+          </Link>
+          ): ''}
+          <button type="submit" className="px-4 py-2 bg-indigo-600 text-white rounded-lg">
           { isEditing? 'Update Course': 'Save Course'}
           </button>
         </div>

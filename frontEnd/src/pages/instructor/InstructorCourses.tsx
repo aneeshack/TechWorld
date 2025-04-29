@@ -43,7 +43,7 @@ const InstructorCourses = () => {
           sort: sortBy
         },
       });
-
+      console.log('ful coursess',response.data.data)
       setCourses(response.data.data);
       setTotalPages(response.data.totalPages);
       setTotalCourses(response.data.totalCourses);
@@ -116,16 +116,16 @@ const InstructorCourses = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 bg-gradient-to-b from-dark-green to-green-900 min-h-screen">
+    <div className="p-4 sm:p-6 md:p-8 bg-gradient-to-b from-dark-indigo to-indigo-900 min-h-screen">
       {/* Dashboard Header Section */}
       <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-green-800">My Courses</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-indigo-800">My Courses</h2>
             <p className="text-gray-600 mt-1">Manage and organize your teaching content</p>
           </div>
           <Link to="/instructor/dashboard/createCourse">
-            <button className="transition-all duration-300 text-white font-semibold bg-green-600 hover:bg-green-700 px-5 py-3 rounded-lg w-full sm:w-auto flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
+            <button className="transition-all duration-300 text-white font-semibold bg-indigo-600 hover:bg-indigo-700 px-5 py-3 rounded-lg w-full sm:w-auto flex items-center justify-center gap-2 shadow-md hover:shadow-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
               </svg>
@@ -140,9 +140,9 @@ const InstructorCourses = () => {
             <p className="text-blue-800 font-semibold">Total Courses</p>
             <p className="text-2xl font-bold text-blue-600">{totalCourses}</p>
           </div>
-          <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
-            <p className="text-green-800 font-semibold">Published</p>
-            <p className="text-2xl font-bold text-green-600">
+          <div className="bg-indigo-50 rounded-lg p-4 border-l-4 border-indigo-500">
+            <p className="text-indigo-800 font-semibold">Published</p>
+            <p className="text-2xl font-bold text-indigo-600">
               {courses.filter(course => course.isPublished).length}
             </p>
           </div>
@@ -172,7 +172,7 @@ const InstructorCourses = () => {
             <input
               type="text"
               placeholder="Search courses by title..."
-              className="pl-10 p-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm sm:text-base"
+              className="pl-10 p-3 rounded-lg border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm sm:text-base"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -180,7 +180,7 @@ const InstructorCourses = () => {
           <div className="flex gap-3">
             <button
               type="submit"
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
+              className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
@@ -203,7 +203,7 @@ const InstructorCourses = () => {
       {/* Course Display Section */}
       {loading ? (
         <div className="flex flex-col justify-center items-center h-64 bg-white rounded-xl shadow-lg">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-green-600 border-green-200"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-indigo-600 border-indigo-200"></div>
           <p className="mt-4 text-gray-600">Loading your courses...</p>
         </div>
       ) : courses.length > 0 ? (
@@ -221,7 +221,7 @@ const InstructorCourses = () => {
                 id="limit"
                 value={limit}
                 onChange={handleLimitChange}
-                className="rounded p-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="rounded p-2 text-sm border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
                 <option value="3">3</option>
                 <option value="6">6</option>
@@ -247,7 +247,7 @@ const InstructorCourses = () => {
                       data-tooltip-id={`edit-tooltip-${index}`}
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                      <span className="text-white font-medium px-4 py-2 bg-green-600 bg-opacity-90 rounded-lg">
+                      <span className="text-white font-medium px-4 py-2 bg-indigo-600 bg-opacity-90 rounded-lg">
                         Edit Course
                       </span>
                     </div>
@@ -275,7 +275,7 @@ const InstructorCourses = () => {
                     {course.category.categoryName}
                   </span>
                 
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2 hover:text-green-700 transition-colors">
+                  <h3 className="text-xl font-semibold text-gray-800 mb-2 hover:text-indigo-700 transition-colors">
                     <Link to={`/instructor/dashboard/editCourse/${course._id}`}>
                       {course.title}
                     </Link>
@@ -297,7 +297,7 @@ const InstructorCourses = () => {
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span>Created: {new Date(course?.createdAt).toLocaleDateString()}</span>
+                      <span>Created: {course?.createdAt ?new Date(course?.createdAt).toLocaleDateString(): 'N/A'}</span>
                     </div>
                   </div>
                   
@@ -307,7 +307,7 @@ const InstructorCourses = () => {
                       !course.isPublished ? (
                         <button
                           onClick={() => publishCourse(course._id ?? "")}
-                          className="flex-1 rounded-lg p-2 text-white font-medium bg-green-600 hover:bg-green-700 transition-colors text-sm flex items-center justify-center gap-1"
+                          className="flex-1 rounded-lg p-2 text-white font-medium bg-indigo-600 hover:bg-indigo-700 transition-colors text-sm flex items-center justify-center gap-1"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -315,7 +315,7 @@ const InstructorCourses = () => {
                           Publish
                         </button>
                       ) : (
-                        <span className="flex-1 rounded-lg p-2 text-green-800 font-medium bg-green-100 text-sm flex items-center justify-center gap-1">
+                        <span className="flex-1 rounded-lg p-2 text-indigo-800 font-medium bg-indigo-100 text-sm flex items-center justify-center gap-1">
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
@@ -327,7 +327,7 @@ const InstructorCourses = () => {
                       to={`/instructor/dashboard/lesson/${course._id}/add`}
                       className="flex-1"
                     >
-                      <button className="w-full rounded-lg p-2 text-white font-medium bg-blue-600 hover:bg-blue-700 transition-colors text-sm flex items-center justify-center gap-1">
+                      <button className="w-full rounded-lg p-2 text-white font-medium bg-gradient-to-r from-blue-500 to-indigo-700 hover:bg-blue-700 transition-colors text-sm flex items-center justify-center gap-1">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                         </svg>
@@ -470,7 +470,7 @@ const InstructorCourses = () => {
             
             {!searchTerm && !selectedCategory && (
               <Link to="/instructor/dashboard/createCourse">
-                <button className="mt-4 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center gap-2">
+                <button className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-6 rounded-lg transition-colors flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     

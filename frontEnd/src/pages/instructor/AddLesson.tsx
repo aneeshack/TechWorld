@@ -205,7 +205,7 @@ const AddLesson = () => {
       {isEditing ?(
         // <a href={`/instructor/dashboard/addAssessment/${lessonId}`} className="flex justify-end">
 <a href={`/instructor/dashboard/${lesson?.assessment && lesson.assessment.length > 0 ? "editAssessment" : "addAssessment"}/${lessonId}`}>       
- <button className="border bg-green-700 p-4 rounded-lg text-white font-semibold">
+ <button className="border bg-indigo-700 p-4 rounded-lg text-white font-semibold">
            {/* Assessment */}
            {lesson?.assessment && lesson.assessment.length > 0 ? "Edit Assessment" : "Add Assessment"}
         </button>
@@ -323,7 +323,7 @@ const AddLesson = () => {
         <div className="mt-6 flex justify-center space-x-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-green-600 text-white rounded-lg"
+            className="px-4 py-2 bg-indigo-600 text-white rounded-lg"
           >
             {isEditing? 'Edit Lesson' :'Add Lesson'}
           </button>

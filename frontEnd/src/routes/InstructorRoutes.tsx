@@ -12,6 +12,8 @@ import ChatPage from "../pages/commonPages/ChatPage"
 import ErrorPage from "../pages/commonPages/ErrorPage"
 import DiscussionForum from "../pages/commonPages/DiscussionForum"
 import InstructorForum from "../pages/instructor/InstructorForum"
+import FinalAssessment from "../pages/instructor/FinalAssessment"
+import EditFinalAssessment from "../pages/instructor/EditFinalAssessment"
 
 
 const InstructorRoutes = () => {
@@ -24,7 +26,11 @@ const InstructorRoutes = () => {
         
         <Route index element={<InstructorHome/>}/>
         <Route path="courses" element={<InstructorCourses/>}/>
+        <Route path="courses/:courseId/finalAssessment" element={<FinalAssessment/>}/>
+        <Route path="editFinalAssessment/:courseId" element={<EditFinalAssessment/>}/>
+
         <Route path="profile" element={<InstructorProfile/>}/>
+
         <Route path="createCourse" element={<CreateCourse/>}/>
         <Route path="editCourse/:courseId" element={<CreateCourse/>}/>
         <Route path="lesson/:courseId/add" element={<AddLesson/>}/>
@@ -33,6 +39,7 @@ const InstructorRoutes = () => {
         <Route path="addAssessment/:lessonId" element={<Assessment/>}/>
         <Route path="editAssessment/:lessonId" element={<EditAssessment/>}/>
         <Route path="chat" element={<ChatPage/>}/>
+        
         <Route path="forum/:courseId" element={<DiscussionForum/>}/>
         <Route path="forums" element={<InstructorForum/>}/>
 

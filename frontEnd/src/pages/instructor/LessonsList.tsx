@@ -26,7 +26,7 @@ const LessonsList = () => {
     <div className="w-5/6 lg:w-5/6 mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-4">Lessons</h2>
       <Link to={`/instructor/dashboard/lesson/${courseId}/add`}>
-      <button className="bg-green-600 text-white px-4 py-2 rounded-lg mb-4">
+      <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg mb-4">
         Add Lesson
       </button>
       </Link>

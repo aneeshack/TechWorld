@@ -27,5 +27,7 @@ export interface IInstructorRepository {
     updateInstructor(userId: string, updateData: Partial<IUser>): Promise<IUser | null>;
     getLessonById(lessonId: string): Promise<ILesson | null>;
     updateLessonAssessment(lessonId: string, questions: any): Promise<ILesson>;
-    findLessonById(lessonId: string):Promise<ILesson| null>
+    findLessonById(lessonId: string):Promise<ILesson| null>;
+     getCourseById(courseId: string): Promise<ICourse | null>;
+     updateCourseAssessment(courseId: string, questions: IAssessment[]): Promise<ICourse>
 }

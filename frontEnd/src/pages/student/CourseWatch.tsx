@@ -94,9 +94,15 @@ useEffect(() => {
         // Set course completion percentage
         if (enrollment && enrollment.progress) {
           setCourseCompletionPercentage(enrollment.progress.overallCompletionPercentage);
+
           // Check if course is completed (e.g., if percentage is 100 or status is "completed")
-          if (enrollment.completionStatus === "completed" || 
-              enrollment.progress.overallCompletionPercentage >= 100) {
+          // if (enrollment.completionStatus === "completed" || 
+          //     enrollment.progress.overallCompletionPercentage >= 100) {
+
+          if(enrollment.progress.finalAssessment.completed &&
+              enrollment.progress.finalAssessment.score >=70
+          ){
+
             setShowCertificate(true);
           }
         }
@@ -163,7 +169,7 @@ useEffect(() => {
   // API call to update lesson completion
   const updateLessonCompletion = async (lessonId: string) => {
     try {
-      const response = await CLIENT_API.post(`/student/enrollment/updateProgress`, {
+      const response = await CLIENT_API.post(`/student/enrollment/update/updateProgress`, {
         courseId,
         lessonId,
       });
@@ -176,8 +182,13 @@ useEffect(() => {
         setCourseCompletionPercentage(response.data.data.progress.overallCompletionPercentage);
         
         // Check if course is now completed
-        if (response.data.data.completionStatus === "completed" || 
-            response.data.data.progress.overallCompletionPercentage >= 100) {
+        // if (response.data.data.completionStatus === "completed" || 
+        //     response.data.data.progress.overallCompletionPercentage >= 100) {
+
+        if (
+          response.data.data.progress.finalAssessment.completed &&
+          response.data.data.progress.finalAssessment.score >= 70
+        ) {
           setShowCertificate(true);
           toast.success("Congratulations! You've completed the course.");
         }
@@ -208,6 +219,13 @@ useEffect(() => {
     window.location.href = `/student/dashboard/certificate/${courseId}`;
   };
 
+  const takeFinalAssessment = () => {
+    if (!courseId) {
+      toast.error("Course ID not available.");
+      return;
+    }
+    window.location.href = `/student/dashboard/finalAssessment/${courseId}`;
+  };
   return (
     <div className="container w-5/6 mx-auto p-6">
       {/* Course Header */}
@@ -241,7 +259,7 @@ useEffect(() => {
         </p>
         
         {/* Certificate Button */}
-        {showCertificate && (
+        {/* {showCertificate && (
           <div className="mt-4 flex justify-center">
             <button
               onClick={viewCertificate}
@@ -250,9 +268,28 @@ useEffect(() => {
               <span className="mr-2">🏆</span> View Course Certificate
             </button>
           </div>
-        )}
+        )} */}
 
-       
+           {/* Final Assessment or Certificate Button */}
+           {courseCompletionPercentage >= 100 && !enrollmentData?.progress.finalAssessment.completed ? (
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={takeFinalAssessment}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center"
+            >
+              <span className="mr-2">📝</span> Take Final Assessment
+            </button>
+          </div>
+        ) : showCertificate ? (
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={viewCertificate}
+              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition flex items-center"
+            >
+              <span className="mr-2">🏆</span> View Course Certificate
+            </button>
+          </div>
+        ) : null}
 
       {/* Rating Stars */}
       <div className="flex items-center mb-2">
