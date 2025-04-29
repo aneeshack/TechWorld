@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate, Link } from "react-router-dom";
-import { BookOpenIcon, ArrowLeftOnRectangleIcon, ChartBarIcon, AcademicCapIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon, ArrowLeftOnRectangleIcon, ChartBarIcon } from "@heroicons/react/24/outline";
 import logo from "../../assets/commonPages/logo.png";
 import { useAppDispatch } from "../../hooks/Hooks";
 import { logoutAction } from "../../redux/store/actions/auth/LogoutAction";
@@ -195,7 +195,7 @@ const StudentSidebar: React.FC = () => {
                 )}
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink
                 to="/student/dashboard/certificates"
                 className={({ isActive }) =>
@@ -209,7 +209,7 @@ const StudentSidebar: React.FC = () => {
                 <AcademicCapIcon  className="h-5 w-5" />
                 <span className="hidden lg:inline font-medium">Courses</span>
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink
                 to="/student/dashboard/courses"
