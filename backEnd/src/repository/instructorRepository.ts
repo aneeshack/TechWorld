@@ -29,9 +29,10 @@ export class InstructorRepository implements IInstructorRepository{
             throw new Error('cannot add more than 4 same catgory')
            }
            
-           const existingCourse = await courseModel.find({instructor:courseData._id, title:courseData.title})
+           const existingCourse = await courseModel.find({instructor:courseData.instructor, title:courseData.title})
 
-           if(existingCourse){
+           if(existingCourse.length>0){
+            console.log('existing course',existingCourse)
              throwError(409,'Course Already exist')
            }
             const newCourse = new courseModel(courseData);

@@ -74,7 +74,10 @@ const CreateCourse = () => {
         }
       })
       .catch((error) => {
-        console.error("Error in creating course", error);
+        const message = error.response?.data?.message || "An unexpected error occurred";
+      toast.error(message);
+      console.error(isEditing ? "Error updating course" : "Error creating course", error);
+        // console.error("Error in creating course", error);
       });
     }
     },

@@ -110,7 +110,7 @@ export default function FinalAssessment() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-green-700 text-center mb-4">Add Assessment</h2>
+        <h2 className="text-2xl font-bold text-green-700 text-center mb-4">Add Final Assessment</h2>
 
         {questions.map((question, qIndex) => (
           <div key={qIndex} className="mb-6 relative">
